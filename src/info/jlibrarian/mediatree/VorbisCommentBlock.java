@@ -1,6 +1,8 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 
+import info.jlibrarian.metatree.MetaTree;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
@@ -62,7 +64,9 @@ public class VorbisCommentBlock extends MediaTag {
             log(Level.WARNING,"failed to decode vendor_string, using \"?\"");
         }
         int user_comment_list_length = (int)(MediaFileUtil.read32bitLittleEndianUnsignedInt(raf));
-        int bytesRemaining = (blockLen - 8) - vendor_length;
+        
+        @SuppressWarnings("unused")
+		int bytesRemaining = (blockLen - 8) - vendor_length;
         
         while(user_comment_list_length>0) {                     
             int length=(int)(MediaFileUtil.read32bitLittleEndianUnsignedInt(raf));
@@ -82,10 +86,25 @@ public class VorbisCommentBlock extends MediaTag {
             user_comment_list_length--;
         }
         
-        // todo: do this "automatically"
-        new SequenceView(MediaProperty.TRACK_SEQUENCE,this,
+        // todo: do this "automatically" from registry?
+        new VirtualSequenceNode(MediaProperty.TRACK_SEQUENCE,this,
                 MediaProperty.VORBISFIELD_TRACKNUMBER,
                 MediaProperty.VORBISFIELD_TRACKTOTAL);
+
+        /* in a vorbis comment, the encoder is stored in one field and the encoder settings 
+         * are stored in another field. mediatree defines the core property "ENCODER" to mean
+         * "encoder and settings" (same as ID3 definition)
+         * 
+         * id3 does not specify how encoder and settings could be combined, so this class
+         * uses a slash "/" between the encoder and settings e.g. "lame 3.91/160kbps VBR"
+         * 
+         * (if this slash is not present in an ID3 TSSI/TSS tag then the entire string is 
+         * treated as the encoder and no encoder-settings are implied)
+         */
+        new VirtualConcatenateNode(MediaProperty.ENCODER,this,
+        		MediaProperty.VORBISFIELD_ENCODERSOFTWARE,
+        		MediaProperty.VORBISFIELD_ENCODERSETTINGS,
+        		"/");
         
         
         //todo: validate user comment list, bytes remaining

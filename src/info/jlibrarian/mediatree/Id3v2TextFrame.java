@@ -1,5 +1,9 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.stringutils.AutoAllocatingByteBuffer;
+
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
@@ -21,7 +25,7 @@ public class Id3v2TextFrame extends Id3v2Frame {
 
     @Override
     public void setValue(Object o) {
-        string=convertObject(this.getProperty().getDataType(), o);
+        string=convertObject(this.getNodeProperty().getDataType(), o);
     }
     
     @Override
@@ -30,7 +34,7 @@ public class Id3v2TextFrame extends Id3v2Frame {
         if(frameData==null)
             return null;
         originalEncodingType=frameData[0];
-        Class<?> dataType=getProperty().getDataType();
+        Class<?> dataType=getNodeProperty().getDataType();
         if(dataType.isAssignableFrom(String.class)
                 || dataType.isAssignableFrom(Integer.class)
                 || dataType.isAssignableFrom(Long.class) ) {
@@ -47,4 +51,11 @@ public class Id3v2TextFrame extends Id3v2Frame {
         } 
         return frameData;
     }
+
+	@Override
+	protected void generateFrameData(AutoAllocatingByteBuffer bb)
+			throws FileNotFoundException, IOException {
+		// TODO: don't just reload frame, regnerate it
+		bb.put(this.reload());
+	}
 }

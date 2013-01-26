@@ -1,5 +1,7 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.metatree.MetaTree;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;

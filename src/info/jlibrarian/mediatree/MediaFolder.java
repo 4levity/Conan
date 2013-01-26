@@ -1,12 +1,15 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.metatree.MetaTreeWithObj;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 
-public class MediaFolder extends ObjectNode {
+public class MediaFolder extends MetaTreeWithObj<MediaProperty> {
     public MediaFolder() {
         super(MediaProperty.FOLDER,null);
     }

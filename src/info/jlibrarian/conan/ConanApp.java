@@ -1,6 +1,7 @@
 package info.jlibrarian.conan;
 
 import info.jlibrarian.mediatree.*;
+import info.jlibrarian.metatree.MetadataQuery;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,9 +12,7 @@ public class ConanApp {
     	MediaFolder mf=new MediaFolder();
     	try {
     		mf.load("/home/ivan/Music/The Polish Ambassador/2008 - I Found Him. Now I Must Kill Him",true);
-//    		System.out.println(mf.describeTree());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	MediaFile f=(MediaFile)mf.getSingleChild(MediaProperty.AUDIOFILE);
@@ -26,7 +25,7 @@ public class ConanApp {
 	        FileOutputStream fs;
 	        try {
 	            fs = new FileOutputStream("/home/ivan/Music/preview.dat");
-	            fs.write(t.generate(1024, 0));
+	            fs.write(t.generate(100000, 0));
 	            fs.close();
 	        } catch (IOException ex) {
 	        	ex.printStackTrace();

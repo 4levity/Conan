@@ -1,10 +1,13 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.metatree.MetaTreeWithObj;
+import info.jlibrarian.stringutils.VersionString;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
 import java.util.logging.Level;
-import java.util.zip.CRC32;
 
 
 public class Id3v2TagHeader {
@@ -43,7 +46,7 @@ public class Id3v2TagHeader {
     {
         return this.unsynchronisation;
     }
-    public boolean load(RandomAccessFile f,ObjectNode owner) 
+    public boolean load(RandomAccessFile f,MetaTreeWithObj<MediaProperty> owner) 
             throws IOException {        
 
         loaded=false;
@@ -115,7 +118,7 @@ public class Id3v2TagHeader {
     }
 
 
-    private boolean loadExtendedHeader(RandomAccessFile f,ObjectNode owner)
+    private boolean loadExtendedHeader(RandomAccessFile f,MetaTreeWithObj<MediaProperty> owner)
             throws IOException {
         if(VersionString.compareVersions(version, "2.3.*") == 0)  {
             // in id3 v2.3 only, extended header needs to be deunsynchronized

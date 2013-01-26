@@ -4,10 +4,11 @@ package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Lice
 import java.awt.Image;
 import java.awt.image.ImageObserver;
 import java.io.IOException;
+import java.util.zip.CRC32;
 
 import javax.swing.ImageIcon;
 
-public class ImageProperties extends FileProperties implements ImageObserver {
+public class ImageLink implements ImageObserver {
     private static String[] pictureTypes=new String[] {
         "Other",
         "32x32 pixels 'file icon' (PNG only)",
@@ -38,28 +39,51 @@ public class ImageProperties extends FileProperties implements ImageObserver {
     protected int imgWidth=-1;
     protected int imgBitsPerPixel=-1;
     protected int imgIndexedColors=-1;
+    
+	private PayloadContainer source;
+	protected String mimeType;
+	protected String description;
+	protected String filename;
+	protected int fileSize;
+	protected CRC32 crc32;
 
-    public ImageProperties(PayloadContainer source, String mimeType, String description, String filename,
+    public ImageLink(PayloadContainer source, String mimeType, String description, String filename,
             byte picType,byte[] imageData) {
-        super(source, mimeType, description, filename, imageData);
+        this.source = source;
+        this.mimeType = mimeType;
+        this.description = description;
+        this.filename = filename;
+        fileSize=-1;
+        crc32=null;
         this.pictureType = picType;
         this.scanImage(imageData);
     }
 
-    public ImageProperties(PayloadContainer source, String mimeType, String description,
+    public ImageLink(PayloadContainer source, String mimeType, String description,
             byte picType,byte[] imageData) {
-        super(source, mimeType, description, null, imageData);
+        this.source = source;
+        this.mimeType = mimeType;
+        this.description = description;
+        this.filename = null;
+        fileSize=-1;
+        crc32=null;
+        
         this.pictureType = picType;
         this.scanImage(imageData);
     }
 
-    public ImageProperties(FrameNode sourceNode, String mimeType, String description,
+    public ImageLink(FrameNode sourceNode, String mimeType, String description,
             byte picType,byte[] imageData,
             int h,int w,int bpp,int indexedColors) {
-        super(sourceNode, mimeType, description, null, imageData);
+        this.source = sourceNode;
+        this.mimeType = mimeType;
+        this.description = description;
+        this.filename = null;
+        fileSize=-1;
+        crc32=null;
+        
         this.pictureType = picType;
 
-        // TODO: examine image and validate h/w/bpp/ix if image type supported        
         this.imgHeight = h;
         this.imgWidth = w;
         this.imgBitsPerPixel = bpp;
@@ -96,21 +120,22 @@ public class ImageProperties extends FileProperties implements ImageObserver {
     }
 
     protected boolean scanImage(byte[] imageData) {
-        // todo: get geometry from img
         if(!this.scanFileData(imageData))
             return false;
         
         if(isImageMimeType()) {
             Image img=new ImageIcon(imageData).getImage();
             if(img!=null) {
+                // TODO: validate h/w/bpp/ix         
                 this.imgHeight=img.getHeight(this);
                 this.imgWidth=img.getWidth(this);
 //                img.getProperty(mimeType, arg1)
                 if(this.imgHeight>0)
                     return true;
             }
-            //else todo: log
+            //todo: else log
         }
+        // todo: support URL MIME type "-->"
         resetImageGeometry();
         return false;
     }
@@ -192,4 +217,130 @@ public class ImageProperties extends FileProperties implements ImageObserver {
         
         return ico;
     }
+
+	protected boolean scanFileData(byte[] fileData) {
+		if(fileData == null) {
+			return false;
+		}
+	    this.fileSize = fileData.length;
+	    if(this.crc32==null)
+	        this.crc32=new CRC32();
+	    this.crc32.reset();
+	    this.crc32.update(fileData);
+	    return true;
+	}
+
+	public byte[] getFileData() throws IOException {
+	    byte[] data = source.getPayload();
+	    CRC32 check=new CRC32();
+	    // todo: see how much this crc check is slowing us down
+	    check.update(data);
+	    if(check.getValue() != this.crc32.getValue()) {
+	        throw new IOException("CRC mismatch reloading file");
+	    }
+	    return data;
+	}
+
+	public String getDescription() {
+	    return description;
+	}
+
+	public void setDescription(String description) {
+	    this.description = description;
+	}
+
+	public String getFilename() {
+	    return filename;
+	}
+
+	public void setFilename(String filename) {
+	    this.filename = filename;
+	}
+
+	public String getMimeType() {
+	    return mimeType;
+	}
+
+	public void setMimeType(String mimeType) {
+	    this.mimeType = mimeType;
+	}
+
+	public long getCrc32() {
+	    return crc32.getValue();
+	}
+
+	public int getFileSize() {
+	    return fileSize;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((crc32 == null) ? 0 : crc32.hashCode());
+		result = prime * result
+				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result + fileSize;
+		result = prime * result
+				+ ((filename == null) ? 0 : filename.hashCode());
+		result = prime * result + imgBitsPerPixel;
+		result = prime * result + imgHeight;
+		result = prime * result + imgIndexedColors;
+		result = prime * result + imgWidth;
+		result = prime * result
+				+ ((mimeType == null) ? 0 : mimeType.hashCode());
+		result = prime * result + pictureType;
+		//result = prime * result + ((source == null) ? 0 : source.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ImageLink other = (ImageLink) obj;
+		if (crc32 == null) {
+			if (other.crc32 != null)
+				return false;
+		} else if (!crc32.equals(other.crc32))
+			return false;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (fileSize != other.fileSize)
+			return false;
+		if (filename == null) {
+			if (other.filename != null)
+				return false;
+		} else if (!filename.equals(other.filename))
+			return false;
+		if (imgBitsPerPixel != other.imgBitsPerPixel)
+			return false;
+		if (imgHeight != other.imgHeight)
+			return false;
+		if (imgIndexedColors != other.imgIndexedColors)
+			return false;
+		if (imgWidth != other.imgWidth)
+			return false;
+		if (mimeType == null) {
+			if (other.mimeType != null)
+				return false;
+		} else if (!mimeType.equals(other.mimeType))
+			return false;
+		if (pictureType != other.pictureType)
+			return false;
+		if (source == null) {
+			if (other.source != null)
+				return false;
+		} else if (!source.equals(other.source))
+			return false;
+		return true;
+	}
+
 }

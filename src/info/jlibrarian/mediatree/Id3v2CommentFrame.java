@@ -1,5 +1,9 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.stringutils.AutoAllocatingByteBuffer;
+
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
@@ -62,4 +66,10 @@ public class Id3v2CommentFrame extends Id3v2Frame {
         return stringMap;
     }
 
+	@Override
+	protected void generateFrameData(AutoAllocatingByteBuffer bb)
+			throws FileNotFoundException, IOException {
+		// TODO: don't just reload frame, regnerate it
+		bb.put(this.reload());
+	}
 }

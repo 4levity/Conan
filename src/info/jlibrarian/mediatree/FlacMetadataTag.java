@@ -1,12 +1,14 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.metatree.MetaTree;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
 
 /**
- * The FLAC format is simple, so the leaves of its ObjectNode are just
- * generic ObjectNode objects loaded by their parent, not special subclasses.
+ * By default the FlacMetadataTag children are represented as FlacMetadataBlocks.
+ * We are most interested in the Vorbis Comment and the Picture tag.  
  * 
  * @author ivan
  */
@@ -31,7 +33,7 @@ public class FlacMetadataTag extends MediaTag {
             sequence++;
         } while(!lastBlock);
 
-        this.setValue(getProperty().getDescription()+" ("+sequence+" blocks)");
+        this.setValue(getNodeProperty().getDescription()+" ("+sequence+" blocks)");
         
         return this;
     }
@@ -57,6 +59,8 @@ public class FlacMetadataTag extends MediaTag {
             FlacMetadataBlock flacBlock = new FlacMetadataBlock(MediaProperty.FLACMETADATABLOCK,this);
             flacBlock.load((new Integer(blockType)).toString(), blockSize, raf);
         }
+        // TODO: implement PICTURE (also needed for Ogg Vorbis)
+        // TODO: (low) implement CUESHEET, and I guess CDDA/Red Book too
         return lastBlock;
     }
 

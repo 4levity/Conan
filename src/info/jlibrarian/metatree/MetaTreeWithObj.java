@@ -1,10 +1,11 @@
-package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.metatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
-public class ObjectNode extends MetaTree<MediaProperty> {
+
+public class MetaTreeWithObj<PROPERTY extends MetaTreeProperty> extends MetaTree<PROPERTY> {
     Object obj;
-    public ObjectNode(MediaProperty prop,MetaTree<MediaProperty> parent) {
+    public MetaTreeWithObj(PROPERTY prop,MetaTree<PROPERTY> parent) {
         super(prop,parent);
-        obj=null;
+        this.obj=null;
     }
 
     @Override
@@ -22,6 +23,6 @@ public class ObjectNode extends MetaTree<MediaProperty> {
     @Override
     //@SuppressWarnings("unchecked")
     public void setValue(Object o) {
-        obj=convertObject(this.getProperty().getDataType(),o);
+        obj=convertObject(this.getNodeProperty().getDataType(),o);
     }
  }

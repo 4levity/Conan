@@ -1,10 +1,13 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 
+
+import info.jlibrarian.metatree.MetaTreeProperty;
+
 import java.io.File;
 import java.net.URL;
 
-public enum MediaProperty {
+public enum MediaProperty implements MetaTreeProperty {
 	// file system objects..
     FOLDER ("Folder",File.class),
     OTHERFILE ("Other file",File.class),
@@ -38,9 +41,9 @@ public enum MediaProperty {
     COPYRIGHTMESSAGE ("Copyright message",String.class),
     DISC_SEQUENCE ("Disc sequence",SequencePosition.class),
     DISCSUBTITLE ("Disc subtitle",String.class),
-    PICTURE ("Picture",ImageProperties.class),
+    PICTURE ("Picture",ImageLink.class),
     ENCODEDBY ("Encoded by",String.class),
-    ENCODER ("Encoder",String.class),
+    ENCODER ("Encoder/settings",String.class),
     FILEOWNER ("File owner",String.class),
     GENRE ("Genre",String.class),
     INITIALKEY ("Initial key",String.class),
@@ -80,7 +83,7 @@ public enum MediaProperty {
 // generic Vorbis Comment fields..
     VORBISFIELD_UNKNOWN ("Unknown Vorbis Comment",String.class),
 
-// Vorbis-specific fields..
+// Vorbis-specific fields.. 
     VORBISFIELD_ENCODERSOFTWARE ("Vorbis field/Encoder software",String.class),
     VORBISFIELD_ENCODERSETTINGS ("Vorbis field/Encoder settings",String.class),
     VORBISFIELD_TRACKNUMBER ("Vorbis field/Track number",Integer.class),
@@ -95,36 +98,36 @@ public enum MediaProperty {
     
 // generic or unsupported Id3v2 frame types..
     ID3V2TEXTFRAME ("Id3v2 text frame",String.class),
-    ID3V2UNKNOWNFRAME ("Id3v2 unknown frame",Id3v2FrameContents.class),
+    ID3V2UNKNOWNFRAME ("Id3v2 unknown frame",Id3v2RawFrameContents.class),
     ID3V2URLFRAME ("Id3v2 URL frame",URL.class),
-    ID3V22UNKNOWNFRAME ("Id3v2 unknown frame (2.2)",Id3v2FrameContents.class),
-    ID3V2FRAME_AUDIOENCRYPTION ("Id3v2 frame/Audio encryption",Id3v2FrameContents.class),
-    ID3V2FRAME_AUDIOSEEKPOINTINDEX ("Id3v2 frame/Audio seek point index",Id3v2FrameContents.class),
-    ID3V2FRAME_COMMERCIAL ("Id3v2 frame/Commercial",Id3v2FrameContents.class),
-    ID3V2FRAME_ENCRYPTEDMETAFRAME ("Id3v2 frame/Encrypted meta frame",Id3v2FrameContents.class),
-    ID3V2FRAME_ENCRYPTIONMETHODREGISTRATION ("Id3v2 frame/Encryption method registration",Id3v2FrameContents.class),
-    ID3V2FRAME_EQUALIZATION ("Id3v2 frame/Equalization",Id3v2FrameContents.class),
-    ID3V2FRAME_EQUALIZATION_2 ("Id3v2 frame/Equalization (2)",Id3v2FrameContents.class),
-    ID3V2FRAME_EVENTTIMINGCODES ("Id3v2 frame/Event timing codes",Id3v2FrameContents.class),
-    ID3V2FRAME_EXPERIMENTAL_RVA2_CLASS3 ("Id3v2 frame/Experimental relative volume adjustment (2)",Id3v2FrameContents.class),
-    ID3V2FRAME_GROUPIDREGISTRATION ("Id3v2 frame/Group ID registration",Id3v2FrameContents.class),
-    ID3V2FRAME_LINKEDINFO ("Id3v2 frame/Linked info",Id3v2FrameContents.class),
-    ID3V2FRAME_MPEGLOCATIONLOOKUPTABLE ("Id3v2 frame/MPEG location lookup table",Id3v2FrameContents.class),
-    ID3V2FRAME_MUSICCDIDENTIFIER ("Id3v2 frame/Music CD identifier",Id3v2FrameContents.class),
-    ID3V2FRAME_MUSICMATCH ("Id3v2 frame/MusicMatch info",Id3v2FrameContents.class),
-    ID3V2FRAME_NEXTTAGOFFSET ("Id3v2 frame/Next tag offset",Id3v2FrameContents.class),
-    ID3V2FRAME_OWNERSHIP ("Id3v2 frame/Ownership",Id3v2FrameContents.class),
-    ID3V2FRAME_POPULARIMETER ("Id3v2 frame/Popularimeter",Id3v2FrameContents.class),
-    ID3V2FRAME_POSITIONSYNC ("Id3v2 frame/Position sync",Id3v2FrameContents.class),
-    ID3V2FRAME_PRIVATE ("Id3v2 frame/Private",Id3v2FrameContents.class),
-    ID3V2FRAME_RECOMMENDEDBUFFERSIZE ("Id3v2 frame/Recommended buffer size",Id3v2FrameContents.class),
-    ID3V2FRAME_RELATIVEVOLUMEADJUSTMENT ("Id3v2 frame/Relative volume adjustment",Id3v2FrameContents.class),
-    ID3V2FRAME_RELATIVEVOLUMEADJUSTMENT_2 ("Id3v2 frame/Relative volume adjustment (2)",Id3v2FrameContents.class),
-    ID3V2FRAME_REPLAYGAINADJUSTMENT ("Id3v2 frame/Replay gain adjustment",Id3v2FrameContents.class),
-    ID3V2FRAME_REVERB ("Id3v2 frame/Reverb",Id3v2FrameContents.class),
-    ID3V2FRAME_SIGNATATURE ("Id3v2 frame/Signature",Id3v2FrameContents.class),
-    ID3V2FRAME_SYNCLYRICS ("Id3v2 frame/Synchronized lyrics/text",Id3v2FrameContents.class),
-    ID3V2FRAME_SYNCTEMPOCODES ("Id3v2 frame/Synchronized tempo codes",Id3v2FrameContents.class);
+    ID3V22UNKNOWNFRAME ("Id3v2 unknown frame (2.2)",Id3v2RawFrameContents.class),
+    ID3V2FRAME_AUDIOENCRYPTION ("Id3v2 frame/Audio encryption",Id3v2RawFrameContents.class),
+    ID3V2FRAME_AUDIOSEEKPOINTINDEX ("Id3v2 frame/Audio seek point index",Id3v2RawFrameContents.class),
+    ID3V2FRAME_COMMERCIAL ("Id3v2 frame/Commercial",Id3v2RawFrameContents.class),
+    ID3V2FRAME_ENCRYPTEDMETAFRAME ("Id3v2 frame/Encrypted meta frame",Id3v2RawFrameContents.class),
+    ID3V2FRAME_ENCRYPTIONMETHODREGISTRATION ("Id3v2 frame/Encryption method registration",Id3v2RawFrameContents.class),
+    ID3V2FRAME_EQUALIZATION ("Id3v2 frame/Equalization",Id3v2RawFrameContents.class),
+    ID3V2FRAME_EQUALIZATION_2 ("Id3v2 frame/Equalization (2)",Id3v2RawFrameContents.class),
+    ID3V2FRAME_EVENTTIMINGCODES ("Id3v2 frame/Event timing codes",Id3v2RawFrameContents.class),
+    ID3V2FRAME_EXPERIMENTAL_RVA2_CLASS3 ("Id3v2 frame/Experimental relative volume adjustment (2)",Id3v2RawFrameContents.class),
+    ID3V2FRAME_GROUPIDREGISTRATION ("Id3v2 frame/Group ID registration",Id3v2RawFrameContents.class),
+    ID3V2FRAME_LINKEDINFO ("Id3v2 frame/Linked info",Id3v2RawFrameContents.class),
+    ID3V2FRAME_MPEGLOCATIONLOOKUPTABLE ("Id3v2 frame/MPEG location lookup table",Id3v2RawFrameContents.class),
+    ID3V2FRAME_MUSICCDIDENTIFIER ("Id3v2 frame/Music CD identifier",Id3v2RawFrameContents.class),
+    ID3V2FRAME_MUSICMATCH ("Id3v2 frame/MusicMatch info",Id3v2RawFrameContents.class),
+    ID3V2FRAME_NEXTTAGOFFSET ("Id3v2 frame/Next tag offset",Id3v2RawFrameContents.class),
+    ID3V2FRAME_OWNERSHIP ("Id3v2 frame/Ownership",Id3v2RawFrameContents.class),
+    ID3V2FRAME_POPULARIMETER ("Id3v2 frame/Popularimeter",Id3v2RawFrameContents.class),
+    ID3V2FRAME_POSITIONSYNC ("Id3v2 frame/Position sync",Id3v2RawFrameContents.class),
+    ID3V2FRAME_PRIVATE ("Id3v2 frame/Private",Id3v2RawFrameContents.class),
+    ID3V2FRAME_RECOMMENDEDBUFFERSIZE ("Id3v2 frame/Recommended buffer size",Id3v2RawFrameContents.class),
+    ID3V2FRAME_RELATIVEVOLUMEADJUSTMENT ("Id3v2 frame/Relative volume adjustment",Id3v2RawFrameContents.class),
+    ID3V2FRAME_RELATIVEVOLUMEADJUSTMENT_2 ("Id3v2 frame/Relative volume adjustment (2)",Id3v2RawFrameContents.class),
+    ID3V2FRAME_REPLAYGAINADJUSTMENT ("Id3v2 frame/Replay gain adjustment",Id3v2RawFrameContents.class),
+    ID3V2FRAME_REVERB ("Id3v2 frame/Reverb",Id3v2RawFrameContents.class),
+    ID3V2FRAME_SIGNATATURE ("Id3v2 frame/Signature",Id3v2RawFrameContents.class),
+    ID3V2FRAME_SYNCLYRICS ("Id3v2 frame/Synchronized lyrics/text",Id3v2RawFrameContents.class),
+    ID3V2FRAME_SYNCTEMPOCODES ("Id3v2 frame/Synchronized tempo codes",Id3v2RawFrameContents.class);
     
     String description;
     Class<?> dataType;

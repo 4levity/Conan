@@ -1,5 +1,9 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.stringutils.AutoAllocatingByteBuffer;
+import info.jlibrarian.stringutils.VersionString;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -194,9 +198,8 @@ public abstract class Id3v2Frame extends FrameNode {
         }
         return rawFrameData;
     }
-	protected void generateFrameData(AutoAllocatingByteBuffer bb) throws FileNotFoundException, IOException {
-		bb.put(this.reload());
-	}
+	abstract protected void generateFrameData(AutoAllocatingByteBuffer bb) throws FileNotFoundException, IOException;
+		//bb.put(this.reload());
     public void generateFullFrame(AutoAllocatingByteBuffer bb) throws FileNotFoundException, IOException {
 		AutoAllocatingByteBuffer frameData;
 

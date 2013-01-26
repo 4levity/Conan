@@ -1,6 +1,8 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 
+import info.jlibrarian.stringutils.VersionString;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -102,10 +104,12 @@ registerId3v2("APIC","*",Id3v2PictureFrame.class,MediaProperty.PICTURE,true);
 
 registerId3v2("TEN","*",Id3v2TextFrame.class,MediaProperty.ENCODEDBY,false);
 registerId3v2("TENC","*",Id3v2TextFrame.class,MediaProperty.ENCODEDBY,false);
-registerVorbis("ENCODEDBY",VorbisTextField.class,MediaProperty.ENCODEDBY);
+registerVorbis("ENCODEDBY",VorbisTextField.class,MediaProperty.ENCODEDBY,true);
 
 registerId3v2("TSS","*",Id3v2TextFrame.class,MediaProperty.ENCODER,false);
 registerId3v2("TSSE","*",Id3v2TextFrame.class,MediaProperty.ENCODER,false);
+registerVorbis("ENCODER",VorbisTextField.class,MediaProperty.VORBISFIELD_ENCODERSOFTWARE);
+registerVorbis("ENCODING",VorbisTextField.class,MediaProperty.VORBISFIELD_ENCODERSETTINGS);
 
 registerId3v2("TOWN","*",Id3v2TextFrame.class,MediaProperty.FILEOWNER,false);
 
@@ -233,6 +237,7 @@ registerVorbis("TITLESORT",VorbisTextField.class,MediaProperty.TITLE_SORTORDER);
 
 registerId3v2("TRCK","*",Id3v2SequenceFrame.class,MediaProperty.TRACK_SEQUENCE,false);
 registerId3v2("TRK","*",Id3v2SequenceFrame.class,MediaProperty.TRACK_SEQUENCE,false);
+// VorbisComment gets TRACK_SEQUENCE by instantiating a SequenceView child of the tag
 
 registerId3v2("TIT3","*",Id3v2TextFrame.class,MediaProperty.TRACKSUBTITLE,false);
 registerId3v2("TT3","*",Id3v2TextFrame.class,MediaProperty.TRACKSUBTITLE,false);
@@ -272,20 +277,18 @@ registerId3v2("TXXX","*",Id3v2TextMapFrame.class,MediaProperty.USERTEXT);
 
 registerId3v2("USER","*",Id3v2CommentFrame.class,MediaProperty.TERMSOFUSE);
 
+registerVorbis("DISCNUMBER",VorbisTextField.class,MediaProperty.VORBISFIELD_DISCNUMBER);
 registerVorbis("DISC",VorbisTextField.class,MediaProperty.VORBISFIELD_DISCNUMBER,true); //alt
 registerVorbis("DISCC",VorbisTextField.class,MediaProperty.VORBISFIELD_DISCNUMBER,true); //alt
-registerVorbis("DISCNUMBER",VorbisTextField.class,MediaProperty.VORBISFIELD_DISCNUMBER);
 
 registerVorbis("DISCTOTAL",VorbisTextField.class,MediaProperty.VORBISFIELD_DISCTOTAL);
 registerVorbis("TOTALDISCS",VorbisTextField.class,MediaProperty.VORBISFIELD_DISCTOTAL,true); // alt
 
-registerVorbis("ENCODING",VorbisTextField.class,MediaProperty.VORBISFIELD_ENCODERSETTINGS);
-registerVorbis("ENCODER",VorbisTextField.class,MediaProperty.VORBISFIELD_ENCODERSOFTWARE);
 
 registerVorbis("TRACKNUMBER",VorbisTextField.class,MediaProperty.VORBISFIELD_TRACKNUMBER);
 
-registerVorbis("TOTALTRACKS",VorbisTextField.class,MediaProperty.VORBISFIELD_TRACKTOTAL,true); // alt
 registerVorbis("TRACKTOTAL",VorbisTextField.class,MediaProperty.VORBISFIELD_TRACKTOTAL);
+registerVorbis("TOTALTRACKS",VorbisTextField.class,MediaProperty.VORBISFIELD_TRACKTOTAL,true); // alt
     }
     public static class FileType {
         public static class TagConfig {
@@ -300,7 +303,7 @@ registerVorbis("TRACKTOTAL",VorbisTextField.class,MediaProperty.VORBISFIELD_TRAC
         }
         public final Class<? extends MediaFile> fileClass;
         public final MediaProperty fileProperty;
-        public List<TagConfig> tagInfo=new ArrayList<TagConfig>();
+        public List<TagConfig> tagInfo=new ArrayList<TagConfig>(1);
         public FileType(Class<? extends MediaFile> fileCl, MediaProperty fileProp) {
             this.fileClass = fileCl;
             this.fileProperty = fileProp;
@@ -345,33 +348,7 @@ registerVorbis("TRACKTOTAL",VorbisTextField.class,MediaProperty.VORBISFIELD_TRAC
             this.canOccurMultiple = canOccurMultiple;
         }
     }
-    public static class VirtualTagField {
-        public MediaProperty virtualFieldProperty;
-        public Class<? extends MetaTree<MediaProperty>> fieldClass;
-        ArrayList<MediaProperty> fieldParams;
-
-        public VirtualTagField(MediaProperty virtualFieldProperty, Class<? extends MetaTree<MediaProperty>> fieldClass) {
-            this.virtualFieldProperty = virtualFieldProperty;
-            this.fieldClass = fieldClass;
-            this.fieldParams =null;
-        }
-        public VirtualTagField(MediaProperty virtualFieldProperty, Class<? extends MetaTree<MediaProperty>> fieldClass, 
-                MediaProperty fieldParam0) {
-            this.virtualFieldProperty = virtualFieldProperty;
-            this.fieldClass = fieldClass;
-            this.fieldParams = new ArrayList<MediaProperty>(1);
-            this.fieldParams.add(fieldParam0);
-        }
-        public VirtualTagField(MediaProperty virtualFieldProperty, Class<? extends MetaTree<MediaProperty>> fieldClass, 
-                MediaProperty fieldParam0,MediaProperty fieldParam1) {
-            this.virtualFieldProperty = virtualFieldProperty;
-            this.fieldClass = fieldClass;
-            this.fieldParams = new ArrayList<MediaProperty>(2);
-            this.fieldParams.add(fieldParam0);
-            this.fieldParams.add(fieldParam1);
-        }        
-    }
-
+    
     private static void registerId3v2(String frame,String verMatch,Class<? extends Id3v2Frame> frameClass,MediaProperty frameProp) {
         id3v2Fields.add(new Id3v2FrameConfig(frame,verMatch,frameClass,frameProp,true));
     }
@@ -412,8 +389,8 @@ registerVorbis("TRACKTOTAL",VorbisTextField.class,MediaProperty.VORBISFIELD_TRAC
     private static void registerVorbis(String field, Class<? extends FrameNode> type, MediaProperty prop) {
         vorbisFields.add(new VorbisCommentConfig(field,type,prop));
     }
-    private static void registerVorbis(String field, Class<? extends FrameNode> type, MediaProperty prop,boolean dep) {
-        vorbisFields.add(new VorbisCommentConfig(field,type,prop,dep));
+    private static void registerVorbis(String field, Class<? extends FrameNode> type, MediaProperty prop,boolean alt) {
+        vorbisFields.add(new VorbisCommentConfig(field,type,prop,alt));
     }
     public static String describeVorbisCommentSupport(MediaProperty p) {
         String supp="";

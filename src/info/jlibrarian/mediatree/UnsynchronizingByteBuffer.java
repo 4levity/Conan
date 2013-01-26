@@ -1,5 +1,7 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.stringutils.AutoAllocatingByteBuffer;
+
 
 public class UnsynchronizingByteBuffer extends AutoAllocatingByteBuffer {
 	int numBytesPut=0;

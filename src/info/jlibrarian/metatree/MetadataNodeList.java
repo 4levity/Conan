@@ -1,10 +1,10 @@
-package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.metatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class MetadataNodeList<PROPERTY> 
+public class MetadataNodeList<PROPERTY extends MetaTreeProperty> 
 	implements 
 	Comparable<MetadataNodeList<PROPERTY>>,
     Comparator<MetadataNodeList<PROPERTY>> {
@@ -13,7 +13,7 @@ public class MetadataNodeList<PROPERTY>
     public MetadataNodeList(MetaTree<PROPERTY> source) {
         sources=new ArrayList<MetaTree<PROPERTY>>(1);
         sources.add(source);
-        property=source.getProperty();
+        property=source.getNodeProperty();
     }
     /**
      * only usable as comparator when not initialized with a first node
@@ -25,7 +25,7 @@ public class MetadataNodeList<PROPERTY>
     public void addSource(MetaTree<PROPERTY> s) {
         if(sources==null)
             throw new RuntimeException("MetadataNodeList internal error: trying to add to comparator");
-        if(s.getProperty() != property)
+        if(s.getNodeProperty() != property)
             throw new RuntimeException("MetadataNodeList internal error: add mismatched value");
         sources.add(s);
     }

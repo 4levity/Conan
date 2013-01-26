@@ -29,7 +29,7 @@ public class Iso8601Date {
     }
     protected Precision precision=Precision.NONE;
     public Iso8601Date(String iso8601date) {
-        // set date from string, dur
+        // TODO: set date from string, dur
     }
     public Iso8601Date() {
         precision=Precision.NONE;

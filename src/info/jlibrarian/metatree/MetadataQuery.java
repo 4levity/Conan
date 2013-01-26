@@ -1,4 +1,40 @@
-package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.metatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+
+/*
+ * query operations on a metatree node ("here"):
+ * 
+ * 1. lookup: get set of unique values under here that have propertyX 
+ * 		(per value: confidence, nodelist)
+ * 		if none match, return null set.
+ * 
+ * 2. quick: return most confident value under here matching propertyX
+ * 		if none match, return null.
+ * 
+ * 3. lookup list: return set of lookups, given set of properties
+ * 		(same result as repeatedly calling lookup but ideally in one traversal)
+ * 		if none match, return null set.
+ * 
+ * 4. lookup all: return set of lookup sets, for any property represented
+ * 		if this node has null value and no descendants with non-null values, 
+ * 			return null set
+ * 
+ * 5. lookup match: return set of child nodes representing propertyX and having valueX
+ * 		if none match, return null set 
+ * 
+ * value operations:
+ * 
+ * 1. set property=value (): propagate given value downward setting all matching nodes;
+ * 			at any node where value is not represented but child can be created, create it;
+ * 			if no nodes are set or created, return false
+ * 2. set property (create container): same as set property, but if operation would fail,
+ * 			then attempt to make it succeed by creating nodes of the given type
+ * 			under any node where this is possible;
+ * 			if property cannot be set and container cannot be created, return false. 
+ * 3. clear property: cascade clear (i.e. virtual node) then destroy all nodes matching
+ * 			the given property;
+ * 			if no node matches, return false.
+ * 
+ */
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,7 +45,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class MetadataQuery<PROPERTY> {
+public class MetadataQuery<PROPERTY extends MetaTreeProperty> {
     private final Set<PROPERTY> properties;
     private HashMap<PROPERTY,ArrayList<MetadataNodeList<PROPERTY>>> allValues=null;
     private List<MetaTree<PROPERTY>> invalidNodes=null;
@@ -20,7 +56,7 @@ public class MetadataQuery<PROPERTY> {
         properties = new HashSet<PROPERTY>(1);
         properties.add(targetProperty);
         allValues = new HashMap<PROPERTY, ArrayList<MetadataNodeList<PROPERTY>>>(1);
-            processNode(queryFrom);
+        processNode(queryFrom);
         sortAllValues();
     }
     public MetadataQuery(MetaTree<PROPERTY> queryFrom,
@@ -72,7 +108,7 @@ public class MetadataQuery<PROPERTY> {
         return(allValues.get(p)!=null);
     }
     private void processNode(MetaTree<PROPERTY> subtree) {
-        if(properties.contains(subtree.getProperty())) {
+        if(properties.contains(subtree.getNodeProperty())) {
             processMatchingNode(subtree);
         }
 /*      
@@ -93,13 +129,13 @@ public class MetadataQuery<PROPERTY> {
 //                    +subtree.getProperty().toString() ,ex);
     }
     private void processMatchingNode(MetaTree<PROPERTY> subtree) {
-        ArrayList<MetadataNodeList<PROPERTY>> valueList=allValues.get(subtree.getProperty());
+        ArrayList<MetadataNodeList<PROPERTY>> valueList=allValues.get(subtree.getNodeProperty());
         if(valueList==null)
         {   // have we not yet processed any value for this property?
             // create a new list of value-sets for this property.
             valueList=new ArrayList<MetadataNodeList<PROPERTY>>();
             valueList.add(new MetadataNodeList<PROPERTY>(subtree));
-            allValues.put(subtree.getProperty(),valueList);
+            allValues.put(subtree.getNodeProperty(),valueList);
         } else {
             // we already have a value for this property.  is it the same?
             MetadataNodeList<PROPERTY> match = findValue(valueList,subtree.getValue());

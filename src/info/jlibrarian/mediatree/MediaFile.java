@@ -1,5 +1,8 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.metatree.MetaTreeWithObj;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,7 +14,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MediaFile extends ObjectNode implements PayloadContainer {
+public class MediaFile extends MetaTreeWithObj<MediaProperty> implements PayloadContainer {
     public MediaFile(MediaProperty prop,MetaTree<MediaProperty> parent) {
         super(prop,parent);
     }
@@ -115,9 +118,6 @@ public class MediaFile extends ObjectNode implements PayloadContainer {
         byte buf[]= new byte[(int)(f.length())];
         FileInputStream ins = null;
         ins = new FileInputStream(f);
-
-        if(ins==null)
-            return null;
 
         try {
             ins.read(buf);

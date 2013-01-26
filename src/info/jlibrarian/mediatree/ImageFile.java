@@ -1,5 +1,8 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.metatree.MetaTreeWithObj;
+
 import java.io.IOException;
 import java.io.File;
 
@@ -27,11 +30,11 @@ public class ImageFile extends MediaFile {
             // unsupported image type
             return this;
         }
-        ImageProperties imgProp=null;
-        imgProp = new ImageProperties(this, mimeType, "", getFile().getName(), 
-                ImageProperties.defaultPictureType, this.getPayload());
+        ImageLink imgProp=null;
+        imgProp = new ImageLink(this, mimeType, "", getFile().getName(), 
+                ImageLink.defaultPictureType, this.getPayload());
         if(imgProp != null) {
-            ObjectNode newChild=new ObjectNode(MediaProperty.PICTURE,this);
+            MetaTreeWithObj<MediaProperty> newChild=new MetaTreeWithObj<MediaProperty>(MediaProperty.PICTURE,this);
             newChild.setValue(imgProp);
         }
         return this;

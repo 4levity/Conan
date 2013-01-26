@@ -1,6 +1,7 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
-import info.jlibrarian.mediatree.Registry.Id3v2FrameConfig;
+import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.stringutils.VersionString;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -178,13 +179,16 @@ public class Id3v2Tag extends MediaTag {
                 if(fc!=null) {
                     newFrame=loadSupportedFrame(fc,frameId,frameSize,raf);
                 } else if(frameId.startsWith("T") 
-                        && !(frameId.equals("TXXX"))
+                        && !(frameId.equals("TXXX")) 
                         && !(frameId.equals("TXX"))) {
+                	// special frames TXXX/TXX are not regular text frames
+                	// TODO: support?
                     newFrame=new Id3v2TextFrame(MediaProperty.ID3V2TEXTFRAME,this);
                     newFrame.load(frameId, frameSize,raf);
                 } else if(frameId.startsWith("W") 
                         && !(frameId.equals("WXXX"))
                         && !(frameId.equals("WXX"))) {
+                	// special frames WXXX/WXX are not regular URL frames
                     newFrame=new Id3v2URLFrame(MediaProperty.ID3V2URLFRAME,this);
                     newFrame.load(frameId, frameSize,raf);
                 } else if(frameId.length() == 3) {

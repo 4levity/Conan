@@ -1,6 +1,11 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 
+import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.stringutils.AutoAllocatingByteBuffer;
+import info.jlibrarian.stringutils.VersionString;
+
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
@@ -9,7 +14,7 @@ import java.util.logging.Level;
 
 public class Id3v2PictureFrame extends Id3v2Frame {
     int originalTextEncoding=0;
-    ImageProperties picHeader=null;
+    ImageLink picHeader=null;
     protected int picDataFrameOffset=0;
 
     public Id3v2PictureFrame(MediaProperty property, MetaTree<MediaProperty> parent) {
@@ -78,14 +83,14 @@ public class Id3v2PictureFrame extends Id3v2Frame {
             descrEnd++;                  
         }
         this.picDataFrameOffset = descrEnd;
-        picHeader = new ImageProperties(this, mimeType, description, picType, 
+        picHeader = new ImageLink(this, mimeType, description, picType, 
                 Arrays.copyOfRange(frameData, this.picDataFrameOffset, frameData.length));
         return frameData;
     }
 
     @Override
     public Object getValue() {
-        if(!getProperty().getDataType().isAssignableFrom(ImageProperties.class)) {
+        if(!getNodeProperty().getDataType().isAssignableFrom(ImageLink.class)) {
             throw new ClassCastException("getValue- not an EmbeddedPictureHeader");
         }
         return picHeader;
@@ -102,4 +107,11 @@ public class Id3v2PictureFrame extends Id3v2Frame {
     public String toString() {
         return (picHeader==null?"embedded picture: null":picHeader.toString());
     }
+
+    @Override
+	protected void generateFrameData(AutoAllocatingByteBuffer bb)
+			throws FileNotFoundException, IOException {
+		// TODO: don't always reload (but maybe this is appropriate for big images)
+		bb.put(this.reload());
+	}
 }

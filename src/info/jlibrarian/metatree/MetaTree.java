@@ -1,4 +1,4 @@
-package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.metatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 import java.io.File;
 import java.util.Iterator;
@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class MetaTree<PROPERTY> {
+public abstract class MetaTree<PROPERTY extends MetaTreeProperty> {
     private final PROPERTY property;
     private MetaTree<PROPERTY> parent;
     private List<MetaTree<PROPERTY>> children;
@@ -19,7 +19,7 @@ public abstract class MetaTree<PROPERTY> {
         if(parent!=null)
             parent.addChild(this);
     }
-    final public PROPERTY getProperty() {
+    final public PROPERTY getNodeProperty() {
         return property;
     }
     final protected boolean delete() {
@@ -65,7 +65,7 @@ public abstract class MetaTree<PROPERTY> {
     final public MetaTree<PROPERTY> getSingleChild(PROPERTY p) {
         MetaTree<PROPERTY> match=null;
         for(MetaTree<PROPERTY> node : children) {
-            if(node.getProperty().equals(p)) {
+            if(node.getNodeProperty().equals(p)) {
 //                if(match!=null)
   //                  return null; // one and ONLY one match
     //            match=node;
@@ -183,15 +183,20 @@ public abstract class MetaTree<PROPERTY> {
         return o;
     }
     
-/*    public boolean createChild(MetaTree<PROPERTY> copyFrom) {
-        // default: node unable to create, must add children from load() or other methods
-        return false;
-    }
-    public boolean canCreateChild(PROPERTY newProperty) {
-        return false;
-    }
-*/  
-    // functions to create text representation of the tree (TODO: XML?)
+	/*final public boolean setValue(MediaProperty property, Object newValue) {
+		// TODO: implement child creation by pushing properties to nodes
+		return false;
+	}*/
+
+/*    public boolean canCreateChild(PROPERTY newProperty) {
+		return false;
+	}
+	public boolean createChild(PROPERTY newProperty,Object newValue) {
+		
+	}*/
+
+    // functions to create text representation of the tree 
+    // TODO: XML!
     public String describeTree() {
         return describeTree(0);
     }
@@ -206,7 +211,7 @@ public abstract class MetaTree<PROPERTY> {
         return s;
     }
     public String describeNode() {
-        return  (getProperty()==null?"null":getProperty().toString().replaceAll("\\p{Cntrl}",""))
+        return  (getNodeProperty()==null?"null":getNodeProperty().toString().replaceAll("\\p{Cntrl}",""))
                 +": "+ toString() + (isValueValid()?"":" (invalid)"); 
     }
 	public String describePath() {

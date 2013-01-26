@@ -1,5 +1,7 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.metatree.MetaTree;
+
 /**
  * Defines a virtual-value node which represents a SequencePosition (x of y)
  * The node determines its value by assembling from two separate position and
@@ -12,9 +14,9 @@ package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Lice
  *
  * @author ivan
  */
-public class SequenceView extends MetaTree<MediaProperty> {
+public class VirtualSequenceNode extends MetaTree<MediaProperty> {
     MediaProperty pPosition,pTotal;
-    public SequenceView(MediaProperty p,MetaTree<MediaProperty> parent,MediaProperty pPos,MediaProperty pTot) {
+    public VirtualSequenceNode(MediaProperty p,MetaTree<MediaProperty> parent,MediaProperty pPos,MediaProperty pTot) {
         super(p,parent);
         pPosition=pPos;
         pTotal=pTot;
@@ -22,7 +24,7 @@ public class SequenceView extends MetaTree<MediaProperty> {
 
     @Override
     public Object getValue() {
-        if(!this.getProperty().getDataType().isAssignableFrom(SequencePosition.class))
+        if(!this.getNodeProperty().getDataType().isAssignableFrom(SequencePosition.class))
             return null;
         MetaTree<MediaProperty> refPosition = this.getParent().getSingleChild(pPosition);
         MetaTree<MediaProperty> refTotal = this.getParent().getSingleChild(pTotal);
@@ -37,6 +39,7 @@ public class SequenceView extends MetaTree<MediaProperty> {
 
     @Override
     public void setValue(Object o) {
+    	// TODO support setting (by pushing properties to parent)
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

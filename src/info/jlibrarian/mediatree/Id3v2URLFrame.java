@@ -1,5 +1,9 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.stringutils.AutoAllocatingByteBuffer;
+
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.MalformedURLException;
@@ -50,7 +54,7 @@ public class Id3v2URLFrame extends Id3v2Frame {
 
     @Override
     public Object getValue() {
-        if(!this.getProperty().getDataType().isAssignableFrom(URL.class))
+        if(!this.getNodeProperty().getDataType().isAssignableFrom(URL.class))
             return null;
         return (Object)url;
 
@@ -58,10 +62,17 @@ public class Id3v2URLFrame extends Id3v2Frame {
 
     @Override
     public void setValue(Object o) {
-        if(!this.getProperty().getDataType().isAssignableFrom(URL.class))
+        if(!this.getNodeProperty().getDataType().isAssignableFrom(URL.class))
             return;        
         if(!URL.class.isAssignableFrom(o.getClass())) 
             return;
         url=(URL)o;
     }
+
+	@Override
+	protected void generateFrameData(AutoAllocatingByteBuffer bb)
+			throws FileNotFoundException, IOException {
+		// TODO: don't just reload frame, regnerate it
+		bb.put(this.reload());
+	}
 }
