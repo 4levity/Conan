@@ -1,6 +1,6 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
-import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.stringutils.AutoAllocatingByteBuffer;
 import info.jlibrarian.stringutils.VersionString;
 
@@ -13,7 +13,7 @@ import java.util.logging.Level;
 
 public abstract class Id3v2Frame extends FrameNode {
     protected Id3v2FrameFlags nonDefaultFlags=null; // null if all flags are normal and 0 appended header bytes
-    public Id3v2Frame(MediaProperty property, MetaTree<MediaProperty> parent) {
+    public Id3v2Frame(MediaProperty property, PropertyTree<MediaProperty> parent) {
         super(property, parent);
     }
     public Id3v2FrameFlags getFlags() {

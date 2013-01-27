@@ -1,7 +1,7 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 
-import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.propertytree.PropertyTree;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -12,7 +12,7 @@ import java.util.logging.Level;
 
 public class VorbisCommentBlock extends MediaTag {
     
-    public VorbisCommentBlock(MediaProperty prop, MetaTree<MediaProperty> parent) {
+    public VorbisCommentBlock(MediaProperty prop, PropertyTree<MediaProperty> parent) {
         super(prop, parent);
     }
 
@@ -21,7 +21,7 @@ public class VorbisCommentBlock extends MediaTag {
         VorbisField newField=null;
         try {
             Constructor<? extends FrameNode> cons = cfg.fieldClass
-                    .getConstructor(MediaProperty.class,MetaTree.class);
+                    .getConstructor(MediaProperty.class,PropertyTree.class);
             if (cons != null) {
                 newField = (VorbisField) cons.newInstance(cfg.fieldProperty,this);
                 newField.load(fieldId, length, openFile);

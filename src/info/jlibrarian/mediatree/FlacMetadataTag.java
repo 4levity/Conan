@@ -1,6 +1,6 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
-import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.propertytree.PropertyTree;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -13,7 +13,7 @@ import java.io.RandomAccessFile;
  * @author ivan
  */
 public class FlacMetadataTag extends MediaTag {
-    public FlacMetadataTag(MediaProperty prop, MetaTree<MediaProperty> parent) {
+    public FlacMetadataTag(MediaProperty prop, PropertyTree<MediaProperty> parent) {
         super(prop, parent);
     }
 

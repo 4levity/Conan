@@ -1,6 +1,6 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
-import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.stringutils.AutoAllocatingByteBuffer;
 
 import java.io.FileNotFoundException;
@@ -14,7 +14,7 @@ public class Id3v2SequenceFrame extends Id3v2Frame {
     byte originalEncodingType=-1;
     SequencePosition sequencePosition=null;
     
-    public Id3v2SequenceFrame(MediaProperty property, MetaTree<MediaProperty> parent) {
+    public Id3v2SequenceFrame(MediaProperty property, PropertyTree<MediaProperty> parent) {
         super(property, parent);
     }
 

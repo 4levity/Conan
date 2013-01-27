@@ -1,13 +1,13 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
-import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.propertytree.PropertyTree;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class VorbisRawField extends VorbisField {
 
-    public VorbisRawField(MediaProperty property, MetaTree<MediaProperty> parent) {
+    public VorbisRawField(MediaProperty property, PropertyTree<MediaProperty> parent) {
         super(property, parent);
     }
 
@@ -23,11 +23,6 @@ public class VorbisRawField extends VorbisField {
             obj=null; ex.printStackTrace(); // todo: log
         }
         return obj;
-    }
-
-    @Override
-    public boolean isValueValid() {
-        return true;
     }
 
     @Override

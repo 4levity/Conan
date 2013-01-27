@@ -1,7 +1,7 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 
-import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.stringutils.AutoAllocatingByteBuffer;
 import info.jlibrarian.stringutils.VersionString;
 
@@ -17,7 +17,7 @@ public class Id3v2PictureFrame extends Id3v2Frame {
     ImageLink picHeader=null;
     protected int picDataFrameOffset=0;
 
-    public Id3v2PictureFrame(MediaProperty property, MetaTree<MediaProperty> parent) {
+    public Id3v2PictureFrame(MediaProperty property, PropertyTree<MediaProperty> parent) {
         super(property, parent);
     }
 
@@ -94,13 +94,6 @@ public class Id3v2PictureFrame extends Id3v2Frame {
             throw new ClassCastException("getValue- not an EmbeddedPictureHeader");
         }
         return picHeader;
-    }
-
-    @Override
-    public boolean isValueValid() {
-        return true; // todo: validate image stuff against something
-                    // without loading the image from disk with getValue()...
-       
     }
 
     @Override

@@ -1,6 +1,6 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
-import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.propertytree.PropertyTree;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -9,7 +9,7 @@ import java.util.logging.Level;
 
 public class VorbisTextField extends VorbisField {
     String string;
-    public VorbisTextField(MediaProperty property, MetaTree<MediaProperty> parent) {
+    public VorbisTextField(MediaProperty property, PropertyTree<MediaProperty> parent) {
         super(property, parent);
     }
 

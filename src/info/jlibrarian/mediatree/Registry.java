@@ -43,6 +43,7 @@ fileTypes.put("wav",new FileType(MediaFile.class,MediaProperty.AUDIOFILE));
 fileTypes.put("jpg", new FileType(ImageFile.class,MediaProperty.IMAGEFILE));
 fileTypes.put("jpeg", new FileType(ImageFile.class,MediaProperty.IMAGEFILE));
 fileTypes.put("png", new FileType(ImageFile.class,MediaProperty.IMAGEFILE));
+// MediaFolder loader will instantiate nodes for unrecognized files w/ MediaProperty.OTHERFILE 
 
 registerId3v2("TAL","*",Id3v2TextFrame.class,MediaProperty.ALBUM,false);
 registerId3v2("TALB","*",Id3v2TextFrame.class,MediaProperty.ALBUM,false);
@@ -284,7 +285,6 @@ registerVorbis("DISCC",VorbisTextField.class,MediaProperty.VORBISFIELD_DISCNUMBE
 registerVorbis("DISCTOTAL",VorbisTextField.class,MediaProperty.VORBISFIELD_DISCTOTAL);
 registerVorbis("TOTALDISCS",VorbisTextField.class,MediaProperty.VORBISFIELD_DISCTOTAL,true); // alt
 
-
 registerVorbis("TRACKNUMBER",VorbisTextField.class,MediaProperty.VORBISFIELD_TRACKNUMBER);
 
 registerVorbis("TRACKTOTAL",VorbisTextField.class,MediaProperty.VORBISFIELD_TRACKTOTAL);
@@ -308,8 +308,8 @@ registerVorbis("TOTALTRACKS",VorbisTextField.class,MediaProperty.VORBISFIELD_TRA
             this.fileClass = fileCl;
             this.fileProperty = fileProp;
         }
-        public FileType addTagConfig(Class<? extends MediaTag> tagCl,MediaProperty tagProp,String tagOpt) {
-            this.tagInfo.add(new TagConfig(tagCl,tagProp,tagOpt));
+        public FileType addTagConfig(Class<? extends MediaTag> tagNodeClass,MediaProperty tagProp,String tagOpt) {
+            this.tagInfo.add(new TagConfig(tagNodeClass,tagProp,tagOpt));
             return this;
         }
     }

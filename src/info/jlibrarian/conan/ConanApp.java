@@ -1,10 +1,13 @@
 package info.jlibrarian.conan;
 
 import info.jlibrarian.mediatree.*;
-import info.jlibrarian.metatree.MetadataQuery;
+import info.jlibrarian.propertytree.PropertySearchResults;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class ConanApp {
     public static void main(String[] args) {
@@ -15,13 +18,18 @@ public class ConanApp {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-    	MediaFile f=(MediaFile)mf.getSingleChild(MediaProperty.AUDIOFILE);
+    	MediaFile f=(MediaFile)mf.queryBestResultNode(MediaProperty.AUDIOFILE);
 
-    	if(f!=null) {    		
-			MetadataQuery<MediaProperty> q;
-			q=new MetadataQuery<MediaProperty>(f,MediaProperty.ARTIST);
-			q.print();	
-			MediaTag t=(MediaTag)f.getSingleChild(MediaProperty.ID3V23TAG);
+    	if(f!=null) {
+    		PropertySearchResults<MediaProperty> results=f.query(MediaProperty.ARTIST);
+    		results.print();
+    		Map<MediaProperty, PropertySearchResults<MediaProperty>> multiResults=f.query();
+    		Set<Entry<MediaProperty, PropertySearchResults<MediaProperty>>> entries=multiResults.entrySet();
+    		for(Entry<MediaProperty, PropertySearchResults<MediaProperty>> entry : entries) {
+    			entry.getValue().print();
+    		}
+    		
+			MediaTag t=(MediaTag)f.queryBestResultNode(MediaProperty.ID3V23TAG);
 	        FileOutputStream fs;
 	        try {
 	            fs = new FileOutputStream("/home/ivan/Music/preview.dat");

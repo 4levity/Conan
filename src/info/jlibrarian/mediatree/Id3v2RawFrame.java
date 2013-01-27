@@ -1,6 +1,6 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
-import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.stringutils.AutoAllocatingByteBuffer;
 
 import java.io.FileNotFoundException;
@@ -11,7 +11,7 @@ import java.io.IOException;
  */
 
 public class Id3v2RawFrame extends Id3v2Frame {
-    public Id3v2RawFrame(MediaProperty property, MetaTree<MediaProperty> parent) {
+    public Id3v2RawFrame(MediaProperty property, PropertyTree<MediaProperty> parent) {
         super(property, parent);
     }
     @Override
@@ -22,11 +22,6 @@ public class Id3v2RawFrame extends Id3v2Frame {
     @Override
     public String toString() {
         return "raw frame, "+this.dataLength+" bytes";
-    }
-
-    @Override
-    public boolean isValueValid() {
-        return true;
     }
 
     @Override

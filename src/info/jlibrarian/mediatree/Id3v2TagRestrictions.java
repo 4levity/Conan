@@ -1,6 +1,6 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
-import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.propertytree.PropertyTree;
 
 import java.util.logging.Level;
 
@@ -71,7 +71,7 @@ public class Id3v2TagRestrictions {
         images_should_be_64x64=false;
     }
     
-    public int getBitmap(MetaTree<?> owner) {
+    public int getBitmap(PropertyTree<?> owner) {
         int bm;
         if(max_tag_size==1048576 && max_frames==128)
             bm=0;

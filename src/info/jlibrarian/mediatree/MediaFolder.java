@@ -1,7 +1,7 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
-import info.jlibrarian.metatree.MetaTree;
-import info.jlibrarian.metatree.MetaTreeWithObj;
+import info.jlibrarian.propertytree.PropertyTree;
+import info.jlibrarian.propertytree.PropertyTreeObjNode;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,16 +9,16 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 
-public class MediaFolder extends MetaTreeWithObj<MediaProperty> {
+public class MediaFolder extends PropertyTreeObjNode<MediaProperty> {
     public MediaFolder() {
         super(MediaProperty.FOLDER,null);
     }
 
-    public MediaFolder(MetaTree<MediaProperty> parent) {
+    public MediaFolder(PropertyTree<MediaProperty> parent) {
         super(MediaProperty.FOLDER,parent);
     }
 
-    public MediaFolder(MediaProperty prop, MetaTree<MediaProperty> parent) {
+    public MediaFolder(MediaProperty prop, PropertyTree<MediaProperty> parent) {
         super(prop, parent);
     }
 
@@ -86,7 +86,7 @@ public class MediaFolder extends MetaTreeWithObj<MediaProperty> {
         } else {
             try {
                 Constructor<? extends MediaFile> cons =
-                        fType.fileClass.getDeclaredConstructor(MediaProperty.class,MetaTree.class);
+                        fType.fileClass.getDeclaredConstructor(MediaProperty.class,PropertyTree.class);
                 if(cons!=null) {
                     newFile=((MediaFile)cons.newInstance(fType.fileProperty,this))
                             .load(f);

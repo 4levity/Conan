@@ -125,7 +125,7 @@ public class VersionString implements Comparable<VersionString>,Comparator<Strin
      */
     public int compareTo(VersionString arg0) {
         if(arg0==null)
-            throw new NullPointerException("cannot compare WildcardString to null");
+            throw new NullPointerException("cannot compare VersionString to null");
         return compareVersions(version,arg0.toString());
     }
     @Override

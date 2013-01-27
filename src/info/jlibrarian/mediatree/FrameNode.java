@@ -1,6 +1,6 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
-import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.propertytree.PropertyTree;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,13 +9,13 @@ import java.io.RandomAccessFile;
 import java.util.logging.Level;
 
 
-public abstract class FrameNode extends MetaTree<MediaProperty>
+public abstract class FrameNode extends PropertyTree<MediaProperty>
 	implements PayloadContainer {
     Long offset=null;
     int dataLength=-1;
     String frameIdentifier=null;
 
-    public FrameNode(MediaProperty property, MetaTree<MediaProperty> parent) {
+    public FrameNode(MediaProperty property, PropertyTree<MediaProperty> parent) {
         super(property, parent);
     }
     abstract protected byte[] load_from_current_position(String frameId,int dataLen,RandomAccessFile openFile) 

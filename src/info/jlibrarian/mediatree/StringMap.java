@@ -1,6 +1,6 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
-import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.propertytree.PropertyTree;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
@@ -11,13 +11,13 @@ public class StringMap extends java.util.HashMap<String, String> {
 
 	private Locale loc;
 
-    public StringMap(String language,MetaTree<?> owner) {
+    public StringMap(String language,PropertyTree<?> owner) {
         initStringMap(language,owner);
     }
     public StringMap(String language) {
         initStringMap(language,null);
     }
-    public StringMap(MetaTree<?> owner) {
+    public StringMap(PropertyTree<?> owner) {
         initStringMap(null,owner);
     }
     public StringMap() {
@@ -25,7 +25,7 @@ public class StringMap extends java.util.HashMap<String, String> {
     }
 
 
-    private void initStringMap(String language,MetaTree<?> owner) {
+    private void initStringMap(String language,PropertyTree<?> owner) {
         if(language == null) {
             this.loc = null;
             return;            

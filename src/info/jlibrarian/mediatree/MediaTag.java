@@ -1,14 +1,14 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
-import info.jlibrarian.metatree.MetaTree;
-import info.jlibrarian.metatree.MetaTreeWithObj;
+import info.jlibrarian.propertytree.PropertyTree;
+import info.jlibrarian.propertytree.PropertyTreeObjNode;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-public abstract class MediaTag extends MetaTreeWithObj<MediaProperty> {
-    public MediaTag(MediaProperty prop, MetaTree<MediaProperty> parent) {
+public abstract class MediaTag extends PropertyTreeObjNode<MediaProperty> {
+    public MediaTag(MediaProperty prop, PropertyTree<MediaProperty> parent) {
         super(prop, parent);
     }
     public File getEnclosingFile() {

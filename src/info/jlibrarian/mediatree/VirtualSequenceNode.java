@@ -1,8 +1,10 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
-import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.propertytree.PropertyTree;
 
 /**
+ * see also VirtualConcatenateNode
+ * 
  * Defines a virtual-value node which represents a SequencePosition (x of y)
  * The node determines its value by assembling from two separate position and
  * total fields that are stored in the tag natively.
@@ -14,9 +16,9 @@ import info.jlibrarian.metatree.MetaTree;
  *
  * @author ivan
  */
-public class VirtualSequenceNode extends MetaTree<MediaProperty> {
+public class VirtualSequenceNode extends PropertyTree<MediaProperty> {
     MediaProperty pPosition,pTotal;
-    public VirtualSequenceNode(MediaProperty p,MetaTree<MediaProperty> parent,MediaProperty pPos,MediaProperty pTot) {
+    public VirtualSequenceNode(MediaProperty p,PropertyTree<MediaProperty> parent,MediaProperty pPos,MediaProperty pTot) {
         super(p,parent);
         pPosition=pPos;
         pTotal=pTot;
@@ -26,14 +28,8 @@ public class VirtualSequenceNode extends MetaTree<MediaProperty> {
     public Object getValue() {
         if(!this.getNodeProperty().getDataType().isAssignableFrom(SequencePosition.class))
             return null;
-        MetaTree<MediaProperty> refPosition = this.getParent().getSingleChild(pPosition);
-        MetaTree<MediaProperty> refTotal = this.getParent().getSingleChild(pTotal);
-        Integer position=null;
-        Integer total=null;
-        if(refPosition!=null)
-            position=refPosition.getInteger();
-        if(refTotal!=null)
-            total=refTotal.getInteger();
+        Integer position = (Integer)this.getParent().queryBestResult(pPosition);
+        Integer total = (Integer)this.getParent().queryBestResult(pTotal);
         return new SequencePosition(position,total);
     }
 

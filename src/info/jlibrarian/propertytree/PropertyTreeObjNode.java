@@ -1,9 +1,9 @@
-package info.jlibrarian.metatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.propertytree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 
-public class MetaTreeWithObj<PROPERTY extends MetaTreeProperty> extends MetaTree<PROPERTY> {
+public class PropertyTreeObjNode<PROPERTY extends Property> extends PropertyTree<PROPERTY> {
     Object obj;
-    public MetaTreeWithObj(PROPERTY prop,MetaTree<PROPERTY> parent) {
+    public PropertyTreeObjNode(PROPERTY prop,PropertyTree<PROPERTY> parent) {
         super(prop,parent);
         this.obj=null;
     }
@@ -23,6 +23,6 @@ public class MetaTreeWithObj<PROPERTY extends MetaTreeProperty> extends MetaTree
     @Override
     //@SuppressWarnings("unchecked")
     public void setValue(Object o) {
-        obj=convertObject(this.getNodeProperty().getDataType(),o);
+        obj=convertObject(o);
     }
  }

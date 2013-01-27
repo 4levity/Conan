@@ -1,15 +1,15 @@
 package info.jlibrarian.mediatree;
 
-import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.propertytree.PropertyTree;
 
 /* 
  * defines a virtual-value node (no object payload) representing a value 
- * which is a concatenated composite of two other properties.
+ * which is a concatenated composite of two other sibling properties.
  */
-public class VirtualConcatenateNode extends MetaTree<MediaProperty> {
+public class VirtualConcatenateNode extends PropertyTree<MediaProperty> {
 	MediaProperty part1,part2;
 	String separator;
-	public VirtualConcatenateNode(MediaProperty property, MetaTree<MediaProperty> parent,
+	public VirtualConcatenateNode(MediaProperty property, PropertyTree<MediaProperty> parent,
 			MediaProperty part1,MediaProperty part2,String separator) {
 		super(property, parent);
 		this.part1=part1;
@@ -43,22 +43,16 @@ public class VirtualConcatenateNode extends MetaTree<MediaProperty> {
 	@Override
 	public Object getValue() {
 		String value="";
-		MetaTree<MediaProperty> encoderSoftwareNode=this.getParent().getSingleChild(this.part1);
-		MetaTree<MediaProperty> encoderSettingsNode=this.getParent().getSingleChild(this.part2);
-		if(encoderSoftwareNode!=null) {
-			Object s=encoderSoftwareNode.getValue();
-			if(s!=null) {
-				value=s.toString();
-			}
+		Object value1=this.getParent().queryBestResult(this.part1);
+		Object value2=this.getParent().queryBestResult(this.part2);
+		if(value1!=null) {
+			value=value1.toString();
 		}
-		if(encoderSettingsNode!=null) {
-			Object s=encoderSettingsNode.getValue();
-			if(s!=null) {
-				if(value.length()>1) {
-					value += this.separator;
-				}
-				value += s.toString();
+		if(value2!=null) {
+			if(value.length()>1) {
+				value += this.separator;
 			}
+			value+=value2.toString();
 		}
 		return value;
 	}

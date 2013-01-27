@@ -1,18 +1,18 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 
-
-import info.jlibrarian.metatree.MetaTreeProperty;
+import info.jlibrarian.propertytree.Property;
 
 import java.io.File;
 import java.net.URL;
 
-public enum MediaProperty implements MetaTreeProperty {
+public enum MediaProperty implements Property {
 	// file system objects..
     FOLDER ("Folder",File.class),
-    OTHERFILE ("Other file",File.class),
-    IMAGEFILE ("Image file",File.class),
-    AUDIOFILE ("Audio file",File.class),
+    FILE ("File",File.class),
+    OTHERFILE ("Other file ",MediaProperty.FILE),
+    IMAGEFILE ("Image file",MediaProperty.FILE),
+    AUDIOFILE ("Audio file",MediaProperty.FILE),
     SYMLINKFILE ("Symbolic file link",File.class),
     SYMLINKFOLDER ("Symbolic folder link",File.class),
             
@@ -20,10 +20,11 @@ public enum MediaProperty implements MetaTreeProperty {
     FLACMETADATATAG ("FLAC Metadata",String.class),
     FLACMETADATABLOCK ("FLAC Metadata block",String.class),
     VORBISCOMMENTBLOCK ("Vorbis Comment block",String.class),
-    ID3V22TAG ("ID3 v2.2 Tag",Id3v2TagHeader.class),
-    ID3V23TAG ("ID3 v2.3 Tag",Id3v2TagHeader.class),
-    ID3V24TAG ("ID3 v2.4 Tag",Id3v2TagHeader.class),
-    ID3V2XTAG ("ID3 v2.5+ Tag (untested)",Id3v2TagHeader.class),
+    ID3V2TAG ("ID3 v2 Tag",Id3v2TagHeader.class),
+    ID3V22TAG ("ID3 v2.2 Tag",MediaProperty.ID3V2TAG),
+    ID3V23TAG ("ID3 v2.3 Tag",MediaProperty.ID3V2TAG),
+    ID3V24TAG ("ID3 v2.4 Tag",MediaProperty.ID3V2TAG),
+    ID3V2XTAG ("ID3 v2.5+ Tag (untested)",MediaProperty.ID3V2TAG),
 
 // generic media properties..
     ALBUM ("Album",String.class),
@@ -131,18 +132,32 @@ public enum MediaProperty implements MetaTreeProperty {
     
     String description;
     Class<?> dataType;
+    MediaProperty superProperty;
 
     MediaProperty(String description, Class<?> dataType) {
         this.description = description;
         this.dataType = dataType;
+        this.superProperty = null;
+    }
+    MediaProperty(String description, MediaProperty superProperty) {
+        this.description = description;
+        this.dataType = null;
+        this.superProperty = superProperty;
     }
     private MediaProperty() {
         this.description = null;
         this.dataType = Object.class;
+        this.superProperty = null;
     }    
 
     public Class<?> getDataType() {
-        return dataType;
+    	if(superProperty == null) {
+    		if(dataType == null) {
+    			return null;
+    		}
+    		return dataType;
+    	}
+        return superProperty.getDataType();
     }
 
     public String getDescription() {
@@ -159,5 +174,17 @@ public enum MediaProperty implements MetaTreeProperty {
     public String toString() {
         return getDescription();
     }
+	@Override
+	public boolean isTypeOf(Property p) {
+		if(p==null)
+			return true;
+		if(equals(p))
+			return true;
+		if(this.superProperty!=null) {
+			return this.superProperty.isTypeOf(p);
+		}
+		return false;
+	}
+    
 
 }

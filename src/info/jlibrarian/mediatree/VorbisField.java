@@ -1,7 +1,7 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 
-import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.propertytree.PropertyTree;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -16,7 +16,7 @@ public abstract class VorbisField extends FrameNode {
         return new String(fieldId);
     }
 
-    public VorbisField(MediaProperty property, MetaTree<MediaProperty> parent) {
+    public VorbisField(MediaProperty property, PropertyTree<MediaProperty> parent) {
         super(property, parent);
     }
 

@@ -1,6 +1,6 @@
 package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
-import info.jlibrarian.metatree.MetaTree;
+import info.jlibrarian.propertytree.PropertyTree;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -20,7 +20,7 @@ public class FlacMetadataBlock extends FrameNode {
 
     protected byte blockType;
     
-    public FlacMetadataBlock(MediaProperty property, MetaTree<MediaProperty> parent) {
+    public FlacMetadataBlock(MediaProperty property, PropertyTree<MediaProperty> parent) {
         super(property, parent);
     }
 
