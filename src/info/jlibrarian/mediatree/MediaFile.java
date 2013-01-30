@@ -1,7 +1,9 @@
-package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.propertytree.PropertyTreeObjNode;
+import info.jlibrarian.specialtypes.FileMetadata;
+import info.jlibrarian.specialtypes.PayloadContainer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,8 +17,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MediaFile extends PropertyTreeObjNode<MediaProperty> implements PayloadContainer {
-    public MediaFile(MediaProperty prop,PropertyTree<MediaProperty> parent) {
+	File actualFile;
+
+	public MediaFile(MediaProperty prop,PropertyTree<MediaProperty> parent) {
         super(prop,parent);
+        this.actualFile=null;
     }
     /**
      * Subclasses could override the load() method to create metadata 
@@ -30,16 +35,39 @@ public class MediaFile extends PropertyTreeObjNode<MediaProperty> implements Pay
      */
     public MediaFile load(File f) 
             throws IOException {
-        setValue(f);
+    	actualFile=f;
+    	
         dropChildren();
         if(!getFile().isDirectory() && getFile().exists()) {
-            log(this,Level.INFO,"Loading file "+getFile().toString());
+            log(this,Level.INFO,"Loading file "+getFile().toString());            
+            
+            String mimeType;
+            if(getExtension().equals("jpg") || getExtension().equals("jpeg")) {
+                mimeType="image/jpeg";
+            } else if(getExtension().equals("png")) {
+                mimeType="image/png";
+            } else if(getExtension().equals("gif")) {
+                mimeType="image/gif";
+            } else {
+                // TODO: guess at more mime types (at least supported image types)
+            	mimeType=null;
+            }
+            // TODO: for image files, guess at id3PictureType (e.g. cover art etc)
+            
             boolean tagerror=false;
-            loadTags();
+            try {
+                loadTags();
+            } catch (IOException ex) {
+	        	log(this,Level.SEVERE,"error reading file: "+ex.toString());	            
+	        	tagerror=true;
+            }
+            // TODO: handle 0 byte FLAC/other files more gracefully than this..
+	        
             if(tagerror) {
                 delete();
                 return null;
             }
+        	this.setValue(new FileMetadata(this,f.getName(),mimeType,null,null,null));
             return this;
         }
         log(this,Level.WARNING,"Warning: File does not exist or is a directory: "+getFile().toString());
@@ -97,7 +125,7 @@ public class MediaFile extends PropertyTreeObjNode<MediaProperty> implements Pay
             } catch (SecurityException ex) {
                 log(this,Level.SEVERE,"reflection FAIL - SecurityException: "+ex.toString());
                 ex.printStackTrace(); throw new RuntimeException("reflection FAIL",ex);
-            }
+	        }
         }
         rf.close();
         return (tag!=null);
@@ -111,7 +139,7 @@ public class MediaFile extends PropertyTreeObjNode<MediaProperty> implements Pay
             log(this,Level.WARNING,"getPayload() called for null file - "+this.describeNode());
             return null;
         }
-        if(f.length() > 1500000) {
+        if(f.length() > 10240*1024) {
             log(this,Level.WARNING,"getPayload() not supported on large file: "+f.toString());
             return null;
         }
@@ -136,4 +164,9 @@ public class MediaFile extends PropertyTreeObjNode<MediaProperty> implements Pay
             return null;
         return MediaFileUtil.getFileExtension(this.getFile());
     }
+    
+    @Override
+	public File getFile() {
+		return this.actualFile;
+	}
 }

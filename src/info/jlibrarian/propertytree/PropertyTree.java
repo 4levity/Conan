@@ -1,4 +1,4 @@
-package info.jlibrarian.propertytree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.propertytree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 import java.io.File;
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public abstract class PropertyTree<PROPERTY extends Property> {
     final public PropertySearchResults<PROPERTY> query(PROPERTY target) {
     	return this.query(target, null);
     }
-    private Map<PROPERTY,PropertySearchResults<PROPERTY>> doQuery(Map<PROPERTY,PropertySearchResults<PROPERTY>> results,ArrayList<PROPERTY> targetList,PROPERTY searchWithin) {
+    final private Map<PROPERTY,PropertySearchResults<PROPERTY>> doQuery(Map<PROPERTY,PropertySearchResults<PROPERTY>> results,ArrayList<PROPERTY> targetList,PROPERTY searchWithin) {    	
     	PropertyTree<PROPERTY> parent=this.getParent();
     	boolean searchHere=false;
     	if(searchWithin==null) {
@@ -58,18 +58,17 @@ public abstract class PropertyTree<PROPERTY extends Property> {
     			searchHere=true;
     		}
     	}
-    	
     	if(searchHere) {
     		if(targetList==null) {
     			// null target = add everything that exists
     			if(this.getValue()!=null) {
-        			results=addThisResult(results);
+        			results=addThisResult(results,targetList);
     			}
     		} else {
         		for(PROPERTY target : targetList) {
             		if(this.getNodeProperty().isTypeOf(target)) {
                 		if(this.getValue()!=null) {
-                			results=addThisResult(results);
+                			results=addThisResult(results,targetList);
                 		}
             		}
         		}
@@ -83,10 +82,21 @@ public abstract class PropertyTree<PROPERTY extends Property> {
     	return results;
     }
 
-    private Map<PROPERTY, PropertySearchResults<PROPERTY>> addThisResult(
-			Map<PROPERTY, PropertySearchResults<PROPERTY>> results) {
+	// we have found a match at this node and need to add it to the result set
+    final private Map<PROPERTY, PropertySearchResults<PROPERTY>> addThisResult(
+			Map<PROPERTY, PropertySearchResults<PROPERTY>> results,ArrayList<PROPERTY> targetProperties) {
 		if(results==null) {
-			results=new HashMap<PROPERTY,PropertySearchResults<PROPERTY>>();
+	    	// first match, need to allocate a result set 
+	    	// guess what size map to create
+	    	int expectedResults;
+	    	if(targetProperties!=null) {
+	    		expectedResults=targetProperties.size();
+	    	} else {
+	    		expectedResults=10;
+	    	}
+	    	results=new HashMap<PROPERTY,PropertySearchResults<PROPERTY>>(expectedResults);
+
+	    	// put this node in results
 			results.put(this.getNodeProperty(),new PropertySearchResults<PROPERTY>(this));
 		} else {
 			PropertySearchResults<PROPERTY> resultForThisProp=results.get(this.getNodeProperty());
@@ -98,7 +108,7 @@ public abstract class PropertyTree<PROPERTY extends Property> {
 		}
 		return results;
 	}
-	/* quick: return [Object] most confident value under here matching propertyX
+	/* quick: return [Object or PropertyTree] most confident value under here matching propertyX
      * optionally only look up values that are direct children of given property/superproperty
      * if none match, return null.
      */
@@ -112,15 +122,14 @@ public abstract class PropertyTree<PROPERTY extends Property> {
     final public Object queryBestResult(PROPERTY target) {
     	return this.queryBestResult(target, null);
     }
-
-    final public Object queryBestResultNode(PROPERTY target,PROPERTY searchWithin) {
+    final public PropertyTree<PROPERTY> queryBestResultNode(PROPERTY target,PROPERTY searchWithin) {
     	PropertySearchResults<PROPERTY> queryResult=this.query(target, searchWithin);
     	if(queryResult!=null) {
     		return queryResult.getResult(0).getNode(0);
     	}
     	return null;
     }
-    final public Object queryBestResultNode(PROPERTY target) {
+    final public PropertyTree<PROPERTY> queryBestResultNode(PROPERTY target) {
     	return this.queryBestResultNode(target, null);
     }
 /* lookup list: return hashmap<property,#1 lookup set>, given set of properties
@@ -235,6 +244,7 @@ public abstract class PropertyTree<PROPERTY extends Property> {
         }
         return (File)gotValue;
     }
+
     public Object convertObject(Object o) {
     	Class<?> targetType = this.property.getDataType();
         if(targetType.equals(Long.class) 
@@ -256,7 +266,7 @@ public abstract class PropertyTree<PROPERTY extends Property> {
                 return null;
             }
         } else if(!targetType.isAssignableFrom(o.getClass())) {
-            String msg="runtime type mismatch: can't assign "+targetType.getName()+" to "+o.getClass().getName();
+            String msg="runtime type mismatch: can't assign "+o.getClass().getName()+" to "+targetType.getName();
             log(Level.SEVERE,msg);
             throw new ClassCastException(msg);
         }
@@ -292,7 +302,7 @@ public abstract class PropertyTree<PROPERTY extends Property> {
     }
     public String describeNode() {
         return  (getNodeProperty()==null?"null":getNodeProperty().toString().replaceAll("\\p{Cntrl}",""))
-                +": "+ toString() + (isValueValid()?"":" (invalid)"); 
+                +"="+ toString() + (isValueValid()?"":" (invalid)"); 
     }
 	public String describePath() {
 		if(parent==null)
@@ -342,6 +352,9 @@ public abstract class PropertyTree<PROPERTY extends Property> {
     }
     public static void log(PropertyTree<?> node,Level level,String msg) {
        	PropertyTree.logger.log(level,(node==null?msg:msg+" / at "+node.describePath()));
+    }
+    public static void setLogLevel(Level newLevel) {
+    	PropertyTree.logger.setLevel(newLevel);
     }
     public void log(Level level,String msg) {
     	PropertyTree.log(this,level,msg);

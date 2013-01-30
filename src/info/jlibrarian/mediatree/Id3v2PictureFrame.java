@@ -1,7 +1,9 @@
-package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 
 import info.jlibrarian.propertytree.PropertyTree;
+import info.jlibrarian.specialtypes.FileMetadata;
+import info.jlibrarian.specialtypes.Id3PictureType;
 import info.jlibrarian.stringutils.AutoAllocatingByteBuffer;
 import info.jlibrarian.stringutils.VersionString;
 
@@ -14,8 +16,8 @@ import java.util.logging.Level;
 
 public class Id3v2PictureFrame extends Id3v2Frame {
     int originalTextEncoding=0;
-    ImageLink picHeader=null;
     protected int picDataFrameOffset=0;
+    FileMetadata embeddedImageLink=null;
 
     public Id3v2PictureFrame(MediaProperty property, PropertyTree<MediaProperty> parent) {
         super(property, parent);
@@ -83,22 +85,10 @@ public class Id3v2PictureFrame extends Id3v2Frame {
             descrEnd++;                  
         }
         this.picDataFrameOffset = descrEnd;
-        picHeader = new ImageLink(this, mimeType, description, picType, 
+        this.embeddedImageLink = new FileMetadata(this,null,mimeType,description,
+        		Id3PictureType.getId3PictureType(picType), 
                 Arrays.copyOfRange(frameData, this.picDataFrameOffset, frameData.length));
         return frameData;
-    }
-
-    @Override
-    public Object getValue() {
-        if(!getNodeProperty().getDataType().isAssignableFrom(ImageLink.class)) {
-            throw new ClassCastException("getValue- not an EmbeddedPictureHeader");
-        }
-        return picHeader;
-    }
-
-    @Override
-    public String toString() {
-        return (picHeader==null?"embedded picture: null":picHeader.toString());
     }
 
     @Override
@@ -106,5 +96,10 @@ public class Id3v2PictureFrame extends Id3v2Frame {
 			throws FileNotFoundException, IOException {
 		// TODO: don't always reload (but maybe this is appropriate for big images)
 		bb.put(this.reload());
+	}
+
+	@Override
+	public Object getValue() {
+		return this.embeddedImageLink;
 	}
 }

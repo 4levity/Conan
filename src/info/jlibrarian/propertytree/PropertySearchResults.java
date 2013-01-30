@@ -20,6 +20,7 @@ public class PropertySearchResults<PROPERTY extends Property> {
 			nodes.add(firstMatchingNode);
 		}
 		public void add(PropertyTree<PROPERTY> nextMatchingNode) {
+			// NOTE: remove check to improve performance
 			if(nodes.get(0).getValue().equals(nextMatchingNode.getValue())) {
 				nodes.add(nextMatchingNode);
 			} else {
@@ -28,10 +29,12 @@ public class PropertySearchResults<PROPERTY extends Property> {
 		}
 		@Override		
 		public int compareTo(Result arg0) {
-			// TODO sort by confidence
-			return 0;
+			if(arg0==null)
+				return 0;
+			//else
+			return arg0.size()-this.size() ; // descending by # of results i.e. most results first
 		}
-		public int confidence() {
+		public int size() {
 			return nodes.size();
 		}
 		public Object getValue() {
@@ -40,7 +43,7 @@ public class PropertySearchResults<PROPERTY extends Property> {
 		public PROPERTY getProperty() {
 			return nodes.get(0).getNodeProperty();
 		}
-		public Object getNode(int result) {
+		public PropertyTree<PROPERTY> getNode(int result) {
 			if(nodes.size()>result) {
 				return nodes.get(result);
 			}
@@ -52,14 +55,17 @@ public class PropertySearchResults<PROPERTY extends Property> {
 	boolean sorted;
 	
 	PropertySearchResults(PropertyTree<PROPERTY> firstNode) {
-		results=new ArrayList<Result>(1);
+		results=new ArrayList<Result>(1); // size 1; guessing there will not be any conflicting values
 		results.add(new Result(firstNode));
 		sorted=true;
 		totalNodes=1;
 	}
+
+	// for unique attributes, this will return the one with the most matches in the result set (ties undefined)
 	public Object getFirstValue() {
 		return getValue(0);
 	}
+	
 	public Object getValue(int ix) {
 		Result r=getResult(ix);
 		if(r!=null) {
@@ -81,6 +87,7 @@ public class PropertySearchResults<PROPERTY extends Property> {
 		return results.size()==1;
 	}
 	public PROPERTY getProperty() {
+		// these should all be the same so no need to sort
 		return results.get(0).getProperty();
 	}
 	public void addResult(PropertyTree<PROPERTY> node) {
@@ -95,7 +102,6 @@ public class PropertySearchResults<PROPERTY extends Property> {
 		this.sorted=false;
 	}
 	private Result getMatchingResult(Object match) {
-		sort();
 		for(Result sr : results) {
 			if(sr.getValue().equals(match)) {
 				return sr;
@@ -104,22 +110,50 @@ public class PropertySearchResults<PROPERTY extends Property> {
 		return null;
 	}
 	private void sort() {
-		if(this.sorted)
+		// skip sorting nonunique attributes
+		if(this.sorted || !this.getProperty().getIsUniqueAttribute())
 			return;
 		
 		Collections.sort(this.results);
 		this.sorted=true;
 	}
 	public void print() {
+		sort();
 		PROPERTY p=this.getProperty();
+        System.out.print("Query ("+this.totalNodes+" elements) ");
         System.out.print(p.toString());
-        System.out.print(" = {");
+    	if(this.isUnanimous()) {
+    		System.out.print(": ");
+    	} else if(p.getIsUniqueAttribute()) {
+            System.out.print(": conflict { ");
+    	} else {
+            System.out.print(": SET { ");
+    	}
         if(this.results != null) {
             for(Result r : this.results) {
-            	System.out.print(r.getValue().toString()
-            			+" ["+r.confidence()+"] ");
+        		if(r.getProperty().getIsUniqueAttribute()) {
+        			// prints out each unique value (most likely first), do not print nodes
+        			System.out.print(r.getValue().toString());
+        			System.out.print(" [");
+        			System.out.print(r.size());
+        			if(r.size()==1) {
+            			System.out.print(" result] ");
+          			} else {
+            			System.out.print(" results] ");
+          			}
+        		} else {
+        			// for nonunique attributes, print the full list of nodes
+        			for(int i=0;i<r.size();i++) {
+            			System.out.print(r.getNode(i).describeNode());
+            			System.out.print("  ");
+        			}
+        		}
             }
         }
-        System.out.println("}");
+    	if(this.isUnanimous()) {
+    		System.out.println("");
+    	} else {
+            System.out.println("}");
+    	}
 	}
 }

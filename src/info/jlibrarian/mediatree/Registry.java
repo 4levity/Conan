@@ -1,4 +1,4 @@
-package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 
 import info.jlibrarian.stringutils.VersionString;
@@ -40,9 +40,9 @@ fileTypes.put("mp3", new FileType(MediaFile.class,MediaProperty.AUDIOFILE)
                             .addTagConfig(Id3v2Tag.class,MediaProperty.ID3V24TAG,"2.4.*")
                             .addTagConfig(Id3v2Tag.class,MediaProperty.ID3V2XTAG,"2.5+"));
 fileTypes.put("wav",new FileType(MediaFile.class,MediaProperty.AUDIOFILE));
-fileTypes.put("jpg", new FileType(ImageFile.class,MediaProperty.IMAGEFILE));
-fileTypes.put("jpeg", new FileType(ImageFile.class,MediaProperty.IMAGEFILE));
-fileTypes.put("png", new FileType(ImageFile.class,MediaProperty.IMAGEFILE));
+fileTypes.put("jpg", new FileType(MediaFile.class,MediaProperty.PICTURE));
+fileTypes.put("jpeg", new FileType(MediaFile.class,MediaProperty.PICTURE));
+fileTypes.put("png", new FileType(MediaFile.class,MediaProperty.PICTURE));
 // MediaFolder loader will instantiate nodes for unrecognized files w/ MediaProperty.OTHERFILE 
 
 registerId3v2("TAL","*",Id3v2TextFrame.class,MediaProperty.ALBUM,false);

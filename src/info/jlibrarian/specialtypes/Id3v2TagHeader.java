@@ -1,6 +1,11 @@
-package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.specialtypes; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.mediatree.Id3v2Tag;
+import info.jlibrarian.mediatree.Id3v2TagRestrictions;
+import info.jlibrarian.mediatree.MediaFileUtil;
+import info.jlibrarian.mediatree.MediaProperty;
 import info.jlibrarian.propertytree.PropertyTree;
+import info.jlibrarian.stringutils.UnsynchronizingByteBuffer;
 import info.jlibrarian.stringutils.VersionString;
 
 import java.io.IOException;
@@ -8,43 +13,28 @@ import java.io.RandomAccessFile;
 import java.util.Arrays;
 import java.util.logging.Level;
 
+// TODO: move loading and saving functions to Id3v2Tag
+// this class should be just a container for header fields
 
 public class Id3v2TagHeader {
     boolean loaded=false;
     String version=null;
-    Long tag_size=null; // including the extended header
-    Long tag_offset=null; // position in file
-    int total_extended_header_size=0; // # of raw bytes used by ext. header
-    boolean unsynchronisation=false;
-    boolean experimental_indicator=false;
-    boolean footer_present=false;
+    Long tagSize=null; // including the extended header
+    Long tagOffset=null; // position in file
+    int totalExtendedHeaderSize=0; // # of raw bytes used by ext. header
+    boolean unsynchronized=false;
+    boolean experimentalIndicator=false;
+    boolean footerPresent=false;
 
     // extended header contents, null if not present:
-    Long reported_padding_size=null;
-    Boolean tag_is_update=null;
+    Long reportedPaddingSize=null;
+    Boolean tagIsUpdate=null;
     Long crc32=null;
     Id3v2TagRestrictions restrictions=null;
 
     public Id3v2TagHeader() {
     }
     
-    public long getTagOffset() {
-        return tag_offset;
-    }
-
-    public long getTagSize() {
-        return tag_size;
-    }
-    public String getVersion() {
-        return version;
-    }
-    public boolean isLoaded() {
-        return loaded;
-    }
-    public boolean isTagUnsynchronized()
-    {
-        return this.unsynchronisation;
-    }
     public boolean load(RandomAccessFile f,PropertyTree<MediaProperty> owner) 
             throws IOException {        
 
@@ -71,9 +61,9 @@ public class Id3v2TagHeader {
         version="2."+(new Integer(id3v2Header[3])).toString()+"."+(new Integer(id3v2Header[4])).toString();
 
         int flags=id3v2Header[5];
-        unsynchronisation = (flags & 0x80)!=0;
+        unsynchronized = (flags & 0x80)!=0;
         boolean extended_header_present = (flags & 0x40)!=0;
-        owner.log(Level.FINEST,"id3 "+version+" tag found, unsync="+unsynchronisation+".  reading from "+f.getFilePointer()); 
+        owner.log(Level.FINEST,"id3 "+version+" tag found, unsync="+unsynchronized+".  reading from "+f.getFilePointer()); 
         if(extended_header_present && (VersionString.compareVersions(version,"2.2.*")==0) )  {
             /**
              * in 2.2.* only, this bit means "compression" and spec states
@@ -84,13 +74,13 @@ public class Id3v2TagHeader {
         	owner.log(Level.WARNING,"Id3v2 unsupported compression flag detected, tag will not load.");
         	return false;
         }
-        experimental_indicator = (flags & 0x20)!=0;
-        footer_present = (flags & 0x10)!=0;
-        if(footer_present && 
+        experimentalIndicator = (flags & 0x20)!=0;
+        footerPresent = (flags & 0x10)!=0;
+        if(footerPresent && 
                 (VersionString.compareVersions(version,"2.4") < 0) ) {
             // footer is not supported in older tag versions
         	owner.log(Level.WARNING,"Id3v2 footer flag ignored, not valid for tag version "+version);
-        	footer_present=false;
+        	footerPresent=false;
         } 
         if((flags & 0x0F) > 0) {
         	owner.log(Level.WARNING,"Id3v2 unknown flag was set, ignoring ("+flags+")");
@@ -104,13 +94,13 @@ public class Id3v2TagHeader {
         	owner.log(Level.SEVERE,"invalid Id3v2 tag size (validator fail)");
             throw new RuntimeException("invalid Id3v2 tag size (validator fail)");
         }
-        tag_size = new Long(hdr_tag_size);
-        tag_offset = new Long(f.getFilePointer() - 10);
+        tagSize = new Long(hdr_tag_size);
+        tagOffset = new Long(f.getFilePointer() - 10);
 
         if(extended_header_present) {
             if(!loadExtendedHeader(f,owner))
             	return false;
-            this.total_extended_header_size = (int)(f.getFilePointer() - this.tag_offset) - 10;
+            this.totalExtendedHeaderSize = (int)(f.getFilePointer() - this.tagOffset) - 10;
         }
         loaded=true;
         return true;
@@ -123,12 +113,12 @@ public class Id3v2TagHeader {
             // in id3 v2.3 only, extended header needs to be deunsynchronized
             // and is formatted differently.
             long hdrsize=MediaFileUtil.convert32bitsToUnsignedInt(
-                    Id3v2Tag.readTagBytes(f, 4, this.unsynchronisation));
+                    Id3v2Tag.readTagBytes(f, 4, this.unsynchronized));
             if(hdrsize!=6 && hdrsize!=10) {
             	owner.log(Level.WARNING,"id3v2.3 invalid extended header size");
             	return false;
             }
-            byte[] extflags=Id3v2Tag.readTagBytes(f, 2, this.unsynchronisation);
+            byte[] extflags=Id3v2Tag.readTagBytes(f, 2, this.unsynchronized);
             if(((extflags[0] & 0x7F) > 0) || (extflags[1]!=0)) {
             	owner.log(Level.WARNING,"id3v2.3 unknown extended header flags");
             	return false;
@@ -139,17 +129,17 @@ public class Id3v2TagHeader {
             	return false;
             }
             
-            reported_padding_size=new Long(MediaFileUtil.convert32bitsToUnsignedInt(
-                    Id3v2Tag.readTagBytes(f, 4, this.unsynchronisation) ));
+            reportedPaddingSize=new Long(MediaFileUtil.convert32bitsToUnsignedInt(
+                    Id3v2Tag.readTagBytes(f, 4, this.unsynchronized) ));
             // TODO: validate padding size
 
             if(has_crc) {
                 // 32 more bits appended to header
                 crc32=new Long(MediaFileUtil.convert32bitsToUnsignedInt(
-                        Id3v2Tag.readTagBytes(f, 4, this.unsynchronisation) ));
+                        Id3v2Tag.readTagBytes(f, 4, this.unsynchronized) ));
             }
             // 2.3 extended header done!
-        } else if (VersionString.compareVersions(version, "2.4") >= 0) {
+        } else if (VersionString.compareVersions(version, "2.4+") >= 0) {
             long extheaderstart = f.getFilePointer();
 
             // 2.4 or later extended header
@@ -160,8 +150,8 @@ public class Id3v2TagHeader {
             	return false;
             }
             int extflags = MediaFileUtil.read_sure(f);
-            tag_is_update=new Boolean((extflags & 0x40)!=0);
-            if(tag_is_update) {
+            tagIsUpdate=new Boolean((extflags & 0x40)!=0);
+            if(tagIsUpdate) {
                 if(MediaFileUtil.read_sure(f)!=0) {
                 	owner.log(Level.WARNING,"id3v2 update flag data length invalid");
                 	return false;
@@ -225,36 +215,36 @@ public class Id3v2TagHeader {
 
 		byte flags=0;
 		byte extendedFlags=0;
-		if(this.unsynchronisation)
+		if(this.unsynchronized)
 			flags |= 0x80;
-		if(this.experimental_indicator) {
-			if(VersionString.compareVersions(this.getVersion(), "2.3+")==0) {
+		if(this.experimentalIndicator) {
+			if(VersionString.compareVersions(this.version, "2.3+")==0) {
 				flags |= 0x20;
 			} else {
 				owner.log(Level.WARNING, "Invalid experimental flag setting (cleared)");
-				this.experimental_indicator=false;
+				this.experimentalIndicator=false;
 			}
 		}
-		if(this.footer_present) {
-			if(VersionString.compareVersions(this.getVersion(), "2.4+")==0) {
+		if(this.footerPresent) {
+			if(VersionString.compareVersions(this.version, "2.4+")==0) {
 				flags |= 0x10;
 			} else {
 				owner.log(Level.WARNING, "Invalid footer flag setting (cleared)");
-				this.footer_present=false;
+				this.footerPresent=false;
 			}
 		}
-		if(this.tag_is_update!=null) {
-			if(VersionString.compareVersions(this.getVersion(), "2.4+")==0) {
+		if(this.tagIsUpdate!=null) {
+			if(VersionString.compareVersions(this.version, "2.4+")==0) {
 				flags |= 0x40;
 				extendedFlags |= 0x40;
 				xhdrPayload.put(0);
 			} else {
 				owner.log(Level.WARNING, "Invalid tag-is-update setting for this tag version (cleared)");
-				this.tag_is_update=false;
+				this.tagIsUpdate=false;
 			}
 		}		
 		if(this.crc32 != null) {
-			if(VersionString.compareVersions(this.getVersion(), "2.4+")==0) {
+			if(VersionString.compareVersions(this.version, "2.4+")==0) {
 				flags |= 0x40;
 				extendedFlags |= 0x20;
 				xhdrPayload.put(5);
@@ -262,7 +252,7 @@ public class Id3v2TagHeader {
 				// CRC must be updated by tag writer before calling!
 				xhdrPayload.put(((int)(this.crc32 >> 28)) & 0x0F);
 				xhdrPayload.put(Id3v2Tag.syncSafeInt((int)(this.crc32 & 0x0FFFFFFF)));
-			} else if(VersionString.compareVersions(this.getVersion(), "2.3+")==0) {
+			} else if(VersionString.compareVersions(this.version, "2.3+")==0) {
 				/* 
 				flags |= 0x40;
 				extendedFlags |= 0x80;
@@ -280,7 +270,7 @@ public class Id3v2TagHeader {
 			}
 		}
 		if(this.restrictions != null) {
-			if(VersionString.compareVersions(this.getVersion(), "2.4+")==0) {
+			if(VersionString.compareVersions(this.version, "2.4+")==0) {
 				flags |= 0x40;
 				extendedFlags |= 0x10;
 				xhdrPayload.put(1);
@@ -297,7 +287,7 @@ public class Id3v2TagHeader {
 			bb.put(Id3v2Tag.syncSafeInt(tagDataSize+paddingSize));
 		} else {
 			// write tag size & extended header
-			if((VersionString.compareVersions(this.getVersion(), "2.3.*")==0)&&(crc32!=null)) {
+			if((VersionString.compareVersions(this.version, "2.3.*")==0)&&(crc32!=null)) {
 				// this "situation" should've been corrected above
 				throw new UnsupportedOperationException("cannot in good conscience write an id3 2.3 extended header");
 				/*
@@ -343,7 +333,7 @@ public class Id3v2TagHeader {
 				bb.put(1);
 				bb.put(extendedFlags);
 				bb.put(xhdrPayload.getAll());
-				this.total_extended_header_size=6+xhdrPayload.getLength();
+				this.totalExtendedHeaderSize=6+xhdrPayload.getLength();
 			}
 		}
 		
@@ -351,7 +341,7 @@ public class Id3v2TagHeader {
     }
     
     public byte[] generateFooter(int tagDataSize,PropertyTree<?> owner) {
-    	if(this.footer_present) {
+    	if(this.footerPresent) {
     		// TODO: implement, or insert comments scoffing at feature
     		throw new UnsupportedOperationException("generateFooter not yet implemented");
     	}
@@ -360,6 +350,56 @@ public class Id3v2TagHeader {
 
     @Override
     public String toString() {
-        return "Id3v2Tag version "+version+" ("+tag_size+" bytes at offset "+tag_offset+")";
+        return "Id3v2Tag version "+version+" ("+tagSize+" bytes at offset "+tagOffset+")";
     }
+
+	public boolean isLoaded() {
+		return loaded;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public Long getTagSize() {
+		return tagSize;
+	}
+
+	public Long getTagOffset() {
+		return tagOffset;
+	}
+
+	public int getTotalExtendedHeaderSize() {
+		return totalExtendedHeaderSize;
+	}
+
+	public boolean isUnsynchronized() {
+		return unsynchronized;
+	}
+
+	public boolean isExperimentalIndicator() {
+		return experimentalIndicator;
+	}
+
+	public boolean isFooterPresent() {
+		return footerPresent;
+	}
+
+	public Long getReportedPaddingSize() {
+		return reportedPaddingSize;
+	}
+
+	public Boolean getTagIsUpdate() {
+		return tagIsUpdate;
+	}
+
+	public Long getCrc32() {
+		return crc32;
+	}
+
+	public Id3v2TagRestrictions getRestrictions() {
+		return restrictions;
+	}
+
+
 }

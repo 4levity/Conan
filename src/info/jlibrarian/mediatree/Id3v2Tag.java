@@ -1,6 +1,8 @@
-package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 import info.jlibrarian.propertytree.PropertyTree;
+import info.jlibrarian.specialtypes.Id3v2TagHeader;
+import info.jlibrarian.stringutils.UnsynchronizingByteBuffer;
 import info.jlibrarian.stringutils.VersionString;
 
 import java.io.FileNotFoundException;
@@ -30,7 +32,7 @@ public class Id3v2Tag extends MediaTag {
     public boolean isTagUnsynchronized() {
         if(this.originalHeader==null)
             return false;
-        return this.originalHeader.isTagUnsynchronized();
+        return this.originalHeader.isUnsynchronized();
     }
 
     final public MediaTag load(RandomAccessFile raf,String versions) 
@@ -274,7 +276,7 @@ public class Id3v2Tag extends MediaTag {
 		UnsynchronizingByteBuffer tag=new UnsynchronizingByteBuffer(targetLength)
 					.enableUnsynchronizing(true);
 		
-		int footerLength = (this.originalHeader.footer_present ? 10:0) ;
+		int footerLength = (this.originalHeader.isFooterPresent() ? 10:0) ;
 		if(tag.getLength()+footerLength > targetLength) {
 			// if we have to grow the buffer past the target length, add preferred padding
 			targetLength = tag.getLength() + footerLength + preferredPadding;

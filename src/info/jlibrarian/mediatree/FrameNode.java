@@ -1,6 +1,7 @@
-package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 import info.jlibrarian.propertytree.PropertyTree;
+import info.jlibrarian.specialtypes.PayloadContainer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -70,9 +71,14 @@ public abstract class FrameNode extends PropertyTree<MediaProperty>
 
     @Override
     public String describeNode() {
-        return super.describeNode() + " (field "+this.frameIdentifier
-                +(offset==null?"":" from offset="+Long.toHexString(offset)+")");
-    }
+        String description="Frame:"+this.frameIdentifier;
+//      +(offset==null?"":" from offset="+Long.toHexString(offset)+")");
+        Object val=this.getValue();
+        if(val!=null) {
+            description+="="+this.getValue().toString();
+        }
+        return description;
+   }
 
     @Override
     public void setValue(Object o) {

@@ -1,6 +1,7 @@
-package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 import info.jlibrarian.propertytree.PropertyTree;
+import info.jlibrarian.specialtypes.SequencePosition;
 
 /**
  * see also VirtualConcatenateNode
@@ -28,8 +29,20 @@ public class VirtualSequenceNode extends PropertyTree<MediaProperty> {
     public Object getValue() {
         if(!this.getNodeProperty().getDataType().isAssignableFrom(SequencePosition.class))
             return null;
-        Integer position = (Integer)this.getParent().queryBestResult(pPosition);
-        Integer total = (Integer)this.getParent().queryBestResult(pTotal);
+        
+        Integer position;
+        try {
+			position= Integer.parseInt((String)this.getParent().queryBestResult(pPosition));
+		} catch (NumberFormatException e) {
+			position=null;
+		}
+        
+        Integer total;
+        try {
+        	total = Integer.parseInt((String)this.getParent().queryBestResult(pTotal));
+		} catch (NumberFormatException e) {
+			total=null;
+		}
         return new SequencePosition(position,total);
     }
 

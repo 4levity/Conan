@@ -1,4 +1,4 @@
-package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 import java.io.File;
 import java.io.IOException;
@@ -39,13 +39,14 @@ public class MediaFileUtil {
         return (d0<<24) + (d1<<16) + (d2<<8) + d3;
     }
 
-    static boolean isLink(File f) throws IOException {
+    public static boolean isLink(File f) throws IOException {
         if (f.getName().toUpperCase().endsWith(".LNK"))
             return true;
         return ! (f.getAbsolutePath().equals(f.getCanonicalPath()));
+        // TODO: this doesn't seem to work on relative paths
     }
     
-    static long read32bitLittleEndianUnsignedInt(RandomAccessFile f) throws IOException {
+    public static long read32bitLittleEndianUnsignedInt(RandomAccessFile f) throws IOException {
         Integer d0,d1,d2,d3;
         d0=0xff & read_sure(f);
         d1=0xff & read_sure(f);

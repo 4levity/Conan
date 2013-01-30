@@ -1,4 +1,4 @@
-package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.specialtypes; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 import java.text.SimpleDateFormat;
 
@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
  * Automatic precision date+time object with iso 8601 support.  No time zone.
  * 
  * Precision controls output format and available fields and is defined by 
- * first un-set field.  e.g. if it represents 2004-04-04 the precision is DAY.
+ * the first un-set field.  e.g. if obj represents 2004-04-04 the precision is DAY.
  * 
  * If you have set year=2004 and time=02:45, the time value will be retained
  * privately, but the object will act like it has precision YEAR until you 

@@ -1,6 +1,7 @@
-package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 import info.jlibrarian.propertytree.PropertyTree;
+import info.jlibrarian.specialtypes.SequencePosition;
 import info.jlibrarian.stringutils.AutoAllocatingByteBuffer;
 
 import java.io.FileNotFoundException;

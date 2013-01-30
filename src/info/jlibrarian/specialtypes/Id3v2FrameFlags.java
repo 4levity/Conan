@@ -1,37 +1,37 @@
-package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.specialtypes; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 import info.jlibrarian.stringutils.VersionString;
 
 
 /**
- * optional flag info for Id3v2.3 and later.
+ * optional frame flag info for Id3v2.3 and later
  * 
- * note that isDefault/equals/hashcode IGNORE the unsynchronization setting
+ * note that equals/isDefault/hashcode IGNORE the frame unsynchronization setting
  * 
  * @author ivan
  */
 public class Id3v2FrameFlags {
 	// frame status flags
-	protected boolean tag_alter_preservation = false;
-	protected boolean file_alter_preservation = false;
-	protected boolean read_only = false;
+	public boolean tag_alter_preservation = false;
+	public boolean file_alter_preservation = false;
+	public boolean read_only = false;
 
 	// frame format flags
-	protected Integer grouping_identity_byte = null; // flag adds one byte to
+	public Integer grouping_identity_byte = null; // flag adds one byte to
 														// frame
-	protected boolean compression = false; // 2.3 implies data_length_indicator,
+	public boolean compression = false; // 2.3 implies data_length_indicator,
 											// 2.4 requires
-	protected Integer encryption_method = null; // flag adds one byte to frame
-	protected boolean frame_unsynchronization = false; // 2.4+
-	protected boolean useDataLengthIndicator = false; // 2.4+
+	public Integer encryption_method = null; // flag adds one byte to frame
+	public boolean frame_unsynchronization = false; // 2.4+
+	public boolean useDataLengthIndicator = false; // 2.4+
 
 	// data
-	protected Long data_length_indicator = null; // optional 2.4+ size before
+	public Long data_length_indicator = null; // optional 2.4+ size before
 													// deunsync/compress/encrypt
 
-	public static Id3v2FrameFlags defaultFlags = new Id3v2FrameFlags();
+	public final static Id3v2FrameFlags defaultFlags = new Id3v2FrameFlags();
 
-	public byte[] toBytes(String version) {
+	final public byte[] toBytes(String version) {
 		byte b[]=new byte[2];
 		if(VersionString.compareVersions(version,"2.4+")==0) {
 			b[0]=(byte)
@@ -53,14 +53,16 @@ public class Id3v2FrameFlags {
 				((this.compression?0x80:0)
 				|(this.encryption_method!=null?0x40:0)
 				|(this.grouping_identity_byte!=null?0x20:0));
+		} else {
+			throw new UnsupportedOperationException("attempted to generate frame flag bytes for id3tag < v2.3");
 		}
 		return b;
 	}
-	boolean isDefault() {
+	public final boolean isDefault() {
 		return this.equals(defaultFlags);
 	}
 
-	int getExtendedHeaderSize() {
+	public final int getExtendedHeaderSize() {
 		return ((this.grouping_identity_byte == null ? 0 : 1)
 				+ (this.encryption_method == null ? 0 : 1) + (this.data_length_indicator == null ? 0
 				: 4));
@@ -132,5 +134,4 @@ public class Id3v2FrameFlags {
 						: 0);
 		return hash;
 	}
-
 }

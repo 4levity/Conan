@@ -1,4 +1,4 @@
-package info.jlibrarian.mediatree; /* Original files (c) by C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.stringutils.AutoAllocatingByteBuffer;
@@ -12,7 +12,7 @@ import java.util.logging.Level;
 
 public class Id3v2TextFrame extends Id3v2Frame {
     protected byte originalEncodingType=-1;
-    private Object string=null;
+    private Object nativeValue=null; // this may be a string or numeric type encoded in a text field 
 
     public Id3v2TextFrame(MediaProperty property, PropertyTree<MediaProperty> parent) {
         super(property, parent);
@@ -20,12 +20,12 @@ public class Id3v2TextFrame extends Id3v2Frame {
 
     @Override
     public Object getValue() {
-        return string;
+        return nativeValue;
     }
 
     @Override
     public void setValue(Object o) {
-        string=convertObject(o);
+        nativeValue=convertObject(o);
     }
     
     @Override
