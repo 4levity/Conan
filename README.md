@@ -1,16 +1,27 @@
 Conan
 =====
 
+conan:
+* the app (some basic command line stuff for now, swing GUI later)
+
 propertytree:
 * tree structure template class
 * each node has a "property" describing what it means and what data type (class) it is
 * an abstract class PropertyTree is provided with no value member
 * an instantiatable class PropertyTreeObjNode is provided 
 * the latter has an Object value; property is used to validate assignment type
-* search functions provide the value of a property at/below a given node
+* query functions provide property-to-valueset maps at/below a given node
 
-conanapp - program to manage media files and tags/metadata
-2. mediatree - library for media file metadata
+mediatree:
+* library using propertytree to represent media files, tags, images etc
+* has node classes for various items
+
+specialtypes:
+* many mediatree nodes are valued with native Java types
+* some special types are here
+
+stringutils:
+* stuff for strings and bytebuffers
 
 Building
 ========
