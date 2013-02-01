@@ -1,11 +1,11 @@
 package info.jlibrarian.conan;
 
-import info.jlibrarian.mediatree.*;
+import info.jlibrarian.mediatree.MediaFolder;
+import info.jlibrarian.mediatree.MediaProperty;
 import info.jlibrarian.propertytree.PropertySearchResults;
 import info.jlibrarian.propertytree.PropertyTree;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;

@@ -9,7 +9,11 @@ import java.util.Comparator;
 
 public class MediaFileUtil {
     public static long convert32bitsToUnsignedInt(byte[] d) {
-        return ((0xff & d[0])<<24) + ((0xff & d[1])<<16) + ((0xff & d[2])<<8) + (0xff & d[3]);
+    	return convert32bitsToUnsignedInt(d,0);
+    }
+    public static long convert32bitsToUnsignedInt(byte[] d,int offset) {
+        return ((0xff & d[offset+0])<<24) + ((0xff & d[offset+1])<<16) 
+        		+ ((0xff & d[offset+2])<<8) + (0xff & d[offset+3]);
     }
     public static byte[] convertUnsignedIntTo32bits(long i) {
     	byte[] b=new byte[4];

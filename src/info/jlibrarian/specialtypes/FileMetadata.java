@@ -27,7 +27,7 @@ public class FileMetadata {
 	private String filename;
 	private long fileSize;
 	private CRC32 crc32;
-	ImageInfo imageInfo; 
+	ImageAttributes imageAttributes=null; 
 
 	// subclasses might do better filling these in
 	protected String mimeType;
@@ -54,7 +54,7 @@ public class FileMetadata {
 		}
 
 		// if this is an image file, try to load it 
-		if(ImageInfo.isImageMimeType(mimeType) || picType!=null) {
+		if(ImageAttributes.isImageMimeType(mimeType) || picType!=null) {
 			if(fileData == null) {
 				try {
 					fileData = source.getPayload();
@@ -63,13 +63,13 @@ public class FileMetadata {
 					fileData = null;
 					this.fileSize = -1;
 					this.crc32 = null;
-					this.imageInfo = null;
+					this.imageAttributes = null;
 				}
 			}
 			
 			if(fileData != null) {
 				this.scanFileData(fileData);
-				this.imageInfo = new ImageInfo(picType,fileData);				
+				this.imageAttributes = new ImageAttributes(picType,fileData);				
 			}
 		}
 	}
@@ -134,7 +134,7 @@ public class FileMetadata {
 		return "file [" 
 					+ (filename==null?"embedded":filename )+" " 
 					+ (crc32==null?"":(", crc="+Long.toHexString(crc32.getValue())))+" "
-					+ (imageInfo==null?"":imageInfo.toString())
+					+ (imageAttributes==null?"":imageAttributes.toString())
 					+"]";
 	}
 
@@ -145,7 +145,7 @@ public class FileMetadata {
 		result = prime * result + ((crc32 == null) ? 0 : crc32.hashCode());
 		result = prime * result + (int) (fileSize ^ (fileSize >>> 32));
 		result = prime * result
-				+ ((imageInfo == null) ? 0 : imageInfo.hashCode());
+				+ ((imageAttributes == null) ? 0 : imageAttributes.hashCode());
 		return result;
 	}
 
@@ -169,12 +169,16 @@ public class FileMetadata {
 		if (fileSize != other.fileSize)
 			return false;
 		
-		if (imageInfo == null) {
-			if (other.imageInfo != null)
+		if (imageAttributes == null) {
+			if (other.imageAttributes != null)
 				return false;
-		} else if (!imageInfo.equals(other.imageInfo))
+		} else if (!imageAttributes.equals(other.imageAttributes))
 			return false;
 		return true;
+	}
+
+	public ImageAttributes getImageAttributes() {
+		return this.imageAttributes;
 	}
 	
 	

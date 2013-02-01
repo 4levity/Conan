@@ -12,8 +12,8 @@ import java.util.logging.Level;
 
 public class VorbisCommentBlock extends MediaTag {
     
-    public VorbisCommentBlock(MediaProperty prop, PropertyTree<MediaProperty> parent) {
-        super(prop, parent);
+    public VorbisCommentBlock(PropertyTree<MediaProperty> parent) {
+        super(MediaProperty.VORBISCOMMENTBLOCK, parent);
     }
 
     private void loadSupportedField(Registry.VorbisCommentConfig cfg, String fieldId, 
@@ -47,8 +47,7 @@ public class VorbisCommentBlock extends MediaTag {
         }
     }
 
-    @Override
-    public MediaTag load(RandomAccessFile raf, String versions) throws IOException {
+    public MediaTag load(RandomAccessFile raf,String versions) throws IOException {
         // todo: support Ogg Vorbis here if different
         int blockLen=FlacMetadataBlock.readBlockSize(raf);
         

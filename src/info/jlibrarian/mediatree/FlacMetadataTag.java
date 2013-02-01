@@ -51,13 +51,17 @@ public class FlacMetadataTag extends MediaTag {
         if(blockType == FlacMetadataBlock.BLOCKTYPE_VORBIS_COMMENT) {
             // vorbis comment block is treated as a sub-tag within a tag
             // as such we let it read its own size
-            VorbisCommentBlock vorbis = new VorbisCommentBlock(MediaProperty.VORBISCOMMENTBLOCK,this);
+            VorbisCommentBlock vorbis = new VorbisCommentBlock(this);
             vorbis.load(raf,this.getVersion());
+        } else if(blockType == FlacMetadataBlock.BLOCKTYPE_PICTURE) {
+            int blockSize=FlacMetadataBlock.readBlockSize(raf);
+        	FlacPicture pic = new FlacPicture(this);
+        	pic.load(FlacMetadataBlock.getBlockTypeString((byte)blockType),blockSize,raf);
         } else {
             // load generic/unsupported flac metadata block
             int blockSize=FlacMetadataBlock.readBlockSize(raf);    
-            FlacMetadataBlock flacBlock = new FlacMetadataBlock(MediaProperty.FLACMETADATABLOCK,this);
-            flacBlock.load((new Integer(blockType)).toString(), blockSize, raf);
+            FlacMetadataBlock flacBlock = new FlacMetadataBlock((byte)blockType,this);
+            flacBlock.load(FlacMetadataBlock.getBlockTypeString((byte)blockType),blockSize,raf);
         }
         // TODO: implement PICTURE (also needed for Ogg Vorbis)
         // TODO: (low) implement CUESHEET, and I guess CDDA/Red Book too

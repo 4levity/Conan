@@ -1,8 +1,11 @@
 package info.jlibrarian.specialtypes; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 
+import info.jlibrarian.mediatree.ImageInfo;
+
 import java.awt.Image;
 import java.awt.image.ImageObserver;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import javax.swing.ImageIcon;
@@ -15,20 +18,22 @@ import javax.swing.ImageIcon;
  * 
  * instantiation requires passing in file data so image details can be extracted
  */
-public class ImageInfo implements ImageObserver {
+public class ImageAttributes implements ImageObserver {
 	private Id3PictureType pictureType=null;
     protected int imgHeight;
     protected int imgWidth;
-    //protected int imgBitsPerPixel;
-    //protected int imgIndexedColors;
     
-    public ImageInfo(Id3PictureType id3PicType,byte[] imageData) {
+    // used for FLAC (or Vorbis) metadata picture block:
+    protected int imgBitsPerPixel=-1;
+    protected int imgIndexedColors=0;
+    
+    public ImageAttributes(Id3PictureType id3PicType,byte[] imageData) {
     	super();
         this.pictureType = id3PicType;
         this.scanImage(imageData);
     }
 
-    public ImageInfo(byte[] imageData) {
+    public ImageAttributes(byte[] imageData) {
     	super();
         this.pictureType = Id3PictureType.getDefaultType();
         this.scanImage(imageData);
@@ -37,11 +42,16 @@ public class ImageInfo implements ImageObserver {
     private void resetImageGeometry() {
         this.imgHeight = -1;
         this.imgWidth = -1;
-        //this.imgBitsPerPixel = -1;
-        //this.imgIndexedColors = -1;
+        this.imgBitsPerPixel = -1;
+        this.imgIndexedColors = 0;
     }
 
     protected boolean scanImage(byte[] imageData) {
+    	/* OLD METHOD: 
+    	 * Load entire image with ImageIcon 
+    	 * -- uses lots of memory
+    	 * -- slow
+    	 * -- (cannot determine bits per pixel or index color type
         Image img=new ImageIcon(imageData).getImage();
         if(img!=null) {
             // TODO: validate h/w/bpp/ix         
@@ -50,7 +60,40 @@ public class ImageInfo implements ImageObserver {
             if(this.imgHeight>0)
                 return true;
         }
-        //todo: log (need to pass in log owner..)
+        */
+
+    	 ImageInfo ii = new ImageInfo();
+    	 ii.setInput(new ByteArrayInputStream(imageData));
+    	 if (ii.check()) {
+    		 // grokked
+    		 this.imgHeight=ii.getHeight();
+    		 this.imgWidth=ii.getWidth();
+    		 this.imgBitsPerPixel=ii.getBitsPerPixel();
+    		 if(this.imgBitsPerPixel<0)
+    			 this.imgBitsPerPixel=0;
+    		 
+    		 if(this.imgBitsPerPixel <= 8) {
+    			 // 8bpp or less guessing indexed + entire color space
+    			 this.imgIndexedColors = 1;
+    			 for(int i=0;i<this.imgBitsPerPixel;i++) {
+    				 this.imgIndexedColors *= 2;
+    			 }
+    		 } else {
+    			 // more than 8bpp guessing not indexed
+    			 this.imgIndexedColors = 0;
+    		 }
+    		 
+    		 // ii.getMimeType()
+    		 return true;
+    	 }
+    	 /* System.out.println(ii.getFormatName() + ", " + ii.getMimeType() + 
+    	 *   ", " + ii.getWidth() + " x " + ii.getHeight() + " pixels, " + 
+    	 *   ii.getBitsPerPixel() + " bits per pixel, " + ii.getNumberOfImages() +
+    	 *   " image(s), " + ii.getNumberOfComments() + " comment(s).");
+    	 *  // there are other properties, check out the API documentation        
+    	 */
+    	 
+    	//todo: log (need to pass in log owner..)
         this.resetImageGeometry();
         return false;
     }
@@ -58,14 +101,14 @@ public class ImageInfo implements ImageObserver {
     public int getImgHeight() {
         return imgHeight;
     }
-    /*
+    
     public int getImgBitsPerPixel() {
         return imgBitsPerPixel;
     }
     public int getImgIndexedColors() {
         return imgIndexedColors;
     }
-	*/
+	
     public Id3PictureType getId3PictureType() {
         return this.pictureType;
     }
@@ -148,7 +191,7 @@ public class ImageInfo implements ImageObserver {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ImageInfo other = (ImageInfo) obj;
+		ImageAttributes other = (ImageAttributes) obj;
 		if (imgHeight != other.imgHeight)
 			return false;
 		if (imgWidth != other.imgWidth)

@@ -19,8 +19,8 @@ public class Id3v2PictureFrame extends Id3v2Frame {
     protected int picDataFrameOffset=0;
     FileMetadata embeddedImageLink=null;
 
-    public Id3v2PictureFrame(MediaProperty property, PropertyTree<MediaProperty> parent) {
-        super(property, parent);
+    public Id3v2PictureFrame(PropertyTree<MediaProperty> parent) {
+        super(MediaProperty.PICTURE, parent);
     }
 
     @Override
