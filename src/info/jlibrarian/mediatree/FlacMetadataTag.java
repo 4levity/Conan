@@ -59,9 +59,9 @@ public class FlacMetadataTag extends MediaTag {
         	pic.load(FlacMetadataBlock.getBlockTypeString((byte)blockType),blockSize,raf);
         } else {
             // load generic/unsupported flac metadata block
-            int blockSize=FlacMetadataBlock.readBlockSize(raf);    
-            FlacMetadataBlock flacBlock = new FlacMetadataBlock((byte)blockType,this);
-            flacBlock.load(FlacMetadataBlock.getBlockTypeString((byte)blockType),blockSize,raf);
+            int blockSize=FlacMetadataBlock.readBlockSize(raf);  
+            byte[] readx=new byte[blockSize];
+            MediaFileUtil.read_sure(raf,readx);
         }
         // TODO: implement PICTURE (also needed for Ogg Vorbis)
         // TODO: (low) implement CUESHEET, and I guess CDDA/Red Book too

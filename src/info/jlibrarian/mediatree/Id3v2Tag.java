@@ -60,7 +60,7 @@ public class Id3v2Tag extends MediaTag {
     }
     
     /**
-     * converts an id3v2 "sync safe 28 bit integer"
+     * converts an id3v2 "sync safe 28 bit integer [unsigned]"
      * @param d
      * @param i
      * @return integer value, or -1 if format is invalid
@@ -71,10 +71,11 @@ public class Id3v2Tag extends MediaTag {
         byte b1=d[2];
         byte b0=d[3];
 
-        if((0xff&b3)>0x80 || (0xff&b2)>0x80 || (0xff&b1)>0x80 || (0xff&b0)>0x80) {
-            return -1;
+        if(b0<0x80 && b1<0x80 && b2<0x80 && b3<0x80) {
+            return ((0xff&b3)<<21)+((0xff&b2)<<14)+((0xff&b1)<<7)+(0xff&b0);
         }
-        return ((0xff&b3)<<21)+((0xff&b2)<<14)+((0xff&b1)<<7)+(0xff&b0);
+        // else invalid, high bits can't be set
+        return -1;
     }
 
 	public static byte[] syncSafeInt(int i) {
@@ -243,10 +244,15 @@ public class Id3v2Tag extends MediaTag {
         } catch (UnsupportedEncodingException ex) {
             throw new RuntimeException("platform doesn't support ISO-8859-1, abort");
         }
+        boolean valid=true;
         for (int ix = 0; ix < id.length(); ix++) {
             if (!Character.isUpperCase(id.charAt(ix)) && !Character.isDigit(id.charAt(ix))) {
-            	log(Level.WARNING,"invalid character "+(id.charAt(ix)==0?"\\0":id.charAt(ix))+" in Id3v2 frameID = " + id);
+            	valid=false;
             }
+        }
+        if(!valid) {
+        	log(Level.WARNING,"invalid character in Id3v2 frameID = " + id);
+        	// TODO: mark frame as invalid so it will not be written out even in a frame copy
         }
         return id;
     }

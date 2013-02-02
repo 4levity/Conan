@@ -29,7 +29,7 @@ public class Id3v2SequenceFrame extends Id3v2Frame {
         String frameString=encode(originalEncodingType, strBytes);
         int nullterm=frameString.indexOf(0);
         if(nullterm>=0) {
-            log(Level.WARNING,"multiple strings or null term in "+frameId+"frame (len="+dataLength+")");
+            //log(Level.WARNING,"multiple strings or null term in "+frameId+"frame (len="+dataLength+")");
             frameString=frameString.substring(0, nullterm);
         }
         Integer pos=null;

@@ -4,6 +4,7 @@ import info.jlibrarian.mediatree.MediaFolder;
 import info.jlibrarian.mediatree.MediaProperty;
 import info.jlibrarian.propertytree.PropertySearchResults;
 import info.jlibrarian.propertytree.PropertyTree;
+import info.jlibrarian.stringutils.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,7 +68,9 @@ public class ConanApp {
         				Set<Entry<MediaProperty, PropertySearchResults<MediaProperty>>> entries=queryResults.entrySet();
         				if(entries!=null) {
             				for(Entry<MediaProperty, PropertySearchResults<MediaProperty>> entry : entries) {
-            					entry.getValue().print();
+            					System.out.println(
+            							StringUtils.lineWrap(
+            									StringUtils.stripControlCharacters(entry.getValue().toString()),80));
             				}
         				}
     				} else {
@@ -109,7 +112,22 @@ public class ConanApp {
     }
 
 	private static void printUsage() {
-		// TODO Auto-generated method stub
+		System.out.println("usage: java -jar conan.jar [options] folder1 [folder2 [folder3...]]");
+		System.out.println("");
+		System.out.println("options:");
+		System.out.println("  --query PROPERTYNAME");
+		System.out.println("       query this property on each folder after loading (default is to query ");
+		System.out.println("       all properties). can be repeated to query a list of properties.");
+		System.out.println("");
+		System.out.println("  --log LEVEL");
+		System.out.println("       set the logging verbosity. LEVEL can be INFO (show everything), WARNING,");
+		System.out.println("       or SEVERE (only show major issues).");
+		System.out.println("");
+		System.out.println("list of properties:");
+		for(MediaProperty m : MediaProperty.values()) {
+			System.out.println(m.getShortName()+ " - " + m.getDescription());
+		}
+		System.out.println("");
 		
 	}
 }

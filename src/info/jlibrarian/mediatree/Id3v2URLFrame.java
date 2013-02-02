@@ -27,7 +27,7 @@ public class Id3v2URLFrame extends Id3v2Frame {
         String originalString = this.encode(0, frameData);
         if (originalString.indexOf(0) >= 0) {
         	originalString=originalString.substring(0, originalString.indexOf(0));
-            log(Level.WARNING,"discarded extra characters in URL frame");
+            //log(Level.WARNING,"discarded extra characters in URL frame");
         }
         if(originalString.indexOf(':')<0 && 
                 (originalString.startsWith("www.") || originalString.startsWith("WWW."))) {

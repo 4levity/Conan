@@ -1,5 +1,7 @@
 package info.jlibrarian.propertytree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.stringutils.StringUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -173,7 +175,7 @@ public abstract class PropertyTree<PROPERTY extends Property> {
             return true;
         if(this.getNodeProperty().getDataType().isAssignableFrom(String.class)) {
             // default behavior for strings: no nulls or control characters allowed
-            if(o.toString().replaceAll("\\p{Cntrl}","").equals(o.toString()))
+            if(StringUtils.stripControlCharacters(o.toString()).equals(o.toString()))
                 return true;
             return false;
         } // else default is to assume valid
@@ -188,7 +190,7 @@ public abstract class PropertyTree<PROPERTY extends Property> {
         if(this.getNodeProperty().getDataType().isAssignableFrom(String.class)) {
             // default behavior for strings: no nulls or control characters allowed
         	// to make valid, replace invalid characters with "?"
-            setValue(toString().replaceAll("\\p{Cntrl}","?"));
+            setValue(StringUtils.stripControlCharacters(toString()));
         } // else default is to assume valid
         return;
     }
@@ -301,7 +303,7 @@ public abstract class PropertyTree<PROPERTY extends Property> {
         return s;
     }
     public String describeNode() {
-        return  (getNodeProperty()==null?"null":getNodeProperty().toString().replaceAll("\\p{Cntrl}",""))
+        return  (getNodeProperty()==null?"null":StringUtils.stripControlCharacters(getNodeProperty().toString()))
                 +"="+ toString() + (isValueValid()?"":" (invalid)"); 
     }
 	public String describePath() {
@@ -318,7 +320,7 @@ public abstract class PropertyTree<PROPERTY extends Property> {
         if(val.getClass().isAssignableFrom(File.class))
             return ((File)getValue()).getName();
         //else
-        return val.toString().replaceAll("\\p{Cntrl}","");
+        return StringUtils.stripControlCharacters(val.toString());
     }
     
     @Override
@@ -362,7 +364,7 @@ public abstract class PropertyTree<PROPERTY extends Property> {
     public void log(Level level,String msg,Throwable ex) {
     	PropertyTree.log(this,level,msg,ex);
     }
-    final protected boolean delete() {
+    final public boolean delete() {
         if(parent==null)
             return false;
         if(!parent.dropChild(this))

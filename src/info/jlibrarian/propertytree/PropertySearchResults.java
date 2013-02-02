@@ -1,5 +1,7 @@
 package info.jlibrarian.propertytree;
 
+import info.jlibrarian.stringutils.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -117,43 +119,44 @@ public class PropertySearchResults<PROPERTY extends Property> {
 		Collections.sort(this.results);
 		this.sorted=true;
 	}
-	public void print() {
+	
+	@Override
+	public String toString() {
 		sort();
 		PROPERTY p=this.getProperty();
-        System.out.print("Query ("+this.totalNodes+" elements) ");
-        System.out.print(p.toString());
+        String result="Query ("+this.totalNodes+" elements) "+p.toString();
     	if(this.isUnanimous()) {
-    		System.out.print(": ");
+    		result+=": ";
     	} else if(p.getIsUniqueAttribute()) {
-            System.out.print(": conflict { ");
+            result+=": conflict { ";
     	} else {
-            System.out.print(": SET { ");
+            result+=": SET { ";
     	}
         if(this.results != null) {
             for(Result r : this.results) {
         		if(r.getProperty().getIsUniqueAttribute()) {
         			// prints out each unique value (most likely first), do not print nodes
-        			System.out.print(r.getValue().toString());
-        			System.out.print(" [");
-        			System.out.print(r.size());
+        			result += StringUtils.stripControlCharacters(r.getValue().toString())
+        			 		+" ["+r.size();
         			if(r.size()==1) {
-            			System.out.print(" result] ");
+            			result+=" result] ";
           			} else {
-            			System.out.print(" results] ");
+            			result+=" results] ";
           			}
         		} else {
         			// for nonunique attributes, print the full list of nodes
         			for(int i=0;i<r.size();i++) {
-            			System.out.print(r.getNode(i).describeNode());
-            			System.out.print("  ");
+            			result+=r.getNode(i).describeNode()+"  ";
         			}
         		}
             }
         }
     	if(this.isUnanimous()) {
-    		System.out.println("");
+    		result+=System.lineSeparator();
     	} else {
-            System.out.println("}");
+            result+="}"+System.lineSeparator();
     	}
+    	
+    	return result;
 	}
 }

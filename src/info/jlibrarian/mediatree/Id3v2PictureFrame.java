@@ -19,8 +19,9 @@ public class Id3v2PictureFrame extends Id3v2Frame {
     protected int picDataFrameOffset=0;
     FileMetadata embeddedImageLink=null;
 
-    public Id3v2PictureFrame(PropertyTree<MediaProperty> parent) {
-        super(MediaProperty.PICTURE, parent);
+    // constructor has to look like this; supported id3 tag frames instantiated by reflection
+    public Id3v2PictureFrame(MediaProperty prop,PropertyTree<MediaProperty> parent) {
+        super(prop, parent);
     }
 
     @Override

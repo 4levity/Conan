@@ -89,7 +89,7 @@ public class Id3v2TagHeader {
         // so far so good, let's interpret the tag size        
         Integer hdr_tag_size=Id3v2Tag.convertSyncSafeBytes_to_Int(Arrays.copyOfRange(id3v2Header, 6, 10));
         if(hdr_tag_size<0) { // invalid syncsafe integer!
-            // this isn't going to happen 'cause I validated when recognizing
+            // this isn't going to happen 'cause I validated the syncsafe int when recognizing
             // the tag according to the recommendation in the id3v2 spec
         	owner.log(Level.SEVERE,"invalid Id3v2 tag size (validator fail)");
             throw new RuntimeException("invalid Id3v2 tag size (validator fail)");
@@ -245,6 +245,7 @@ public class Id3v2TagHeader {
 		}		
 		if(this.crc32 != null) {
 			if(VersionString.compareVersions(this.version, "2.4+")==0) {
+				// ok to create extended header on id3 2.3
 				flags |= 0x40;
 				extendedFlags |= 0x20;
 				xhdrPayload.put(5);
@@ -257,12 +258,9 @@ public class Id3v2TagHeader {
 				flags |= 0x40;
 				extendedFlags |= 0x80;
 
-				 * after a lot of soul searching
-				 * I decided that the best thing to do 
-				 * when asked to write an extended header to a v2.3 tag
-				 * is this:
+				 * 2.3 extended header spec is very unclear on how the unsyn
 				 */
-				owner.log(Level.WARNING,"cannot in good conscience create an id3 2.3 extended header, clearing CRC");
+				owner.log(Level.WARNING,"id3 2.3 extended header is not enabled, clearing CRC");
 				this.crc32=null;
 			} else {
 				owner.log(Level.WARNING, "Invalid CRC32 setting for this tag version (cleared)");

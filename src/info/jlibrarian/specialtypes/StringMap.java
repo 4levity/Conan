@@ -1,6 +1,7 @@
 package info.jlibrarian.specialtypes; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 import info.jlibrarian.propertytree.PropertyTree;
+import info.jlibrarian.stringutils.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
@@ -44,7 +45,8 @@ public class StringMap extends java.util.HashMap<String, String> {
             } catch (UnsupportedEncodingException ex) {
                 this.loc = null;
                 if(owner!=null)
-                    owner.log(Level.WARNING,"Invalid language "+language+" initializing StringMap");
+                    owner.log(Level.WARNING,"Invalid language "+StringUtils.stripControlCharacters(language)
+                    		+" initializing StringMap");
             }
         } else if(language.length()==2) {
         	iso839_1_lang=language.toLowerCase(Locale.ENGLISH);

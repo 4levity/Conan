@@ -54,7 +54,9 @@ public class MediaFile extends PropertyTreeObjNode<MediaProperty> implements Pay
             }
             // TODO: for image files, guess at id3PictureType (e.g. cover art etc)
             
-            boolean tagerror=false;
+        	this.setValue(new FileMetadata(this,f.getName(),mimeType,null,null,null));
+
+        	boolean tagerror=false;
             try {
                 loadTags();
             } catch (IOException ex) {
@@ -67,7 +69,6 @@ public class MediaFile extends PropertyTreeObjNode<MediaProperty> implements Pay
                 delete();
                 return null;
             }
-        	this.setValue(new FileMetadata(this,f.getName(),mimeType,null,null,null));
             return this;
         }
         log(this,Level.WARNING,"Warning: File does not exist or is a directory: "+getFile().toString());

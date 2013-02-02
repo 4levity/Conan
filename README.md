@@ -2,7 +2,7 @@ Conan
 =====
 
 conan:
-* the app (some basic command line stuff for now, swing GUI later)
+* the app (command line test/debug features for now, swing or html GUI later?)
 
 propertytree:
 * tree structure template class

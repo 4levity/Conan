@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
-import java.util.logging.Level;
 
 
 public class Id3v2TextFrame extends Id3v2Frame {
@@ -40,13 +39,18 @@ public class Id3v2TextFrame extends Id3v2Frame {
                 || dataType.isAssignableFrom(Long.class) ) {
             byte[] strBytes=Arrays.copyOfRange(frameData, 1, frameData.length);
             String newValue = encode(originalEncodingType,strBytes);
-            if(newValue.length()>0) {
-                if(newValue.charAt(newValue.length()-1) == 0) {
-                    // remove invalid null terminator
-                    newValue = newValue.substring(0, newValue.length()-1);
-                    log(Level.WARNING,"Removed invalid null terminator in "+this.getFrameIdentifier()+": "+newValue);
-                }
+
+            // trim all after first \0 character
+            int ix=newValue.indexOf(0);
+            if(ix>=0) {
+        		/* actually, null terminators are specifically indicated in id3 2.4.0
+        		 * and optional on most text frames in id3 2.3.0 and 2.2.0
+        		 * reader doesn't care
+        		 */
+                //log(Level.WARNING,"Removed invalid null terminator in "+this.getFrameIdentifier()+": "+newValue);
+            	newValue=newValue.substring(0,ix);
             }
+            
             setValue(newValue);
         } 
         return frameData;
