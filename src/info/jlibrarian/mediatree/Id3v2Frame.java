@@ -74,7 +74,7 @@ public abstract class Id3v2Frame extends FrameNode {
 
     static public String readFrameId(RandomAccessFile openFile,Id3v2Tag tag) throws IOException {
         int frameIdSize;
-        if(VersionString.compareVersions(tag.getVersion(),"2.3") < 0)
+        if(VersionString.compareVersions(tag.getVersion(),"2.3.*") < 0)
         {
             frameIdSize=3;
         } else {
