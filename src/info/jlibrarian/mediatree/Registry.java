@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * This is the global registry of filetype/tag/frame/version/class.
@@ -45,238 +46,238 @@ fileTypes.put("jpeg", new FileType(MediaFile.class,MediaProperty.PICTURE));
 fileTypes.put("png", new FileType(MediaFile.class,MediaProperty.PICTURE));
 // MediaFolder loader will instantiate nodes for unrecognized files w/ MediaProperty.OTHERFILE 
 
-registerId3v2("TAL","*",Id3v2TextFrame.class,MediaProperty.ALBUM,false);
-registerId3v2("TALB","*",Id3v2TextFrame.class,MediaProperty.ALBUM,false);
+registerId3v2("TAL","2.2.*",Id3v2TextFrame.class,MediaProperty.ALBUM,false);
+registerId3v2("TALB","2.3+",Id3v2TextFrame.class,MediaProperty.ALBUM,false);
 registerVorbis("ALBUM",VorbisTextField.class,MediaProperty.ALBUM);
 
 registerId3v2("TSOA","2.4+",Id3v2TextFrame.class,MediaProperty.ALBUM_SORTORDER,false);
 registerId3v2("XSOA","2.3.*",Id3v2TextFrame.class,MediaProperty.ALBUM_SORTORDER,false);
 registerVorbis("ALBUMSORT",VorbisTextField.class,MediaProperty.ALBUM_SORTORDER);
 
-registerId3v2("TP2","*",Id3v2TextFrame.class,MediaProperty.ALBUMARTIST,false);
-registerId3v2("TPE2","*",Id3v2TextFrame.class,MediaProperty.ALBUMARTIST,false);
+registerId3v2("TP2","2.2.*",Id3v2TextFrame.class,MediaProperty.ALBUMARTIST,false);
+registerId3v2("TPE2","2.3+",Id3v2TextFrame.class,MediaProperty.ALBUMARTIST,false);
 registerVorbis("ALBUMARTIST",VorbisTextField.class,MediaProperty.ALBUMARTIST);
 
-registerId3v2("TSO2","*",Id3v2TextFrame.class,MediaProperty.ALBUMARTIST_SORTORDER,false);
+registerId3v2("TSO2","2.3+",Id3v2TextFrame.class,MediaProperty.ALBUMARTIST_SORTORDER,false);
 registerVorbis("ALBUMARTISTSORT",VorbisTextField.class,MediaProperty.ALBUMARTIST_SORTORDER);
 
-registerId3v2("TP1","*",Id3v2TextFrame.class,MediaProperty.ARTIST,false);
-registerId3v2("TPE1","*",Id3v2TextFrame.class,MediaProperty.ARTIST,false);
+registerId3v2("TP1","2.2.*",Id3v2TextFrame.class,MediaProperty.ARTIST,false);
+registerId3v2("TPE1","2.3+",Id3v2TextFrame.class,MediaProperty.ARTIST,false);
 registerVorbis("ARTIST",VorbisTextField.class,MediaProperty.ARTIST);
 
 registerId3v2("TSOP","2.4+",Id3v2TextFrame.class,MediaProperty.ARTIST_SORTORDER,false);
 registerId3v2("XSOP","2.3.*",Id3v2TextFrame.class,MediaProperty.ARTIST_SORTORDER,false);
 registerVorbis("ARTISTSORT",VorbisTextField.class,MediaProperty.ARTIST_SORTORDER);
 
-registerId3v2("TBP","*",Id3v2TextFrame.class,MediaProperty.BEATSPERMINUTE,false);
-registerId3v2("TBPM","*",Id3v2TextFrame.class,MediaProperty.BEATSPERMINUTE,false);
+registerId3v2("TBP","2.2.*",Id3v2TextFrame.class,MediaProperty.BEATSPERMINUTE,false);
+registerId3v2("TBPM","2.3+",Id3v2TextFrame.class,MediaProperty.BEATSPERMINUTE,false);
 registerVorbis("BPM",VorbisTextField.class,MediaProperty.BEATSPERMINUTE); 
 
-registerId3v2("COM","*",Id3v2CommentFrame.class,MediaProperty.COMMENTS);
-registerId3v2("COMM","*",Id3v2CommentFrame.class,MediaProperty.COMMENTS);
+registerId3v2("COM","2.2.*",Id3v2CommentFrame.class,MediaProperty.COMMENTS);
+registerId3v2("COMM","2.3+",Id3v2CommentFrame.class,MediaProperty.COMMENTS);
 
-registerId3v2("TCM","*",Id3v2TextFrame.class,MediaProperty.COMPOSER,false);
-registerId3v2("TCOM","*",Id3v2TextFrame.class,MediaProperty.COMPOSER,false);
+registerId3v2("TCM","2.2.*",Id3v2TextFrame.class,MediaProperty.COMPOSER,false);
+registerId3v2("TCOM","2.3+",Id3v2TextFrame.class,MediaProperty.COMPOSER,false);
 registerVorbis("COMPOSER",VorbisTextField.class,MediaProperty.COMPOSER);
 
-registerId3v2("TSOC","*",Id3v2TextFrame.class,MediaProperty.COMPOSER_SORTORDER,false);
+registerId3v2("TSOC","2.3+",Id3v2TextFrame.class,MediaProperty.COMPOSER_SORTORDER,false);
 registerVorbis("COMPOSERSORT",VorbisTextField.class,MediaProperty.COMPOSER_SORTORDER);
 
-registerId3v2("TP3","*",Id3v2TextFrame.class,MediaProperty.CONDUCTOR,false);
-registerId3v2("TPE3","*",Id3v2TextFrame.class,MediaProperty.CONDUCTOR,false);
+registerId3v2("TP3","2.2.*",Id3v2TextFrame.class,MediaProperty.CONDUCTOR,false);
+registerId3v2("TPE3","2.3+",Id3v2TextFrame.class,MediaProperty.CONDUCTOR,false);
 registerVorbis("CONDUCTOR",VorbisTextField.class,MediaProperty.CONDUCTOR);
 
-registerId3v2("TIT1","*",Id3v2TextFrame.class,MediaProperty.CONTENTGROUP,false);
-registerId3v2("TT1","*",Id3v2TextFrame.class,MediaProperty.CONTENTGROUP,false);
+registerId3v2("TIT1","2.3+",Id3v2TextFrame.class,MediaProperty.CONTENTGROUP,false);
+registerId3v2("TT1","2.2.*",Id3v2TextFrame.class,MediaProperty.CONTENTGROUP,false);
 registerVorbis("GROUPING",VorbisTextField.class,MediaProperty.CONTENTGROUP);
 
-registerId3v2("TCOP","*",Id3v2TextFrame.class,MediaProperty.COPYRIGHTMESSAGE,false);
-registerId3v2("TCR","*",Id3v2TextFrame.class,MediaProperty.COPYRIGHTMESSAGE,false);
+registerId3v2("TCOP","2.3+",Id3v2TextFrame.class,MediaProperty.COPYRIGHTMESSAGE,false);
+registerId3v2("TCR","2.2.*",Id3v2TextFrame.class,MediaProperty.COPYRIGHTMESSAGE,false);
 registerVorbis("COPYRIGHT",VorbisTextField.class,MediaProperty.COPYRIGHTMESSAGE);
 
-registerId3v2("TPA","*",Id3v2SequenceFrame.class,MediaProperty.DISC_SEQUENCE,false);
-registerId3v2("TPOS","*",Id3v2SequenceFrame.class,MediaProperty.DISC_SEQUENCE,false);
+registerId3v2("TPA","2.2.*",Id3v2SequenceFrame.class,MediaProperty.DISC_SEQUENCE,false);
+registerId3v2("TPOS","2.3+",Id3v2SequenceFrame.class,MediaProperty.DISC_SEQUENCE,false);
 
 registerId3v2("TSST","2.4+",Id3v2TextFrame.class,MediaProperty.DISCSUBTITLE,false);
 registerVorbis("DISCSUBTITLE",VorbisTextField.class,MediaProperty.DISCSUBTITLE);
 
-registerId3v2("PIC","*",Id3v2PictureFrame.class,MediaProperty.PICTURE,true);
-registerId3v2("APIC","*",Id3v2PictureFrame.class,MediaProperty.PICTURE,true);
+registerId3v2("PIC","2.2.*",Id3v2PictureFrame.class,MediaProperty.PICTURE,true);
+registerId3v2("APIC","2.3+",Id3v2PictureFrame.class,MediaProperty.PICTURE,true);
 
-registerId3v2("TEN","*",Id3v2TextFrame.class,MediaProperty.ENCODEDBY,false);
-registerId3v2("TENC","*",Id3v2TextFrame.class,MediaProperty.ENCODEDBY,false);
+registerId3v2("TEN","2.2.*",Id3v2TextFrame.class,MediaProperty.ENCODEDBY,false);
+registerId3v2("TENC","2.3+",Id3v2TextFrame.class,MediaProperty.ENCODEDBY,false);
 registerVorbis("ENCODEDBY",VorbisTextField.class,MediaProperty.ENCODEDBY,true);
 
-registerId3v2("TSS","*",Id3v2TextFrame.class,MediaProperty.ENCODER,false);
-registerId3v2("TSSE","*",Id3v2TextFrame.class,MediaProperty.ENCODER,false);
+registerId3v2("TSS","2.2.*",Id3v2TextFrame.class,MediaProperty.ENCODER,false);
+registerId3v2("TSSE","2.3+",Id3v2TextFrame.class,MediaProperty.ENCODER,false);
 registerVorbis("ENCODER",VorbisTextField.class,MediaProperty.VORBISFIELD_ENCODERSOFTWARE);
 registerVorbis("ENCODING",VorbisTextField.class,MediaProperty.VORBISFIELD_ENCODERSETTINGS);
 
-registerId3v2("TOWN","*",Id3v2TextFrame.class,MediaProperty.FILEOWNER,false);
+registerId3v2("TOWN","2.3+",Id3v2TextFrame.class,MediaProperty.FILEOWNER,false);
 
-registerId3v2("TFLT","2.3.*",Id3v2TextFrame.class,MediaProperty.ID3V2_FILETYPE,false);
+registerId3v2("TFLT","2.3+",Id3v2TextFrame.class,MediaProperty.ID3V2_FILETYPE,false);
 
-registerId3v2("TRD","*",Id3v2TextFrame.class,MediaProperty.ID3V2_RECORDINGDATES,false);
+registerId3v2("TRD","2.2.*",Id3v2TextFrame.class,MediaProperty.ID3V2_RECORDINGDATES,false);
 registerId3v2("TRDA","2.3.*",Id3v2TextFrame.class,MediaProperty.ID3V2_RECORDINGDATES,false);
 
-registerId3v2("TSI","*",Id3v2TextFrame.class,MediaProperty.ID3V2_SIZEINFO,false);
+registerId3v2("TSI","2.2.*",Id3v2TextFrame.class,MediaProperty.ID3V2_SIZEINFO,false);
 registerId3v2("TSIZ","2.3.*",Id3v2TextFrame.class,MediaProperty.ID3V2_SIZEINFO,false);
 
-registerId3v2("AENC","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_AUDIOENCRYPTION);
+registerId3v2("AENC","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_AUDIOENCRYPTION);
 
-registerId3v2("ASPI","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_AUDIOSEEKPOINTINDEX,false);
+registerId3v2("ASPI","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_AUDIOSEEKPOINTINDEX,false);
 
-registerId3v2("COMR","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_COMMERCIAL);
+registerId3v2("COMR","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_COMMERCIAL);
 
-registerId3v2("ENCR","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_ENCRYPTEDMETAFRAME);
+registerId3v2("ENCR","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_ENCRYPTEDMETAFRAME);
 
-registerId3v2("EQUA","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_EQUALIZATION,false);
+registerId3v2("EQUA","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_EQUALIZATION,false);
 
-registerId3v2("EQU2","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_EQUALIZATION_2);
+registerId3v2("EQU2","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_EQUALIZATION_2);
 
-registerId3v2("ETCO","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_EVENTTIMINGCODES,false);
+registerId3v2("ETCO","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_EVENTTIMINGCODES,false);
 
-registerId3v2("XRVA","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_EXPERIMENTAL_RVA2_CLASS3,false);
+registerId3v2("XRVA","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_EXPERIMENTAL_RVA2_CLASS3,false);
 
-registerId3v2("GRID","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_GROUPIDREGISTRATION);
+registerId3v2("GRID","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_GROUPIDREGISTRATION);
 
-registerId3v2("LINK","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_LINKEDINFO);
+registerId3v2("LINK","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_LINKEDINFO);
 
-registerId3v2("MLLT","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_MPEGLOCATIONLOOKUPTABLE,false);
+registerId3v2("MLLT","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_MPEGLOCATIONLOOKUPTABLE,false);
 
-registerId3v2("MCDI","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_MUSICCDIDENTIFIER,false);
+registerId3v2("MCDI","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_MUSICCDIDENTIFIER,false);
 
-registerId3v2("NCON","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_MUSICMATCH);
+registerId3v2("NCON","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_MUSICMATCH);
 
-registerId3v2("OWNE","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_OWNERSHIP,false);
+registerId3v2("OWNE","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_OWNERSHIP,false);
 
-registerId3v2("POPM","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_POPULARIMETER);
+registerId3v2("POPM","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_POPULARIMETER);
 
-registerId3v2("POSS","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_POSITIONSYNC,false);
+registerId3v2("POSS","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_POSITIONSYNC,false);
 
-registerId3v2("PRIV","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_PRIVATE);
+registerId3v2("PRIV","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_PRIVATE);
 
-registerId3v2("RBUF","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_RECOMMENDEDBUFFERSIZE,false);
+registerId3v2("RBUF","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_RECOMMENDEDBUFFERSIZE,false);
 
-registerId3v2("RVAD","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_RELATIVEVOLUMEADJUSTMENT,false);
+registerId3v2("RVAD","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_RELATIVEVOLUMEADJUSTMENT,false);
 
 registerId3v2("RVA2","2.4+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_RELATIVEVOLUMEADJUSTMENT_2);
 
-registerId3v2("RGAD","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_REPLAYGAINADJUSTMENT,false);
+registerId3v2("RGAD","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_REPLAYGAINADJUSTMENT,false);
 
-registerId3v2("RVRB","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_REVERB,false);
+registerId3v2("RVRB","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_REVERB,false);
 
 registerId3v2("SIGN","2.4+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_SIGNATATURE);
 
-registerId3v2("SYLT","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_SYNCLYRICS);
+registerId3v2("SYLT","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_SYNCLYRICS);
 
-registerId3v2("SYTC","*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_SYNCTEMPOCODES,false);
+registerId3v2("SYTC","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_SYNCTEMPOCODES,false);
 
-registerId3v2("TKE","*",Id3v2TextFrame.class,MediaProperty.INITIALKEY,false);
-registerId3v2("TKEY","*",Id3v2TextFrame.class,MediaProperty.INITIALKEY,false);
+registerId3v2("TKE","2.2.*",Id3v2TextFrame.class,MediaProperty.INITIALKEY,false);
+registerId3v2("TKEY","2.3+",Id3v2TextFrame.class,MediaProperty.INITIALKEY,false);
 
-registerId3v2("TRSN","*",Id3v2TextFrame.class,MediaProperty.INTERNETRADIOSTATION_NAME,false);
+registerId3v2("TRSN","2.3+",Id3v2TextFrame.class,MediaProperty.INTERNETRADIOSTATION_NAME,false);
 
-registerId3v2("TRSO","*",Id3v2TextFrame.class,MediaProperty.INTERNETRADIOSTATION_OWNER,false);
+registerId3v2("TRSO","2.3+",Id3v2TextFrame.class,MediaProperty.INTERNETRADIOSTATION_OWNER,false);
 
-registerId3v2("IPL","*",Id3v2TextMapFrame.class,MediaProperty.INVOLVEDPEOPLE,false);
+registerId3v2("IPL","2.2.*",Id3v2TextMapFrame.class,MediaProperty.INVOLVEDPEOPLE,false);
 registerId3v2("IPLS","2.3.*",Id3v2TextMapFrame.class,MediaProperty.INVOLVEDPEOPLE,false);
 registerId3v2("TIPL","2.4+",Id3v2TextMapFrame.class,MediaProperty.INVOLVEDPEOPLE,false);
 
-registerId3v2("TLE","*",Id3v2TextFrame.class,MediaProperty.LENGTH_MS,false);
-registerId3v2("TLEN","*",Id3v2TextFrame.class,MediaProperty.LENGTH_MS,false);
+registerId3v2("TLE","2.2.*",Id3v2TextFrame.class,MediaProperty.LENGTH_MS,false);
+registerId3v2("TLEN","2.3+",Id3v2TextFrame.class,MediaProperty.LENGTH_MS,false);
 
-registerId3v2("TEXT","*",Id3v2TextFrame.class,MediaProperty.LYRICIST,false);
-registerId3v2("TXT","*",Id3v2TextFrame.class,MediaProperty.LYRICIST,false);
+registerId3v2("TEXT","2.3+",Id3v2TextFrame.class,MediaProperty.LYRICIST,false);
+registerId3v2("TXT","2.2.*",Id3v2TextFrame.class,MediaProperty.LYRICIST,false);
 registerVorbis("LYRICIST",VorbisTextField.class,MediaProperty.LYRICIST);
 
-registerId3v2("ULT","*",Id3v2CommentFrame.class,MediaProperty.LYRICS);
-registerId3v2("USLT","*",Id3v2CommentFrame.class,MediaProperty.LYRICS);
+registerId3v2("ULT","2.2.*",Id3v2CommentFrame.class,MediaProperty.LYRICS);
+registerId3v2("USLT","2.3+",Id3v2CommentFrame.class,MediaProperty.LYRICS);
 
 registerId3v2("TMOO","2.4+",Id3v2TextFrame.class,MediaProperty.MOOD,false);
 registerVorbis("MOOD",VorbisTextField.class,MediaProperty.MOOD);
 
 registerId3v2("TMCL","2.4+",Id3v2TextMapFrame.class,MediaProperty.MUSICIANS,false);
 
-registerId3v2("TOAL","*",Id3v2TextFrame.class,MediaProperty.ORIGINAL_ALBUM,false);
-registerId3v2("TOT","*",Id3v2TextFrame.class,MediaProperty.ORIGINAL_ALBUM,false);
-registerId3v2("TOA","*",Id3v2TextFrame.class,MediaProperty.ORIGINAL_ARTIST,false);
+registerId3v2("TOAL","2.3+",Id3v2TextFrame.class,MediaProperty.ORIGINAL_ALBUM,false);
+registerId3v2("TOT","2.2.*",Id3v2TextFrame.class,MediaProperty.ORIGINAL_ALBUM,false);
+registerId3v2("TOA","2.2.*",Id3v2TextFrame.class,MediaProperty.ORIGINAL_ARTIST,false);
 
-registerId3v2("TOPE","*",Id3v2TextFrame.class,MediaProperty.ORIGINAL_ARTIST,false);
+registerId3v2("TOPE","2.3+",Id3v2TextFrame.class,MediaProperty.ORIGINAL_ARTIST,false);
 
-registerId3v2("TOF","*",Id3v2TextFrame.class,MediaProperty.ORIGINAL_FILENAME,false);
-registerId3v2("TOFN","*",Id3v2TextFrame.class,MediaProperty.ORIGINAL_FILENAME,false);
+registerId3v2("TOF","2.2.*",Id3v2TextFrame.class,MediaProperty.ORIGINAL_FILENAME,false);
+registerId3v2("TOFN","2.3+",Id3v2TextFrame.class,MediaProperty.ORIGINAL_FILENAME,false);
 
-registerId3v2("TOL","*",Id3v2TextFrame.class,MediaProperty.ORIGINAL_LYRICIST,false);
-registerId3v2("TOLY","*",Id3v2TextFrame.class,MediaProperty.ORIGINAL_LYRICIST,false);
+registerId3v2("TOL","2.2.*",Id3v2TextFrame.class,MediaProperty.ORIGINAL_LYRICIST,false);
+registerId3v2("TOLY","2.3+",Id3v2TextFrame.class,MediaProperty.ORIGINAL_LYRICIST,false);
 
-registerId3v2("TMED","*",Id3v2TextFrame.class,MediaProperty.ORIGINAL_MEDIA,false);
-registerId3v2("TMT","*",Id3v2TextFrame.class,MediaProperty.ORIGINAL_MEDIA,false);
+registerId3v2("TMED","2.3+",Id3v2TextFrame.class,MediaProperty.ORIGINAL_MEDIA,false);
+registerId3v2("TMT","2.2.*",Id3v2TextFrame.class,MediaProperty.ORIGINAL_MEDIA,false);
 registerVorbis("MEDIA",VorbisTextField.class,MediaProperty.ORIGINAL_MEDIA);
 
-registerId3v2("TDLY","*",Id3v2TextFrame.class,MediaProperty.PLAYLISTDELAY_MS,false);
-registerId3v2("TDY","*",Id3v2TextFrame.class,MediaProperty.PLAYLISTDELAY_MS,false);
+registerId3v2("TDLY","2.3+",Id3v2TextFrame.class,MediaProperty.PLAYLISTDELAY_MS,false);
+registerId3v2("TDY","2.2.*",Id3v2TextFrame.class,MediaProperty.PLAYLISTDELAY_MS,false);
 
 registerId3v2("TPRO","2.4+",Id3v2TextFrame.class,MediaProperty.PRODUCTIONNOTICE,false);
 
-registerId3v2("TPB","*",Id3v2TextFrame.class,MediaProperty.PUBLISHER,false);
-registerId3v2("TPUB","*",Id3v2TextFrame.class,MediaProperty.PUBLISHER,false);
+registerId3v2("TPB","2.2.*",Id3v2TextFrame.class,MediaProperty.PUBLISHER,false);
+registerId3v2("TPUB","2.3+",Id3v2TextFrame.class,MediaProperty.PUBLISHER,false);
 registerVorbis("LABEL",VorbisTextField.class,MediaProperty.PUBLISHER,true); // alt
 registerVorbis("ORGANIZATION",VorbisTextField.class,MediaProperty.PUBLISHER);
 
-registerId3v2("TP4","*",Id3v2TextFrame.class,MediaProperty.REMIXER,false);
-registerId3v2("TPE4","*",Id3v2TextFrame.class,MediaProperty.REMIXER,false);
+registerId3v2("TP4","2.2.*",Id3v2TextFrame.class,MediaProperty.REMIXER,false);
+registerId3v2("TPE4","2.3+",Id3v2TextFrame.class,MediaProperty.REMIXER,false);
 registerVorbis("REMIXER",VorbisTextField.class,MediaProperty.REMIXER);
 
-registerId3v2("TIT2","2.4+",Id3v2TextFrame.class,MediaProperty.TITLE,false);
-registerId3v2("TT2","*",Id3v2TextFrame.class,MediaProperty.TITLE,false);
+registerId3v2("TIT2","2.3+",Id3v2TextFrame.class,MediaProperty.TITLE,false);
+registerId3v2("TT2","2.2.*",Id3v2TextFrame.class,MediaProperty.TITLE,false);
 registerVorbis("TITLE",VorbisTextField.class,MediaProperty.TITLE);
 
 registerId3v2("TSOT","2.4+",Id3v2TextFrame.class,MediaProperty.TITLE_SORTORDER,false);
 registerId3v2("XSOT","2.3.*",Id3v2TextFrame.class,MediaProperty.TITLE_SORTORDER,false);
 registerVorbis("TITLESORT",VorbisTextField.class,MediaProperty.TITLE_SORTORDER);
 
-registerId3v2("TRCK","*",Id3v2SequenceFrame.class,MediaProperty.TRACK_SEQUENCE,false);
-registerId3v2("TRK","*",Id3v2SequenceFrame.class,MediaProperty.TRACK_SEQUENCE,false);
+registerId3v2("TRCK","2.3+",Id3v2SequenceFrame.class,MediaProperty.TRACK_SEQUENCE,false);
+registerId3v2("TRK","2.2.*",Id3v2SequenceFrame.class,MediaProperty.TRACK_SEQUENCE,false);
 // VorbisComment gets TRACK_SEQUENCE by instantiating a SequenceView child of the tag
 
-registerId3v2("TIT3","*",Id3v2TextFrame.class,MediaProperty.TRACKSUBTITLE,false);
-registerId3v2("TT3","*",Id3v2TextFrame.class,MediaProperty.TRACKSUBTITLE,false);
+registerId3v2("TIT3","2.3+",Id3v2TextFrame.class,MediaProperty.TRACKSUBTITLE,false);
+registerId3v2("TT3","2.2.*",Id3v2TextFrame.class,MediaProperty.TRACKSUBTITLE,false);
 registerVorbis("SUBTITLE",VorbisTextField.class,MediaProperty.TRACKSUBTITLE);
 registerVorbis("VERSION",VorbisTextField.class,MediaProperty.TRACKSUBTITLE,true); // alt?
 
-registerId3v2("WCM","*",Id3v2URLFrame.class,MediaProperty.URL_COMMERCIAL,false);
-registerId3v2("WCOM","*",Id3v2URLFrame.class,MediaProperty.URL_COMMERCIAL,false);
+registerId3v2("WCM","2.2.*",Id3v2URLFrame.class,MediaProperty.URL_COMMERCIAL,false);
+registerId3v2("WCOM","2.3+",Id3v2URLFrame.class,MediaProperty.URL_COMMERCIAL,false);
 
-registerId3v2("WCOP","*",Id3v2URLFrame.class,MediaProperty.URL_COPYRIGHT,false);
-registerId3v2("WCP","*",Id3v2URLFrame.class,MediaProperty.URL_COPYRIGHT,false);
+registerId3v2("WCOP","2.3+",Id3v2URLFrame.class,MediaProperty.URL_COPYRIGHT,false);
+registerId3v2("WCP","2.2.*",Id3v2URLFrame.class,MediaProperty.URL_COPYRIGHT,false);
 
-registerId3v2("WAS","*",Id3v2URLFrame.class,MediaProperty.URL_OFFICIALARTIST,false);
-registerId3v2("WOAR","*",Id3v2URLFrame.class,MediaProperty.URL_OFFICIALARTIST,false);
+registerId3v2("WAS","2.2.*",Id3v2URLFrame.class,MediaProperty.URL_OFFICIALARTIST,false);
+registerId3v2("WOAR","2.3+",Id3v2URLFrame.class,MediaProperty.URL_OFFICIALARTIST,false);
 
-registerId3v2("WAF","*",Id3v2URLFrame.class,MediaProperty.URL_OFFICIALAUDIOFILE,false);
-registerId3v2("WOAF","*",Id3v2URLFrame.class,MediaProperty.URL_OFFICIALAUDIOFILE,false);
+registerId3v2("WAF","2.2.*",Id3v2URLFrame.class,MediaProperty.URL_OFFICIALAUDIOFILE,false);
+registerId3v2("WOAF","2.3+",Id3v2URLFrame.class,MediaProperty.URL_OFFICIALAUDIOFILE,false);
 
-registerId3v2("WAS","*",Id3v2URLFrame.class,MediaProperty.URL_OFFICIALAUDIOSRC,false);
-registerId3v2("WOAS","*",Id3v2URLFrame.class,MediaProperty.URL_OFFICIALAUDIOSRC,false);
+registerId3v2("WAS","2.2.*",Id3v2URLFrame.class,MediaProperty.URL_OFFICIALAUDIOSRC,false);
+registerId3v2("WOAS","2.3+",Id3v2URLFrame.class,MediaProperty.URL_OFFICIALAUDIOSRC,false);
 
-registerId3v2("WORS","*",Id3v2URLFrame.class,MediaProperty.URL_OFFICIALINTERNETRADIOSTATION,false);
+registerId3v2("WORS","2.3+",Id3v2URLFrame.class,MediaProperty.URL_OFFICIALINTERNETRADIOSTATION,false);
 
-registerId3v2("WPAY","*",Id3v2URLFrame.class,MediaProperty.URL_PAYMENT,false);
+registerId3v2("WPAY","2.3+",Id3v2URLFrame.class,MediaProperty.URL_PAYMENT,false);
 
-registerId3v2("WPB","*",Id3v2URLFrame.class,MediaProperty.URL_PUBLISHER,false);
-registerId3v2("WPUB","*",Id3v2URLFrame.class,MediaProperty.URL_PUBLISHER,false);
+registerId3v2("WPB","2.2.*",Id3v2URLFrame.class,MediaProperty.URL_PUBLISHER,false);
+registerId3v2("WPUB","2.3+",Id3v2URLFrame.class,MediaProperty.URL_PUBLISHER,false);
 
-registerId3v2("WPB","*",Id3v2URLFrame.class,MediaProperty.URL_PUBLISHER,false);
-registerId3v2("WPUB","*",Id3v2URLFrame.class,MediaProperty.URL_PUBLISHER,false);
+registerId3v2("WPB","2.2.*",Id3v2URLFrame.class,MediaProperty.URL_PUBLISHER,false);
+registerId3v2("WPUB","2.3+",Id3v2URLFrame.class,MediaProperty.URL_PUBLISHER,false);
 
-registerId3v2("WXX","*",Id3v2TextMapFrame.class,MediaProperty.URL_USER,false);
-registerId3v2("WXXX","*",Id3v2TextMapFrame.class,MediaProperty.URL_USER,false);
+registerId3v2("WXX","2.2.*",Id3v2TextMapFrame.class,MediaProperty.URL_USER,false);
+registerId3v2("WXXX","2.3+",Id3v2TextMapFrame.class,MediaProperty.URL_USER,false);
 
-registerId3v2("TXX","*",Id3v2TextMapFrame.class,MediaProperty.USERTEXT);
-registerId3v2("TXXX","*",Id3v2TextMapFrame.class,MediaProperty.USERTEXT);
+registerId3v2("TXX","2.2.*",Id3v2TextMapFrame.class,MediaProperty.USERTEXT);
+registerId3v2("TXXX","2.3+",Id3v2TextMapFrame.class,MediaProperty.USERTEXT);
 
-registerId3v2("USER","*",Id3v2CommentFrame.class,MediaProperty.TERMSOFUSE);
+registerId3v2("USER","2.3+",Id3v2CommentFrame.class,MediaProperty.TERMSOFUSE);
 
 registerVorbis("DISCNUMBER",VorbisTextField.class,MediaProperty.VORBISFIELD_DISCNUMBER);
 registerVorbis("DISC",VorbisTextField.class,MediaProperty.VORBISFIELD_DISCNUMBER,true); //alt
@@ -373,6 +374,25 @@ registerVorbis("TOTALTRACKS",VorbisTextField.class,MediaProperty.VORBISFIELD_TRA
         }
         return null;
     }
+    // alternate: get frame config searching by property and tag version
+	public static Id3v2FrameConfig getId3v2FrameConfig(MediaProperty frameProperty,
+			Id3v2Tag targetTag) {
+		Id3v2FrameConfig match=null;
+        for(Id3v2FrameConfig cfg : id3v2Fields) {
+            if(cfg.frameProperty.equals(frameProperty) 
+                    && 0==VersionString.compareVersions(cfg.versionMatch,targetTag.getVersion())) {
+                if(match==null) {
+                	match=cfg;
+                } else {
+                	// TODO: make sure this should never happen because there aren't multiple ways to represent a property within ID3 tag
+                	// (or if this is allowed, handle better)
+                	targetTag.log(Level.SEVERE, "Internal error, can't decide how to represent property "+frameProperty+"("+match.frameID+", "+cfg.frameID+")");
+                	return null;
+                }
+            }
+        }
+        return match;
+	}
 
     public static String describeId3v2Support(MediaProperty p) {
         String supp="";

@@ -151,10 +151,8 @@ public class PropertySearchResults<PROPERTY extends Property> {
         		}
             }
         }
-    	if(this.isUnanimous()) {
-    		result+=System.lineSeparator();
-    	} else {
-            result+="}"+System.lineSeparator();
+    	if(!this.isUnanimous()) {
+            result+="}";
     	}
     	
     	return result;

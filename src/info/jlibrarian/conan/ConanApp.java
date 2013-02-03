@@ -70,7 +70,9 @@ public class ConanApp {
             				for(Entry<MediaProperty, PropertySearchResults<MediaProperty>> entry : entries) {
             					System.out.println(
             							StringUtils.lineWrap(
-            									StringUtils.stripControlCharacters(entry.getValue().toString()),80));
+            									StringUtils.stripControlCharacters(entry.getValue().toString())
+            							,80)
+            									);
             				}
         				}
     				} else {

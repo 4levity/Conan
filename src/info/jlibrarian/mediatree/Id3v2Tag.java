@@ -1,7 +1,9 @@
 package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.mediatree.Registry.Id3v2FrameConfig;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.specialtypes.Id3v2TagHeader;
+import info.jlibrarian.stringutils.StringUtils;
 import info.jlibrarian.stringutils.UnsynchronizingByteBuffer;
 import info.jlibrarian.stringutils.VersionString;
 
@@ -171,13 +173,30 @@ public class Id3v2Tag extends MediaTag {
 
     private boolean loadFrames(RandomAccessFile raf) throws IOException {
         FrameNode newFrame=null;
+        int expectedFrameIdLength = (VersionString.compareVersions("2.3+", originalHeader.getVersion())==0)?4:3;
         while(raf.getFilePointer()<(originalHeader.getTagOffset()+10+originalHeader.getTagSize())) {
             String frameId=Id3v2Frame.readFrameId(raf, this);
             if(frameId!=null) {
                 int frameSize=Id3v2Frame.readFrameSize(raf, this);
+                Registry.Id3v2FrameConfig fc=null;
+                if(expectedFrameIdLength==4 && frameId.length()==3) {
+                	// id3 v2.2.0 frame identifier stored in a 2.3+ tag
+                	// (pretty sure iTunes was to blame for this use case!)
+                    fc=Registry.getId3v2FrameConfig(frameId,"2.2.0");
+                	
+                	if(fc!=null) {
+                    	// try to convert to four char frame ID (look up by property)
+                    	Id3v2FrameConfig newConfig=Registry.getId3v2FrameConfig(fc.frameProperty,this);
+                		this.log(Level.WARNING, "Converting improper v2.2 frame ID \""+StringUtils.stripControlCharacters(frameId)+"\" to \""+newConfig.frameID+"\"");
+                		fc=newConfig;
+                	} else {
+                		this.log(Level.WARNING, "Failed to convert non-conforming frame ID \""+StringUtils.stripControlCharacters(frameId)+"\" to 4 char ID");
+                	}
+                } else {
+                    fc=Registry.getId3v2FrameConfig(frameId,
+                            originalHeader.getVersion());
 
-                Registry.Id3v2FrameConfig fc=Registry.getId3v2FrameConfig(frameId,
-                        originalHeader.getVersion());
+                }
                 
                 if(fc!=null) {
                     newFrame=loadSupportedFrame(fc,frameId,frameSize,raf);
@@ -198,11 +217,13 @@ public class Id3v2Tag extends MediaTag {
                     newFrame=new Id3v2RawFrame(MediaProperty.ID3V22UNKNOWNFRAME,this);
                     newFrame.load(frameId, frameSize,raf);
                 } else {
+                	// check for possibility of null-terminated ID3 V2.2.0 tag fields
+                	// stored in ID3 V2.3.0 format. I saw some iTunes 11 tags like this.
+                	
                     newFrame=new Id3v2RawFrame(MediaProperty.ID3V2UNKNOWNFRAME,this);
                     newFrame.load(frameId, frameSize,raf);
                 }
-                // TODO: need to be able to ignore frames
-                // when loading produces no useful info
+                // TODO: need to ignore or unload invalid/empty frames
             } else {
                 break;// TODO: handle padding measurement
             }

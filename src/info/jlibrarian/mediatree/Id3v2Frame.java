@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 
@@ -72,6 +73,10 @@ public abstract class Id3v2Frame extends FrameNode {
         return newString;
     }
 
+    /*
+     * will return either 3 or 4 character string
+     * may return 3 character string for id3 2.3+ tag if null-terminated possible old frameid seen
+     */
     static public String readFrameId(RandomAccessFile openFile,Id3v2Tag tag) throws IOException {
         int frameIdSize;
         if(VersionString.compareVersions(tag.getVersion(),"2.3.*") < 0)
@@ -91,6 +96,13 @@ public abstract class Id3v2Frame extends FrameNode {
         }
         if(!nonzero)
             return null;
+        
+        if(frameIdSize==4 && buf[3]==0x0) {
+        	// I saw some itunes tags marked as ID3 v2.3.0, but using 
+        	// null-terminated three character tag names from v2.2.0
+        	// if we see this, we'll try and convert to a usable string.
+        	return tag.convertId3v2FrameID(Arrays.copyOf(buf, 3));
+        }
         
         return tag.convertId3v2FrameID(buf);
     }
