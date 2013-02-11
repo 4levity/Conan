@@ -60,4 +60,10 @@ public class Id3v2TextMapFrame extends Id3v2Frame {
 		// TODO: don't just reload frame, regnerate it
 		bb.put(this.reload());
 	}
+
+	@Override
+	public void setValue(Object o) {
+		// instance must encapsulate a StringMap
+		this.stringMap=(StringMap)this.convertObject(o);
+	}
 }

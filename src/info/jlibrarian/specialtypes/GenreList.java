@@ -1,10 +1,10 @@
 package info.jlibrarian.specialtypes; /* Project (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.stringutils.SettableFromString;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import info.jlibrarian.stringutils.SettableFromString;
 
 /*
  * represents a list of music genres consisting of 0 or more ID3v1 genre IDs and 0 or more custom genre strings 
@@ -267,7 +267,6 @@ public class GenreList extends ArrayList<String> implements SettableFromString {
 			}
 		}
 		return result+"]";
-	}
-	
+	}	
 	
 }

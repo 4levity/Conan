@@ -51,7 +51,6 @@ public abstract class Id3v2Frame extends FrameNode {
         }
         return frameSize;
     }
-
     public String encode(int encodingType,byte[] raw) {
         String newString=null;
         try {
@@ -189,8 +188,9 @@ public abstract class Id3v2Frame extends FrameNode {
             this.nonDefaultFlags=flags;
         
         if(dataLength<1) {
-        	log(Level.SEVERE,"invalid id3v2 frame size at "
-                    +Long.toHexString(this.offset) );
+        	// empty frame
+//        	log(Level.SEVERE,"invalid id3v2 frame size at "
+//                    +Long.toHexString(this.offset) );
             return null;
         }
 
@@ -212,9 +212,21 @@ public abstract class Id3v2Frame extends FrameNode {
         }
         return rawFrameData;
     }
-	abstract protected void generateFrameData(ResizingByteBuffer bb) throws FileNotFoundException, IOException;
-		//bb.put(this.reload());
-    public void generateFullFrame(ResizingByteBuffer bb) throws FileNotFoundException, IOException {
+
+    /*
+     * generateFrameData: default behavior is just to reload frame from source.
+     * 
+
+	protected void generateFrameData(ResizingByteBuffer bb)
+			throws FileNotFoundException, IOException {
+		bb.put(this.reload());
+	}
+
+     */
+    abstract protected void generateFrameData(ResizingByteBuffer bb)
+			throws FileNotFoundException, IOException;
+
+	public void generateFullFrame(ResizingByteBuffer bb) throws FileNotFoundException, IOException {
 		ResizingByteBuffer frameData;
 
 		byte[] fid;

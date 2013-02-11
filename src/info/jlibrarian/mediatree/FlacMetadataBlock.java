@@ -23,7 +23,13 @@ public class FlacMetadataBlock extends MediaTag {
     @Override
     public MediaTag load(RandomAccessFile raf, String versions) 
             throws IOException {
+        if(raf.length()<42) {
+        	// definitely not FLAC
+        	return null;
+        }
+        
         byte b[]=new byte[4];
+        raf.seek(0L);
         MediaFileUtil.read_sure(raf,b);
         if(!(new String(b,"US-ASCII")).equals("fLaC")) {
             return null; // no flac file header

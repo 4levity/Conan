@@ -77,7 +77,7 @@ public class VorbisCommentBlock extends MediaTag {
             if(cfg != null) {
                 this.loadSupportedField(cfg, fieldId, valueLength, raf);
             } else {
-                newField=new VorbisRawField(MediaProperty.VORBISFIELD_UNKNOWN,this);
+                newField=new VorbisTextField(MediaProperty.VORBISFIELD_UNKNOWN,this);
                 newField.load(fieldId, valueLength , raf);                
             }
             

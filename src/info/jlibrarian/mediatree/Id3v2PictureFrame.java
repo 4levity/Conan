@@ -103,4 +103,10 @@ public class Id3v2PictureFrame extends Id3v2Frame {
 	public Object getValue() {
 		return this.embeddedImageLink;
 	}
+
+	@Override
+	public void setValue(Object o) {
+		// instance must encapsulate a FileMetadata
+		this.embeddedImageLink=(FileMetadata) this.convertObject(o);
+	}
 }

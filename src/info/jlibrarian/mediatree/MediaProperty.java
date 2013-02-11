@@ -31,7 +31,7 @@ public enum MediaProperty implements Property {
     ID3V24TAG ("ID3 v2.4 Tag",MediaProperty.ID3V2TAG),
     ID3V2XTAG ("ID3 v2.5+ Tag (untested)",MediaProperty.ID3V2TAG),
 
-// generic media properties..
+// general music/media properties..
     ALBUM ("Album",String.class,true),
     ALBUM_SORTORDER ("Album sort order",String.class,true),
     ALBUMARTIST ("Album artist",String.class,true),
@@ -52,7 +52,7 @@ public enum MediaProperty implements Property {
     ENCODEDBY ("Encoded by",String.class,true),
     ENCODER ("Encoder/settings",String.class,true),
     FILEOWNER ("File owner",String.class,true),
-    GENRES ("Genre",GenreList.class,true),
+    GENRES ("Genre or genres",GenreList.class,true),
     INITIALKEY ("Initial key",String.class,true),
     INTERNETRADIOSTATION_NAME ("Internet radio station name",String.class,true),
     INTERNETRADIOSTATION_OWNER ("Internet radio station owner",String.class,true),
@@ -89,9 +89,6 @@ public enum MediaProperty implements Property {
     URL_USER ("User URL map",StringMap.class,true),
     USERTEXT ("User text",StringMap.class,true),
 
-// generic Vorbis Comment fields..
-    VORBISFIELD_UNKNOWN ("Unknown Vorbis Comment",String.class),
-
 // Vorbis-specific fields.. 
     VORBISFIELD_ENCODERSOFTWARE ("Vorbis field/Encoder software",String.class,true),
     VORBISFIELD_ENCODERSETTINGS ("Vorbis field/Encoder settings",String.class,true),
@@ -99,6 +96,10 @@ public enum MediaProperty implements Property {
     VORBISFIELD_TRACKTOTAL ("Vorbis field/Track total",Integer.class,true),
     VORBISFIELD_DISCNUMBER ("Vorbis field/Disc number",Integer.class,true),
     VORBISFIELD_DISCTOTAL ("Vorbis field/Disc total",Integer.class,true),
+    VORBISFIELD_DATE ("Vorbis field/Date",VariablePrecisionTime.class,true),
+
+ // generic Vorbis Comment fields..
+    VORBISFIELD_UNKNOWN ("Unknown Vorbis Comment",String.class),
 
 // Id3v2-specific frame types..
     ID3_YEAR ("ID3 year (YYYY)",VariablePrecisionTime.class,true),

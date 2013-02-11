@@ -74,8 +74,7 @@ public class VariablePrecisionTime implements SettableFromString {
      */
     private boolean setIso8601Date(String s) {
     	for(Precision p : Precision.values()) {
-    		// TODO: this works, but need to find out if it is Java defined behavior or not
-    		// I am depending on the iteration order of the enum here.
+    		// depending on the iteration order of the enum here (should be declaration order)
     		if(s.length()>=p.expectedStringLength) {
             	if(s.substring(0, p.expectedStringLength).matches(p.regex)) {
             		if(s.length()>( p.expectedStringLength+1 )) {
@@ -194,6 +193,9 @@ public class VariablePrecisionTime implements SettableFromString {
 		}
 		if(p.compareTo(Precision.SECOND)<=0) {
 			s+=String.format(":%02d", second);
+		}
+		if(this.extraData!=null) {
+			s+=" "+this.extraData;
 		}
 		return s;
 	}

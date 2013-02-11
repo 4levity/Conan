@@ -195,7 +195,7 @@ registerId3v2("TFLT","2.3+",Id3v2TextFrame.class,MediaProperty.ID3V2_FILETYPE,fa
  * 
  * Solution for now:
  * 		- Every ID3v2 tag gets a virtual recording date and release date field
- * 		- 
+ * 		- behavior of these fields will be configurable
  */
 
 registerId3v2("TYE","2.2.*", Id3v2TextFrame.class,MediaProperty.ID3_YEAR,false);
@@ -214,12 +214,15 @@ registerId3v2("TDRC","2.4+",Id3v2TextFrame.class,MediaProperty.ID3V2_RECORDINGDA
 registerId3v2("TDRL","2.4+",Id3v2TextFrame.class,MediaProperty.ID3V2_RELEASEDATE,false);
 registerId3v2("TDOR","2.4+",Id3v2TextFrame.class,MediaProperty.ID3V2_ORIGINALDATE,false);
 
+registerVorbis("DATE",VorbisTextField.class,MediaProperty.VORBISFIELD_DATE);
 
 /*
  * Content type fields 
- */
+ * 
+ */ 
 registerId3v2("TCO","2.2.*",Id3v2TextFrame.class,MediaProperty.GENRES,false);
 registerId3v2("TCON","2.3+",Id3v2TextFrame.class,MediaProperty.GENRES,false);
+// TODO: Vorbis
 
 registerId3v2("TSI","2.2.*",Id3v2TextFrame.class,MediaProperty.ID3V2_SIZEINFO,false);
 registerId3v2("TSIZ","2.3.*",Id3v2TextFrame.class,MediaProperty.ID3V2_SIZEINFO,false);

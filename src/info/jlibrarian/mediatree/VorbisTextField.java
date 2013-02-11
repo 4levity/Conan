@@ -49,5 +49,10 @@ public class VorbisTextField extends VorbisField {
         }
         return i;
     }
+
+	@Override
+	public void setValue(Object o) {
+		this.string=this.convertObject(o).toString();
+	}
     
 }

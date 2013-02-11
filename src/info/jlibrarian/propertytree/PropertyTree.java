@@ -251,6 +251,10 @@ public abstract class PropertyTree<PROPERTY extends Property> {
     }
 
     public Object convertObject(Object o) {
+    	if(o==null) {
+    		return null;
+    	}
+    	
     	Class<?> targetType = this.property.getDataType();
         if(targetType.equals(Long.class) 
                 && String.class.isAssignableFrom(o.getClass()) ) {

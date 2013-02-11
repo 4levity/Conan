@@ -6,9 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class VorbisRawField extends VorbisField {
-
+	
     public VorbisRawField(MediaProperty property, PropertyTree<MediaProperty> parent) {
         super(property, parent);
+		throw new UnsupportedOperationException("VorbisRawField deprecated");
     }
 
     @Override
@@ -17,6 +18,7 @@ public class VorbisRawField extends VorbisField {
         
         try {
             obj=reload();
+    		throw new UnsupportedOperationException("VorbisRawField deprecated");
         } catch (FileNotFoundException ex) {
             obj=null; ex.printStackTrace(); // todo: log
         } catch (IOException ex) {
@@ -27,7 +29,13 @@ public class VorbisRawField extends VorbisField {
 
     @Override
     public String toString() {
-        return "raw frame, "+this.dataLength+" bytes";
+		throw new UnsupportedOperationException("VorbisRawField deprecated");
+//        return "raw frame, "+this.dataLength+" bytes";
     }
+
+	@Override
+	public void setValue(Object o) {
+		throw new UnsupportedOperationException("VorbisRawField deprecated");
+	}
 
 }

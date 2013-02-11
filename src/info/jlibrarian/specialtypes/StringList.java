@@ -34,7 +34,7 @@ public class StringList implements SettableFromString {
 		if(strings==null) {
 			return "(null)";
 		} //else
-		return strings[0];
+		return toString("/");
 	}
 	
 	// return all strings separated by specified separator

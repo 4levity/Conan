@@ -80,9 +80,11 @@ public abstract class FrameNode extends PropertyTree<MediaProperty>
         }
         return description;
    }
-
+/*
     @Override
     public void setValue(Object o) {
-        throw new UnsupportedOperationException("Frame is not settable.");
+    	// subclasses should define this behavior if they will be settable
+        throw new UnsupportedOperationException("Internal error: Frame is not inherently settable.");
     }
+    */
 }

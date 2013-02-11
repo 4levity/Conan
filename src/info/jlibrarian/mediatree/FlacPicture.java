@@ -71,5 +71,11 @@ public class FlacPicture extends FrameNode {
 	public Object getValue() {
 		return this.embeddedImageLink;
 	}
+
+	@Override
+	public void setValue(Object o) {
+		// instance must encapsulate a FileMetadata
+		this.embeddedImageLink=(FileMetadata) this.convertObject(o);
+	}
 	
 }

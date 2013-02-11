@@ -1,12 +1,11 @@
 package info.jlibrarian.stringutils; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 import java.util.Arrays;
-
 public class ResizingByteBuffer {
 	protected byte[] buf;
 	protected int index;
 	protected int initialCapacity;
-	
+
 	protected void _allocate(int cap) {
 		initialCapacity=cap;
 		buf=new byte[cap];
@@ -19,6 +18,11 @@ public class ResizingByteBuffer {
 	
 	public ResizingByteBuffer() {
 		_allocate(1024);
+	}
+	
+	public ResizingByteBuffer(byte[] bytes) {
+		_allocate(bytes.length);
+		put(bytes);
 	}
 
 	protected void _reallocate(int newCapacity) {
