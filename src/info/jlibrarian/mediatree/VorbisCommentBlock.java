@@ -121,4 +121,9 @@ public class VorbisCommentBlock extends MediaTag {
 	public byte[] generate(int targetLength, int preferredPadding) {
 		return new byte[0];
 	}
+
+	@Override
+	public String describeNode() {
+		return "[VCB]";
+	}
 }

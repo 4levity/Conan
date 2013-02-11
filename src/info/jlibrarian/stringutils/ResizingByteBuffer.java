@@ -2,26 +2,26 @@ package info.jlibrarian.stringutils; /* Original source code (c) 2013 C. Ivan Co
 
 import java.util.Arrays;
 
-public class AutoAllocatingByteBuffer {
+public class ResizingByteBuffer {
 	protected byte[] buf;
 	protected int index;
-	private int initialCapacity;
+	protected int initialCapacity;
 	
-	private void _allocate(int cap) {
+	protected void _allocate(int cap) {
 		initialCapacity=cap;
 		buf=new byte[cap];
 		index=0;
 	}
 	
-	public AutoAllocatingByteBuffer(int cap) {
+	public ResizingByteBuffer(int cap) {
 		_allocate(cap);
 	}
 	
-	public AutoAllocatingByteBuffer() {
+	public ResizingByteBuffer() {
 		_allocate(1024);
 	}
 
-	private void _reallocate(int newCapacity) {
+	protected void _reallocate(int newCapacity) {
 		buf = Arrays.copyOf(buf, newCapacity);
 	}
 	
@@ -42,21 +42,21 @@ public class AutoAllocatingByteBuffer {
 		ensureSpaceFor(index+add);
 	}
 	
-	public AutoAllocatingByteBuffer compact() {
+	public ResizingByteBuffer compact() {
 		if (this.index != this.buf.length)
 			this.buf = Arrays.copyOf(this.buf, this.index);
 		
 		return this;
 	}
 	
-	public AutoAllocatingByteBuffer put(byte b) {
+	public ResizingByteBuffer put(byte b) {
 		makeRoom(1);
 		this.buf[this.index]=b;
 		this.index++;
 		return this;
 	}
 
-	public AutoAllocatingByteBuffer put(byte[] bs,int start,int end) {
+	public ResizingByteBuffer put(byte[] bs,int start,int end) {
 		if(bs == null)
 			return this;
 		if(start<0 || end>bs.length || end<start)
@@ -71,21 +71,21 @@ public class AutoAllocatingByteBuffer {
 		return this;
 	}
 
-	public AutoAllocatingByteBuffer put(byte[] bs) {
+	public ResizingByteBuffer put(byte[] bs) {
 		put(bs,0,bs.length);
 		return this;
 	}
 	
-	public AutoAllocatingByteBuffer put(AutoAllocatingByteBuffer frameData) {
+	public ResizingByteBuffer put(ResizingByteBuffer frameData) {
 		put(frameData.getBuffer(),0,frameData.getLength());
 		return this;
 	}
 
-	public AutoAllocatingByteBuffer put(char c) {
+	public ResizingByteBuffer put(char c) {
 		return put((byte)c);
 	}
 
-	public AutoAllocatingByteBuffer put(int i) {
+	public ResizingByteBuffer put(int i) {
 		return put((byte)i);
 	}
 
@@ -121,7 +121,7 @@ public class AutoAllocatingByteBuffer {
 		return Arrays.copyOfRange(buf, from, to);
 	}
 
-	public AutoAllocatingByteBuffer setLength(int targetLength) {
+	public ResizingByteBuffer setLength(int targetLength) {
 		if(targetLength>buf.length) {
 			buf = Arrays.copyOf(buf, targetLength);
 		}
@@ -130,7 +130,7 @@ public class AutoAllocatingByteBuffer {
 	}
 
 
-	public AutoAllocatingByteBuffer setRange(int destination, byte[] newData) {
+	public ResizingByteBuffer setRange(int destination, byte[] newData) {
 		if(newData == null)
 			return this;
 		
@@ -145,7 +145,7 @@ public class AutoAllocatingByteBuffer {
 		return this;
 	}
 
-	public AutoAllocatingByteBuffer fill(int numBytes, byte b) {
+	public ResizingByteBuffer fill(int numBytes, byte b) {
 		for(;numBytes>0;numBytes--) {
 			this.put(b);
 		}

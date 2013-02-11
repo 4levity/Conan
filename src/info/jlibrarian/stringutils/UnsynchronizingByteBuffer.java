@@ -1,7 +1,7 @@
 package info.jlibrarian.stringutils; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 
-public class UnsynchronizingByteBuffer extends AutoAllocatingByteBuffer {
+public class UnsynchronizingByteBuffer extends ResizingByteBuffer {
 	int numBytesPut=0;
 
 	@Override
@@ -27,7 +27,7 @@ public class UnsynchronizingByteBuffer extends AutoAllocatingByteBuffer {
 	}
 
 	@Override
-	public AutoAllocatingByteBuffer put(byte b) {
+	public ResizingByteBuffer put(byte b) {
 		this.numBytesPut ++;
 		
 		if(this.unsynchronizingEnabledOffset>0 && (this.index >= this.unsynchronizingEnabledOffset) && ( ((b & 0xE0) != 0) || (b == 0) )) {
@@ -46,7 +46,7 @@ public class UnsynchronizingByteBuffer extends AutoAllocatingByteBuffer {
 	}
 
 	@Override
-	public AutoAllocatingByteBuffer put(byte[] bs,int start,int end) {
+	public ResizingByteBuffer put(byte[] bs,int start,int end) {
 		if(bs == null)
 			return this;
 		if(start<0 || end>bs.length || end<start)

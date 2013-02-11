@@ -17,7 +17,6 @@ import java.util.logging.Level;
 // this class should be just a container for header fields
 
 public class Id3v2TagHeader {
-    boolean loaded=false;
     String version=null;
     Long tagSize=null; // including the extended header
     Long tagOffset=null; // position in file
@@ -38,8 +37,6 @@ public class Id3v2TagHeader {
     public boolean load(RandomAccessFile f,PropertyTree<MediaProperty> owner) 
             throws IOException {        
 
-        loaded=false;
-        
         byte id3v2Header[]=new byte[10];
 
         f.seek(0L);
@@ -102,7 +99,6 @@ public class Id3v2TagHeader {
             	return false;
             this.totalExtendedHeaderSize = (int)(f.getFilePointer() - this.tagOffset) - 10;
         }
-        loaded=true;
         return true;
     }
 
@@ -350,10 +346,6 @@ public class Id3v2TagHeader {
     public String toString() {
         return "Id3v2Tag version "+version+" ("+tagSize+" bytes at offset "+tagOffset+")";
     }
-
-	public boolean isLoaded() {
-		return loaded;
-	}
 
 	public String getVersion() {
 		return version;

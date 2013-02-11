@@ -72,11 +72,12 @@ public abstract class FrameNode extends PropertyTree<MediaProperty>
     @Override
     public String describeNode() {
         String description="Frame:"+this.frameIdentifier;
-//      +(offset==null?"":" from offset="+Long.toHexString(offset)+")");
-/*        Object val=this.getValue();
+        Object val=this.getValue();
         if(val!=null) {
-            description+="="+this.getValue().toString();
-        }*/
+        	if(val.getClass()==String.class) {
+        		description+="="+String.format("%.15s", val);
+        	}
+        }
         return description;
    }
 

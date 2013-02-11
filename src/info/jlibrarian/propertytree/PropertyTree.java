@@ -1,8 +1,11 @@
 package info.jlibrarian.propertytree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.stringutils.SettableFromString;
 import info.jlibrarian.stringutils.StringUtils;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -265,6 +268,34 @@ public abstract class PropertyTree<PROPERTY extends Property> {
                 o=new Integer(Integer.parseInt(o.toString()));
             } catch (NumberFormatException ex) {
             	log(Level.WARNING,"String to Integer conversion failed on "+o.toString());
+                return null;
+            }
+        } else if(SettableFromString.class.isAssignableFrom(targetType)
+        		&& String.class.isAssignableFrom(o.getClass()) ) {
+        	SettableFromString sfs=null;
+            try {
+                @SuppressWarnings("unchecked")
+				Constructor<? extends SettableFromString> cons = (Constructor<? extends SettableFromString>) targetType.getConstructor();
+                if (cons != null) {
+                    sfs = cons.newInstance();
+                }
+            } catch (NoSuchMethodException ex) {
+                ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
+            } catch (SecurityException ex) {
+                ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
+            } catch (InstantiationException ex) {
+                ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
+            } catch (IllegalAccessException ex) {
+                ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
+            } catch (IllegalArgumentException ex) {
+                 ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
+            } catch (InvocationTargetException ex) {
+                ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
+            }
+            if(sfs.setFromString((String)o)) {
+            	return sfs;
+            } else {
+            	log(Level.WARNING,"String to "+targetType.getSimpleName()+" conversion failed on "+o.toString());
                 return null;
             }
         } else if(!targetType.isAssignableFrom(o.getClass())) {

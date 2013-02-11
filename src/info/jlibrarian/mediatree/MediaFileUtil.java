@@ -84,13 +84,19 @@ public class MediaFileUtil {
             return arg0.getShortName().compareTo(arg1.getShortName());
         }
     }
-    public static String supportReport() {
+    public static String supportReport(boolean abbrev) {
         ArrayList<MediaProperty> props= new ArrayList<MediaProperty>();
         for(MediaProperty p : MediaProperty.values() ) {
             props.add(p);
         }
         Collections.sort(props, new Sorter());
-        String fmt="%-40.40s|%-43.43s|%-20.20s|%-25.25s|%-33.33s\n";
+        String fmt;
+        if(abbrev) {
+        	fmt="%-40.40s|%-38.38s\n";
+        } else {
+        	fmt="%-40.40s|%-43.43s|%-20.20s|%-25.25s|%-33.33s\n";
+        }
+        
         String r=String.format(fmt,"Property","Description","Data type","Id3v2 field(s)","Vorbis field(s)");
         for(MediaProperty p : props ) {
             r+=String.format(fmt,

@@ -1,5 +1,6 @@
 package info.jlibrarian.conan;
 
+import info.jlibrarian.mediatree.MediaFileUtil;
 import info.jlibrarian.mediatree.MediaFolder;
 import info.jlibrarian.mediatree.MediaProperty;
 import info.jlibrarian.propertytree.PropertySearchResults;
@@ -125,11 +126,13 @@ public class ConanApp {
 		System.out.println("       set the logging verbosity. LEVEL can be INFO (show everything), WARNING,");
 		System.out.println("       or SEVERE (only show major issues).");
 		System.out.println("");
-		System.out.println("list of properties:");
-		for(MediaProperty m : MediaProperty.values()) {
-			System.out.println(m.getShortName()+ " - " + m.getDescription());
-		}
-		System.out.println("");
 		
+/*		System.out.println("list of properties:");
+ 		for(MediaProperty m : MediaProperty.values()) {
+			System.out.println(m.getShortName()+ " - " + m.getDescription());
+		}*/
+		System.out.println(MediaFileUtil.supportReport(true));		
 	}
 }
+
+// TODO: javadoc this whole project

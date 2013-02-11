@@ -7,20 +7,22 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * represent a list of languages (as for id3v2 TLAN tag)
+ * represent a list of languages (as for id3v2 TLAN tag) 
+ * as a HashSet of native Locale objects
  * 
- * also contains static function for handling language code conversion
+ * also contains static function for handling language code conversion 
+ * for ISO 639-2 / ISO 639-1
  * 
  * throws UnsupportedEncodingException throughout - should catch to define behavior
  * 
  * @author ivan
  */
-public class Iso639_2_LocaleSet extends HashSet<Locale> implements Set<Locale> {
+public class LocaleSet extends HashSet<Locale> implements Set<Locale> {
 	static HashMap<String,String> iso639_2to1;
 	static {
 		// TODO: correct and complete list
-		/* allow conversion both ways between ISO 639-2 (id3) to Java Locale 2/3 char codes
-		 * java will allow 3 character iso 639-2 codes in cases where 2 character code is not available
+		/* should allow conversion both ways between ISO 639-2 (id3) to Java Locale 2/3 char codes
+		 * (java uses 3 character iso 639-2 codes in cases where 2 character code is not available)
 		 */
 		iso639_2to1=new HashMap<String,String>();
 		iso639_2to1.put("aar","aa");
@@ -168,13 +170,14 @@ public class Iso639_2_LocaleSet extends HashSet<Locale> implements Set<Locale> {
 	}
 	private static final long serialVersionUID = 5208601891396446456L;
 
-	public Iso639_2_LocaleSet(String threeCharCode) throws UnsupportedEncodingException {
+	public LocaleSet(String threeCharCode) throws UnsupportedEncodingException {
         super();
-        add(new Locale(Iso639_2_LocaleSet.iso639_2_to_iso639_1(threeCharCode)));
+        add(new Locale(LocaleSet.iso639_2_to_iso639_1(threeCharCode)));
     }
 
     public boolean add(String threeCharCode) throws UnsupportedEncodingException {
-        return super.add(new Locale(Iso639_2_LocaleSet.iso639_2_to_iso639_1(threeCharCode)));
+    	// TODO: also accept two character codes, full names of languages, etc
+        return super.add(new Locale(LocaleSet.iso639_2_to_iso639_1(threeCharCode)));
     }
     
     static public String iso639_2_to_iso639_1(String threeCharCode) throws UnsupportedEncodingException {

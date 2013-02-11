@@ -18,6 +18,13 @@ import java.util.logging.Level;
  *
  * @author ivan
  */
+
+// TODO: implement mp3 structure, Xing/VBRI headers, length/bitrate analysis
+// TODO: implement id3v1 tag
+// TODO: implement APE tag
+// TODO: implement Lyrics3 tag
+// TODO: detect MusicMatch tag
+
 public class Registry {
     private static HashMap<String,FileType> fileTypes=new HashMap<String,FileType>();
     private static ArrayList<Id3v2FrameConfig> id3v2Fields=new ArrayList<Id3v2FrameConfig>();
@@ -34,7 +41,7 @@ public class Registry {
  * all file name extensions are converted to lower case.
  */
 fileTypes.put("flac",new FileType(MediaFile.class,MediaProperty.AUDIOFILE)
-                            .addTagConfig(FlacMetadataTag.class,MediaProperty.FLACMETADATATAG,null));
+                            .addTagConfig(FlacMetadataBlock.class,MediaProperty.FLACMETADATA,null));
 fileTypes.put("mp3", new FileType(MediaFile.class,MediaProperty.AUDIOFILE)
                             .addTagConfig(Id3v2Tag.class,MediaProperty.ID3V22TAG,"2.2.*")
                             .addTagConfig(Id3v2Tag.class,MediaProperty.ID3V23TAG,"2.3.*")
@@ -95,8 +102,8 @@ registerId3v2("TCOP","2.3+",Id3v2TextFrame.class,MediaProperty.COPYRIGHTMESSAGE,
 registerId3v2("TCR","2.2.*",Id3v2TextFrame.class,MediaProperty.COPYRIGHTMESSAGE,false);
 registerVorbis("COPYRIGHT",VorbisTextField.class,MediaProperty.COPYRIGHTMESSAGE);
 
-registerId3v2("TPA","2.2.*",Id3v2SequenceFrame.class,MediaProperty.DISC_SEQUENCE,false);
-registerId3v2("TPOS","2.3+",Id3v2SequenceFrame.class,MediaProperty.DISC_SEQUENCE,false);
+registerId3v2("TPA","2.2.*",Id3v2TextFrame.class,MediaProperty.DISC_SEQUENCE,false);
+registerId3v2("TPOS","2.3+",Id3v2TextFrame.class,MediaProperty.DISC_SEQUENCE,false);
 
 registerId3v2("TSST","2.4+",Id3v2TextFrame.class,MediaProperty.DISCSUBTITLE,false);
 registerVorbis("DISCSUBTITLE",VorbisTextField.class,MediaProperty.DISCSUBTITLE);
@@ -117,8 +124,102 @@ registerId3v2("TOWN","2.3+",Id3v2TextFrame.class,MediaProperty.FILEOWNER,false);
 
 registerId3v2("TFLT","2.3+",Id3v2TextFrame.class,MediaProperty.ID3V2_FILETYPE,false);
 
+/* On "date" fields: The concept of "Recording Year" is different than "Release Year". So what?
+ *  
+ * ID3v1 specifies a 4 digit "year" which seems to have been generally used as "release year".
+ * 
+ * ID3v2.2.0 specifies frame "TYE" which is "year of the recording" and generally used for "release year."
+ * 		Another frame TRD is labeled as "recording dates" and meant as a "complement to" TYE, implying
+ * 		that TYE is actually meant to be recording year. Another frame TOR specifies the "Original Release 
+ * 		Year" (as in a cover song) but there is no frame specifically meant for release year. It appears
+ * 		that most tags use TYE to represent release year.
+ *
+ * ID3v2.3.0 has new frameIDs TYER (TYE), TRDA (TRD), TORY (TOR) etc and defines them similarly to 2.2.0.
+ * 		There is still no frame for release year and it seems to me that it is still common practice to 
+ * 		use TYER for release year.
+ * 		
+ * The ID3v2.4.0 spec states that the new frame TDRC "Recording date" replaces TYER.  It also introduces 
+ * 		another new frame TDRL "release date" (finally!). However, many tags converted from older 
+ * 		versions of ID3 would have the release year stored in ID3V1-Year, TYE or TYER frames originally. So 
+ * 		after conversion they would have the release date in TDRC instead of TDRL. I am not sure how many 
+ * 		people are using the new "release date" field but I have definitely	seen plenty of example 2.4 tags 
+ * 		where TDRC "recording date" is used to store the release date, and TDRL "release date" is not used.
+ *  
+ * Vorbis Comment (FLAC/Vorbis) spec provides suggestions/recommendations for field names and contents. One
+ * 		fairly universal field is "DATE". This field may be repeated multiple times but usually it is not.
+ * 		It consists of an ISO 8601 date optionally followed by a space and additional text. The additional
+ * 		text indicates the meaning of the date, e.g. "2004-01-21 released" or "2003-11-13 (recorded date)"
+ *		If no qualifier is given after the date, on
+ * 
+ * In order to do high-level processing of the tag data and convert tags between formats, Conan needs to 
+ * associate each value or set of values with a particular property - for instance, if TYER=2004, Conan 
+ * needs to know whether that is the "recording date" as the ID3v2 spec would imply, or the release date
+ * as one might reasonably assume based on common usage (unless the recording has not been released).
+ * 
+ * The question therefore is, when interpreting tag data from any combination of the above tags, how 
+ * should it be internally represented? NOTE: Probably needs to be user configurable. Options:
+ * 
+ * 1. "Specs-compliant": Release date is not available in ID3v2.2/2.3 (can be custom frame or 
+ * 		comment). ID3v1 year and VorbisComment DATE (no qualifier present) are interpreted 
+ * 		as release year. In ID3v2.4, use TDRL for release year. Writing FLAC, include the 
+ * 		"release" qualifier after the date when writing release year as DATE.
+ * 
+ * 		PRO: compliant/compatible with standard tagging specs
+ * 		CON: I think most people/programs use TYE/TYER to mean release date, so interpreting it as 
+ * 			recording date in existing files is very likely to result in factually incorrect reads.
+ * 			also this means release date cannot be written to ID3v2.2/2.3 without using custom
+ * 			fields or just putting it in a comment.
+ *
+ * 2. "TYE/TYER are release date": Follow the specs as above, except on ID3v2.2/v2.3, interpret the 
+ * 		TYE/TYER dates (and associated frames) to mean "Release Date" instead of "Recording
+ * 		date" and pretend that these tag versions don't actually have frames for recording date.
+ * 		But in ID3v2.4 use the specified frames (TDRC=recording, TDRL=release).  
+ * 
+ * 		PRO: Tags created by compliant 2.4 readers will be interpreted correctly. But normal
+ * 			behavior of using TYE/TYER for release date in 2.2/2.3 is respected.
+ * 		CON: not compliant with 2.2/2.3 spec. Tags upconverted to 2.4 by compliant 2.4 taggers
+ * 			will sometimes be misinterpreted since TDRC will contain release date.  
+ * 
+ * 3. "TYE/TYER is release date, TDRC might be": In ALL ID3v2 versions, interpret the frames 
+ * 		TYE/TYER/TDRC as release date (common usage), although the spec says otherwise. Except in 
+ * 		ID3v2.4 if BOTH the TDRC and TDRL frames are present and have different values, or if the tag
+ * 		was created by Conan, interpret according to spec. If writing v2.4, use TDRL for release date.
+ * 
+ * 		PRO: Simple approach that reflects expected behavior by 80-90% of users that there is
+ * 			just one date associated with each track. Tags converted to 2.4 or created in compliant
+ * 			2.4 taggers will be interpreted correctly*.
+ * 		CON: not compliant with any ID3v2 spec. *=if a file is tagged with recording date only and
+ * 			no release date in v2.4, Conan will assume it was mistagged due to upconversion and
+ * 			will interpret the date as a release date.
+ *
+ * 
+ * Solution for now:
+ * 		- Every ID3v2 tag gets a virtual recording date and release date field
+ * 		- 
+ */
+
+registerId3v2("TYE","2.2.*", Id3v2TextFrame.class,MediaProperty.ID3_YEAR,false);
+registerId3v2("TYER","2.3+", Id3v2TextFrame.class,MediaProperty.ID3_YEAR,false);
+registerId3v2("TDA","2.2.*",Id3v2TextFrame.class,MediaProperty.ID3V2_DATE,false);
+registerId3v2("TDAT","2.3+",Id3v2TextFrame.class,MediaProperty.ID3V2_DATE,false);
+registerId3v2("TIM","2.2.*",Id3v2TextFrame.class,MediaProperty.ID3V2_TIME,false);
+registerId3v2("TIME","2.3+",Id3v2TextFrame.class,MediaProperty.ID3V2_TIME,false);
 registerId3v2("TRD","2.2.*",Id3v2TextFrame.class,MediaProperty.ID3V2_RECORDINGDATES,false);
-registerId3v2("TRDA","2.3.*",Id3v2TextFrame.class,MediaProperty.ID3V2_RECORDINGDATES,false);
+registerId3v2("TRDA","2.3+",Id3v2TextFrame.class,MediaProperty.ID3V2_RECORDINGDATES,false);
+
+registerId3v2("TOR","2.2.*",Id3v2TextFrame.class,MediaProperty.ID3V2_ORIGINALYEAR,false);
+registerId3v2("TORY","2.3+",Id3v2TextFrame.class,MediaProperty.ID3V2_ORIGINALYEAR,false);
+
+registerId3v2("TDRC","2.4+",Id3v2TextFrame.class,MediaProperty.ID3V2_RECORDINGDATE,false);
+registerId3v2("TDRL","2.4+",Id3v2TextFrame.class,MediaProperty.ID3V2_RELEASEDATE,false);
+registerId3v2("TDOR","2.4+",Id3v2TextFrame.class,MediaProperty.ID3V2_ORIGINALDATE,false);
+
+
+/*
+ * Content type fields 
+ */
+registerId3v2("TCO","2.2.*",Id3v2TextFrame.class,MediaProperty.GENRES,false);
+registerId3v2("TCON","2.3+",Id3v2TextFrame.class,MediaProperty.GENRES,false);
 
 registerId3v2("TSI","2.2.*",Id3v2TextFrame.class,MediaProperty.ID3V2_SIZEINFO,false);
 registerId3v2("TSIZ","2.3.*",Id3v2TextFrame.class,MediaProperty.ID3V2_SIZEINFO,false);
@@ -237,14 +338,17 @@ registerId3v2("TSOT","2.4+",Id3v2TextFrame.class,MediaProperty.TITLE_SORTORDER,f
 registerId3v2("XSOT","2.3.*",Id3v2TextFrame.class,MediaProperty.TITLE_SORTORDER,false);
 registerVorbis("TITLESORT",VorbisTextField.class,MediaProperty.TITLE_SORTORDER);
 
-registerId3v2("TRCK","2.3+",Id3v2SequenceFrame.class,MediaProperty.TRACK_SEQUENCE,false);
-registerId3v2("TRK","2.2.*",Id3v2SequenceFrame.class,MediaProperty.TRACK_SEQUENCE,false);
+registerId3v2("TRCK","2.3+",Id3v2TextFrame.class,MediaProperty.TRACK_SEQUENCE,false);
+registerId3v2("TRK","2.2.*",Id3v2TextFrame.class,MediaProperty.TRACK_SEQUENCE,false);
 // VorbisComment gets TRACK_SEQUENCE by instantiating a SequenceView child of the tag
 
 registerId3v2("TIT3","2.3+",Id3v2TextFrame.class,MediaProperty.TRACKSUBTITLE,false);
 registerId3v2("TT3","2.2.*",Id3v2TextFrame.class,MediaProperty.TRACKSUBTITLE,false);
 registerVorbis("SUBTITLE",VorbisTextField.class,MediaProperty.TRACKSUBTITLE);
 registerVorbis("VERSION",VorbisTextField.class,MediaProperty.TRACKSUBTITLE,true); // alt?
+
+//registerId3v2("DATE","2.2.*", Id3v2TextFrame.class,MediaProperty.RECORDINGDATE);
+// id3 gets recording date by instantiating a DateView child of the tag
 
 registerId3v2("WCM","2.2.*",Id3v2URLFrame.class,MediaProperty.URL_COMMERCIAL,false);
 registerId3v2("WCOM","2.3+",Id3v2URLFrame.class,MediaProperty.URL_COMMERCIAL,false);

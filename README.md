@@ -26,6 +26,8 @@ stringutils:
 Building
 ========
 
+developed mostly on openjdk 1.7 / Java SE 7
+
 build from Eclipse, or use ant
 
 build.xml is generated from Eclipse

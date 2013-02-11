@@ -42,8 +42,7 @@ public class Id3v2Tag extends MediaTag {
         // search for tag, load header info etc, set container value
         Id3v2TagHeader hdr;
         hdr=new Id3v2TagHeader();
-        hdr.load(raf,this);
-        if(hdr.isLoaded())
+        if(hdr.load(raf,this))
         {
             if(VersionString.compareVersions(hdr.getVersion(),versions)==0) {
                 originalHeader=hdr;
@@ -179,6 +178,7 @@ public class Id3v2Tag extends MediaTag {
             if(frameId!=null) {
                 int frameSize=Id3v2Frame.readFrameSize(raf, this);
                 Registry.Id3v2FrameConfig fc=null;
+
                 if(expectedFrameIdLength==4 && frameId.length()==3) {
                 	// id3 v2.2.0 frame identifier stored in a 2.3+ tag
                 	// (pretty sure iTunes was to blame for this use case!)
@@ -187,15 +187,20 @@ public class Id3v2Tag extends MediaTag {
                 	if(fc!=null) {
                     	// try to convert to four char frame ID (look up by property)
                     	Id3v2FrameConfig newConfig=Registry.getId3v2FrameConfig(fc.frameProperty,this);
-                		this.log(Level.WARNING, "Converting improper v2.2 frame ID \""+StringUtils.stripControlCharacters(frameId)+"\" to \""+newConfig.frameID+"\"");
+                		this.log(Level.WARNING, "Converting improper 3 char frame ID \""+StringUtils.stripControlCharacters(frameId)+"\" to \""+newConfig.frameID+"\"");
                 		fc=newConfig;
                 	} else {
-                		this.log(Level.WARNING, "Failed to convert non-conforming frame ID \""+StringUtils.stripControlCharacters(frameId)+"\" to 4 char ID");
+                		this.log(Level.WARNING, "Failed to convert 3 char frame ID \""+StringUtils.stripControlCharacters(frameId)+"\" to 4 char ID");
                 	}
                 } else {
                     fc=Registry.getId3v2FrameConfig(frameId,
                             originalHeader.getVersion());
-
+                    
+                    // sometimes people use 2.4 frames in 2.3 tags. this is bad 
+                    // but probably we should go ahead and read them anyhow.
+                    if((fc == null) && VersionString.compareVersions(originalHeader.getVersion(),"2.3.*")==0) {
+                    	fc=Registry.getId3v2FrameConfig(frameId,"2.4.0");
+                    }
                 }
                 
                 if(fc!=null) {
@@ -217,9 +222,6 @@ public class Id3v2Tag extends MediaTag {
                     newFrame=new Id3v2RawFrame(MediaProperty.ID3V22UNKNOWNFRAME,this);
                     newFrame.load(frameId, frameSize,raf);
                 } else {
-                	// check for possibility of null-terminated ID3 V2.2.0 tag fields
-                	// stored in ID3 V2.3.0 format. I saw some iTunes 11 tags like this.
-                	
                     newFrame=new Id3v2RawFrame(MediaProperty.ID3V2UNKNOWNFRAME,this);
                     newFrame.load(frameId, frameSize,raf);
                 }

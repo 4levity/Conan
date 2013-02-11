@@ -40,7 +40,7 @@ public class StringMap extends java.util.HashMap<String, String> {
         } else if(language.length()==3) {
         	// TODO: once you get the language map fixed, clean up this processing for 2/3 char codes
             try {
-                iso839_1_lang = Iso639_2_LocaleSet.iso639_2_to_iso639_1(language);
+                iso839_1_lang = LocaleSet.iso639_2_to_iso639_1(language);
                 this.loc = new Locale(iso839_1_lang);
             } catch (UnsupportedEncodingException ex) {
                 this.loc = null;

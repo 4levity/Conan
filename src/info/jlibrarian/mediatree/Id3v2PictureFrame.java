@@ -4,7 +4,7 @@ package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Coop
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.specialtypes.FileMetadata;
 import info.jlibrarian.specialtypes.Id3PictureType;
-import info.jlibrarian.stringutils.AutoAllocatingByteBuffer;
+import info.jlibrarian.stringutils.ResizingByteBuffer;
 import info.jlibrarian.stringutils.VersionString;
 
 import java.io.FileNotFoundException;
@@ -93,7 +93,7 @@ public class Id3v2PictureFrame extends Id3v2Frame {
     }
 
     @Override
-	protected void generateFrameData(AutoAllocatingByteBuffer bb)
+	protected void generateFrameData(ResizingByteBuffer bb)
 			throws FileNotFoundException, IOException {
 		// TODO: don't always reload (but maybe this is appropriate for big images)
 		bb.put(this.reload());

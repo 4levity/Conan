@@ -2,7 +2,7 @@ package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Coop
 
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.specialtypes.Id3v2FrameFlags;
-import info.jlibrarian.stringutils.AutoAllocatingByteBuffer;
+import info.jlibrarian.stringutils.ResizingByteBuffer;
 import info.jlibrarian.stringutils.UnsynchronizingByteBuffer;
 import info.jlibrarian.stringutils.VersionString;
 
@@ -212,10 +212,10 @@ public abstract class Id3v2Frame extends FrameNode {
         }
         return rawFrameData;
     }
-	abstract protected void generateFrameData(AutoAllocatingByteBuffer bb) throws FileNotFoundException, IOException;
+	abstract protected void generateFrameData(ResizingByteBuffer bb) throws FileNotFoundException, IOException;
 		//bb.put(this.reload());
-    public void generateFullFrame(AutoAllocatingByteBuffer bb) throws FileNotFoundException, IOException {
-		AutoAllocatingByteBuffer frameData;
+    public void generateFullFrame(ResizingByteBuffer bb) throws FileNotFoundException, IOException {
+		ResizingByteBuffer frameData;
 
 		byte[] fid;
 		try {
@@ -242,7 +242,7 @@ public abstract class Id3v2Frame extends FrameNode {
 				flags.encryption_method=null;
 			}
 			if(VersionString.compareVersions(this.getVersion(), "2.4+")==0) {
-				frameData=new AutoAllocatingByteBuffer(32);
+				frameData=new ResizingByteBuffer(32);
 				if(flags.grouping_identity_byte!=null)
 					frameData.put(flags.grouping_identity_byte);
 				if(flags.data_length_indicator!=null)
