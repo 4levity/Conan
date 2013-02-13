@@ -1,7 +1,6 @@
 package info.jlibrarian.specialtypes; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 import info.jlibrarian.mediatree.Id3v2Tag;
-import info.jlibrarian.mediatree.Id3v2TagRestrictions;
 import info.jlibrarian.mediatree.MediaFileUtil;
 import info.jlibrarian.mediatree.MediaProperty;
 import info.jlibrarian.propertytree.PropertyTree;

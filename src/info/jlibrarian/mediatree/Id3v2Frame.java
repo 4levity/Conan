@@ -13,6 +13,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.logging.Level;
 
+/* 
+ * base class for all nodes that represent values (concrete or virtual) 
+ * within a id3v2 tag.
+ */
 
 public abstract class Id3v2Frame extends FrameNode {
     protected Id3v2FrameFlags nonDefaultFlags=null; // null if all flags are normal and 0 appended header bytes
@@ -74,7 +78,8 @@ public abstract class Id3v2Frame extends FrameNode {
 
     /*
      * will return either 3 or 4 character string
-     * may return 3 character string for id3 2.3+ tag if null-terminated possible old frameid seen
+     * could return a 3 character string even for id3 2.3+ tag if position 4 is char 0 
+     * (possible invalid old frameid seen)
      */
     static public String readFrameId(RandomAccessFile openFile,Id3v2Tag tag) throws IOException {
         int frameIdSize;

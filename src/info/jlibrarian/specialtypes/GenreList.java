@@ -191,13 +191,9 @@ public class GenreList extends ArrayList<String> implements SettableFromString {
 	public GenreList() {
 		super(1);
 	}
-	public GenreList(String customGenre) {
+	public GenreList(String genres) {
 		super(1);
-		String[] strings = customGenre.split("\\x00");
-		this.ensureCapacity(strings.length);
-		for(int i=0;i<strings.length;i++) {
-			this.add(strings[i]);
-		}
+		this.setFromString(genres);
 	}
 
 	public GenreList(int id3Genre) {

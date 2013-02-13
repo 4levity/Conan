@@ -6,6 +6,10 @@ import info.jlibrarian.propertytree.PropertyTree;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+/* 
+ * base class for all nodes that represent values (concrete or virtual) 
+ * within a Vorbis Comment.
+ */
 public abstract class VorbisField extends FrameNode {
     static String readFieldId(RandomAccessFile raf, int length, VorbisCommentBlock block) throws IOException {
         StringBuilder fieldId = new StringBuilder();

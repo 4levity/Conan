@@ -27,9 +27,15 @@ public class Id3v2URLFrame extends Id3v2Frame {
     	String originalString = this.encode(0, frameData);
     	URL u=null;
     	if(originalString.length()>0) {
+    		if(originalString.charAt(0) == 0) {
+    			log(Level.WARNING,"Invalid byte 00 leading URL frame (skipping)");
+    			originalString = originalString.substring(1);
+    		}
+    	}
+    	if(originalString.length()>0) {
     		if (originalString.indexOf(0) >= 0) {
     			originalString=originalString.substring(0, originalString.indexOf(0));
-    			//log(Level.WARNING,"discarded extra characters in URL frame");
+    			log(Level.WARNING,"discarded extra characters in URL frame");
     		}
     		if(originalString.indexOf(':')<0 && 
     				(originalString.startsWith("www.") || originalString.startsWith("WWW."))) {
@@ -74,7 +80,7 @@ public class Id3v2URLFrame extends Id3v2Frame {
 	@Override
 	protected void generateFrameData(ResizingByteBuffer bb)
 			throws FileNotFoundException, IOException {
-		// TODO: don't just reload frame, regnerate it
+		// TODO: don't just reload frame, regenerate it
 		bb.put(this.reload());
 	}
 }

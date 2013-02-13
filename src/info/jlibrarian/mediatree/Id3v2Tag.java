@@ -197,11 +197,17 @@ public class Id3v2Tag extends MediaTag {
                             originalHeader.getVersion());
                     
                     // sometimes people use 2.4 frames in 2.3 tags. this is bad 
-                    // but probably we should go ahead and read them anyhow.
+                    // but probably we should go ahead and read them anyhow. define other behavior?
                     if((fc == null) && VersionString.compareVersions(originalHeader.getVersion(),"2.3.*")==0) {
                     	fc=Registry.getId3v2FrameConfig(frameId,"2.4.0");
                     }
-                }
+
+                    // sometimes people use 2.3 frames in 2.4 tags, or continue using XSOT instead of TSOT
+                    // etc. this is bad also but probably we should go ahead and read them anyhow.
+                    if((fc == null) && VersionString.compareVersions(originalHeader.getVersion(),"2.4.*")==0) {
+                    	fc=Registry.getId3v2FrameConfig(frameId,"2.3.0");
+                    }
+}
                 
                 if(fc!=null) {
                     newFrame=loadSupportedFrame(fc,frameId,frameSize,raf);

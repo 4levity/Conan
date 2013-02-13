@@ -10,8 +10,9 @@ import java.io.RandomAccessFile;
 import java.util.Arrays;
 
 /*
- * node class for any id3 text frame regardless of native type.
- * native type can be String, Integer, Long, or any class that
+ * node class for any id3 text, map or map-with-locale frame regardless of native type.
+ * 
+ * native type can be String, Integer, Long, *or* any class that
  * implements SettableFromString.
  */
 public class Id3v2TextFrame extends Id3v2Frame {
@@ -53,7 +54,7 @@ public class Id3v2TextFrame extends Id3v2Frame {
         		 * and optional on most text frames in id3 2.3.0 and 2.2.0
         		 * 
         		 * but if we are trying to assign to a single String/Integer/Long
-        		 * then we will ignore extra data in multistring frames
+        		 * then we will **ignore** extra data in multistring frames
         		 */
                 //log(Level.WARNING,"Removed invalid null terminator in "+this.getFrameIdentifier()+": "+newValue);
             	newValue=newValue.substring(0,ix);
@@ -61,7 +62,7 @@ public class Id3v2TextFrame extends Id3v2Frame {
         	
         	setValue(newValue);
         } else if(SettableFromString.class.isAssignableFrom(dataType)) {
-        	// only trim final \0 character if any
+        	// trim final \0 character if any
     		if(newValue.endsWith("\00")) {
     			newValue = newValue.substring(0, newValue.length()-1);
     		}

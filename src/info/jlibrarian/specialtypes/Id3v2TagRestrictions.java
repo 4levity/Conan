@@ -1,4 +1,4 @@
-package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
+package info.jlibrarian.specialtypes; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 import info.jlibrarian.propertytree.PropertyTree;
 
@@ -6,6 +6,7 @@ import java.util.logging.Level;
 
 
 public class Id3v2TagRestrictions {
+	// TODO: remove dependency on PropertyTree (throw or default instead of log)
     public int max_tag_size;
     public short max_frames;
     public boolean encoding_only_ISO8859_1_or_UTF8;

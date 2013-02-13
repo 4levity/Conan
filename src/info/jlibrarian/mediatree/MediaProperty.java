@@ -8,6 +8,7 @@ import info.jlibrarian.specialtypes.GenreList;
 import info.jlibrarian.specialtypes.Id3v2TagHeader;
 import info.jlibrarian.specialtypes.SequencePosition;
 import info.jlibrarian.specialtypes.StringMap;
+import info.jlibrarian.specialtypes.StringMapWithLocale;
 import info.jlibrarian.specialtypes.VariablePrecisionTime;
 import info.jlibrarian.stringutils.ResizingByteBuffer;
 
@@ -39,7 +40,7 @@ public enum MediaProperty implements Property {
     ARTIST ("Artist",String.class,true),
     ARTIST_SORTORDER ("Artist sort order",String.class,true),
     BEATSPERMINUTE ("Beats per minute (BPM)",Long.class,true),
-    COMMENTS ("Comments",StringMap.class,true),
+    COMMENTS ("Comments",StringMapWithLocale.class,true),
     COMPOSER ("Composer",String.class,true),
     COMPOSER_SORTORDER ("Composer sort order",String.class,true),
     CONDUCTOR ("Conductor",String.class,true),
@@ -59,7 +60,7 @@ public enum MediaProperty implements Property {
     INVOLVEDPEOPLE ("Involved People",StringMap.class,true),
     LENGTH_MS ("Length (ms)",Long.class,true),
     LYRICIST ("Lyricist",String.class,true),
-    LYRICS ("Lyrics",StringMap.class,true),
+    LYRICS ("Lyrics",StringMapWithLocale.class,true),
     MOOD ("Mood",String.class,true),
     MUSICIANS ("Musicians",StringMap.class,true),
     ORIGINAL_ALBUM ("Original album",String.class,true),
@@ -73,7 +74,7 @@ public enum MediaProperty implements Property {
     RECORDING_DATE ("Recording date",VariablePrecisionTime.class,true),
     RELEASE_DATE ("Release date",VariablePrecisionTime.class,true),
     REMIXER ("Remixer",String.class,true),
-    TERMSOFUSE ("Terms of Use",String.class,true),
+    TERMSOFUSE ("Terms of Use",StringMapWithLocale.class,true),
     TITLE ("Title",String.class,true),
     TITLE_SORTORDER ("Title sort order",String.class,true),
     TRACK_SEQUENCE ("Track sequence",SequencePosition.class,true),
@@ -89,7 +90,15 @@ public enum MediaProperty implements Property {
     URL_USER ("User URL map",StringMap.class,true),
     USERTEXT ("User text",StringMap.class,true),
 
-// Vorbis-specific fields.. 
+    // ReplayGain 1.0 http://www.replaygain.org
+    // TODO: make ReplayGain a single special type, represented by virtual value field that can search inside id3 USERTEXT and Vorbis comment fields (etc) to get value
+    REPLAYGAIN_TRACK_GAIN ("ReplayGain Track Gain",String.class,true),
+    REPLAYGAIN_TRACK_PEAK ("ReplayGain Track Peak",String.class,true),
+    REPLAYGAIN_ALBUM_GAIN ("ReplayGain Album Gain",String.class,true),
+    REPLAYGAIN_ALBUM_PEAK ("ReplayGain Album Peak",String.class,true),
+    REPLAYGAIN_REFERENCE_LOUDNESS ("ReplayGain Reference Loudness",String.class,true),
+
+    // Vorbis-specific fields.. 
     VORBISFIELD_ENCODERSOFTWARE ("Vorbis field/Encoder software",String.class,true),
     VORBISFIELD_ENCODERSETTINGS ("Vorbis field/Encoder settings",String.class,true),
     VORBISFIELD_TRACKNUMBER ("Vorbis field/Track number",Integer.class,true),
@@ -97,7 +106,7 @@ public enum MediaProperty implements Property {
     VORBISFIELD_DISCNUMBER ("Vorbis field/Disc number",Integer.class,true),
     VORBISFIELD_DISCTOTAL ("Vorbis field/Disc total",Integer.class,true),
     VORBISFIELD_DATE ("Vorbis field/Date",VariablePrecisionTime.class,true),
-
+    
  // generic Vorbis Comment fields..
     VORBISFIELD_UNKNOWN ("Unknown Vorbis Comment",String.class),
 
@@ -121,6 +130,7 @@ public enum MediaProperty implements Property {
     ID3V2FRAME_AUDIOENCRYPTION ("Id3v2 frame/Audio encryption",ResizingByteBuffer.class,true),
     ID3V2FRAME_AUDIOSEEKPOINTINDEX ("Id3v2 frame/Audio seek point index",ResizingByteBuffer.class,true),
     ID3V2FRAME_COMMERCIAL ("Id3v2 frame/Commercial",ResizingByteBuffer.class,true),
+    ID3V2FRAME_ENCAPSULATEDFILE ("Id3v2 frame/Encapsulated file",ResizingByteBuffer.class,true),
     ID3V2FRAME_ENCRYPTEDMETAFRAME ("Id3v2 frame/Encrypted meta frame",ResizingByteBuffer.class,true),
     ID3V2FRAME_ENCRYPTIONMETHODREGISTRATION ("Id3v2 frame/Encryption method registration",ResizingByteBuffer.class,true),
     ID3V2FRAME_EQUALIZATION ("Id3v2 frame/Equalization",ResizingByteBuffer.class,true),
@@ -144,7 +154,8 @@ public enum MediaProperty implements Property {
     ID3V2FRAME_REVERB ("Id3v2 frame/Reverb",ResizingByteBuffer.class,true),
     ID3V2FRAME_SIGNATATURE ("Id3v2 frame/Signature",ResizingByteBuffer.class,true),
     ID3V2FRAME_SYNCLYRICS ("Id3v2 frame/Synchronized lyrics/text",ResizingByteBuffer.class,true),
-    ID3V2FRAME_SYNCTEMPOCODES ("Id3v2 frame/Synchronized tempo codes",ResizingByteBuffer.class,true);
+    ID3V2FRAME_SYNCTEMPOCODES ("Id3v2 frame/Synchronized tempo codes",ResizingByteBuffer.class,true),
+    ID3V2FRAME_UNIQUEFILEID ("Id3v2 frame/Unique file identifier",ResizingByteBuffer.class,true);
     
     private String description;
     private Class<?> dataType;

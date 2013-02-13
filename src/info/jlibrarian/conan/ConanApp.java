@@ -19,7 +19,8 @@ public class ConanApp {
     public static void main(String[] args) {
     	ArrayList<File> targets=new ArrayList<File>();
     	ArrayList<MediaProperty> queries=new ArrayList<MediaProperty>();
-    	Level logLevel=Level.WARNING;;
+    	Level logLevel=Level.WARNING;
+    	int maxResults=-1;
     	
     	if(args.length==0) {
     		printUsage();
@@ -35,6 +36,15 @@ public class ConanApp {
         				arg++;
         				logLevel=Level.parse(args[arg]);
         				System.out.println("** Setting log level to "+logLevel.getLocalizedName());
+        			} else if(args[arg].equalsIgnoreCase("--maxresults")) {
+        				arg++;
+        				try {
+							maxResults=Integer.parseInt(args[arg]);
+						} catch (NumberFormatException e) {
+							printUsage();
+							return;
+						}
+        				System.out.println("** Setting maxresults to "+maxResults);
         			} else {
         				targets.add(new File(args[arg]));
         			}
@@ -69,11 +79,23 @@ public class ConanApp {
         				Set<Entry<MediaProperty, PropertySearchResults<MediaProperty>>> entries=queryResults.entrySet();
         				if(entries!=null) {
             				for(Entry<MediaProperty, PropertySearchResults<MediaProperty>> entry : entries) {
-            					System.out.println(
-            							StringUtils.lineWrap(
-            									StringUtils.stripControlCharacters(entry.getValue().toString())
-            							,80)
-            									);
+            					if(maxResults<0) {
+                					System.out.println(
+                							StringUtils.lineWrap(
+                									StringUtils.stripControlCharacters(entry.getValue().toString())
+                							,80)
+                									);
+            					} else if(maxResults==0) {
+            						System.out.println(entry.getKey()+"("+entry.getKey().getShortName()+"): "+entry.getValue().getNumResults()
+            								+" results in "+entry.getValue().getTotalNodes()+" total nodes");
+            					} else {
+            						// TODO: limit results
+                					System.out.println(
+                							StringUtils.lineWrap(
+                									StringUtils.stripControlCharacters(entry.getValue().toString())
+                							,80)
+                									);
+            					}
             				}
         				}
     				} else {

@@ -155,4 +155,40 @@ public class ResizingByteBuffer {
 		}
 		return this;
 	}
+
+	@Override
+	public String toString() {
+		String s="\"";
+		if(buf.length<15) {			
+			s+=StringUtils.stripControlCharacters(new String(buf))+"\"";
+		} else {
+			s+=StringUtils.stripControlCharacters(new String(Arrays.copyOfRange(buf, 0, 12)))
+					+"...\" ("+buf.length+" bytes)";
+		}
+		return s;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(buf);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ResizingByteBuffer other = (ResizingByteBuffer) obj;
+		if (!Arrays.equals(buf, other.buf))
+			return false;
+		return true;
+	}
+	
+	
 }

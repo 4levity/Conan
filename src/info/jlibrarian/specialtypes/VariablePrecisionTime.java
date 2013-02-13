@@ -18,11 +18,11 @@ import java.text.SimpleDateFormat;
  */
 public class VariablePrecisionTime implements SettableFromString {	
     public enum Precision {
-        SECOND ("yyyy-MM-dd'T'HH:mm:ss","\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d",19),
-        MINUTE ("yyyy-MM-dd'T'HH:mm","\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d",16),
-        DAY ("yyyy-MM-dd","\\d\\d\\d\\d-\\d\\d-\\d\\d",10),
-        MONTH ("yyyy-MM","\\d\\d\\d\\d-\\d\\d",7),
-        YEAR ("yyyy","\\d\\d\\d\\d",4),
+        SECOND ("yyyy-MM-dd'T'HH:mm:ss","\\d{4}-\\d{2}-\\d{2}[Tt:]\\d{2}:\\d{2}:\\d{2}",19),
+        MINUTE ("yyyy-MM-dd'T'HH:mm","\\d{4}-\\d{2}-\\d{2}[Tt:]\\d{2}:\\d{2}",16),
+        DAY ("yyyy-MM-dd","\\d{4}-\\d{2}-\\d{2}",10),
+        MONTH ("yyyy-MM","\\d{4}-\\d{2}",7),
+        YEAR ("yyyy","\\d{4}",4),
         NONE ("'N'","",0);
         ;
         protected SimpleDateFormat formatter;

@@ -82,6 +82,16 @@ public class PropertySearchResults<PROPERTY extends Property> {
 		}
 		return null;
 	}
+	
+	
+	public int getNumResults() {
+		return results.size();
+	}
+
+	public int getTotalNodes() {
+		return totalNodes;
+	}
+
 	public Object count() {
 		return results.size();
 	}
