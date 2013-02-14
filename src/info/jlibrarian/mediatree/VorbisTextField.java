@@ -8,7 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 
 public class VorbisTextField extends VorbisField {
-    String string;
+    Object nativeValue;
     public VorbisTextField(MediaProperty property, PropertyTree<MediaProperty> parent) {
         super(property, parent);
     }
@@ -21,11 +21,15 @@ public class VorbisTextField extends VorbisField {
         if(frameData==null)
             return null;
         
+        String string=null;
         try {
             string = new String(frameData, "UTF-8");
         } catch (UnsupportedEncodingException ex) {
             log(Level.SEVERE,"UTF-8 decoder not supported",ex);
             throw new RuntimeException("UTF-8 decoder not supported");
+        }
+        if(string!=null) {
+        	setValue(string);
         }
         
         return frameData;
@@ -33,26 +37,12 @@ public class VorbisTextField extends VorbisField {
 
     @Override
     public Object getValue() {
-        return string;
+        return this.nativeValue;
     }
 
     @Override
-    public Integer getInteger() {
-        if(string==null) 
-            return null;
-        Integer i;
-        try {
-            i=new Integer(Integer.parseInt(string));
-        } catch (NumberFormatException numberFormatException) {
-            i=null;
-            //todo:log
-        }
-        return i;
+    public void setValue(Object o) {
+        this.nativeValue=convertObject(o);
     }
-
-	@Override
-	public void setValue(Object o) {
-		this.string=this.convertObject(o).toString();
-	}
     
 }

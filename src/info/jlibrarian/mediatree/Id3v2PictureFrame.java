@@ -60,6 +60,7 @@ public class Id3v2PictureFrame extends Id3v2Frame {
             return frameData;
         }
         byte picType=frameData[mimeEnd+1];
+        // TODO: if picType validates, CHANGE (clarify) the property of this node from PICTURE to a more specific property e.g. "cover art" or "a bright coloured fish"
         
         int descrEnd=mimeEnd+2;
         String description;

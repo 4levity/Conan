@@ -59,7 +59,16 @@ public class VariablePrecisionTime implements SettableFromString {
     	reset();
     }
     
-    /*
+    public VariablePrecisionTime(VariablePrecisionTime copy) {
+    	this.year=copy.year;
+    	this.month=copy.month;
+    	this.day=copy.day;
+    	this.hour=copy.hour;
+    	this.minute=copy.minute;
+    	this.second=copy.second;
+   		this.extraData=copy.extraData;
+	}
+	/*
      * sets the value of this object from an ISO 8601 variable precision date string in the
      * format YYYY or YYYY-DD or YYYY-DD-MM or YYYY-DD-MMTHH:MM or YYYY-DD-MMTHH:MM:SS
      * 
@@ -250,6 +259,12 @@ public class VariablePrecisionTime implements SettableFromString {
 		if (year != other.year)
 			return false;
 		return true;
+	}
+	public void setExtraData(String extraData) {
+		this.extraData=extraData;
+	}
+	public String getExtraData() {
+		return this.extraData;
 	}
     
 }

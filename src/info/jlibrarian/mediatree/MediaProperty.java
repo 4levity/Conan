@@ -32,6 +32,9 @@ public enum MediaProperty implements Property {
     ID3V24TAG ("ID3 v2.4 Tag",MediaProperty.ID3V2TAG),
     ID3V2XTAG ("ID3 v2.5+ Tag (untested)",MediaProperty.ID3V2TAG),
 
+    // TODO: each picture context (e.g. "cover art" or "a brightly coloured fish") should have unique property
+    PICTURE ("Picture",FileMetadata.class,true),
+
 // general music/media properties..
     ALBUM ("Album",String.class,true),
     ALBUM_SORTORDER ("Album sort order",String.class,true),
@@ -46,10 +49,8 @@ public enum MediaProperty implements Property {
     CONDUCTOR ("Conductor",String.class,true),
     CONTENTGROUP ("Content group",String.class,true),
     COPYRIGHTMESSAGE ("Copyright message",String.class,true),
-    RECORDED_DATE ("Recording date",VariablePrecisionTime.class,true),
     DISC_SEQUENCE ("Disc sequence",SequencePosition.class,true),
     DISCSUBTITLE ("Disc subtitle",String.class,true),
-    PICTURE ("Picture",FileMetadata.class,true),
     ENCODEDBY ("Encoded by",String.class,true),
     ENCODER ("Encoder/settings",String.class,true),
     FILEOWNER ("File owner",String.class,true),

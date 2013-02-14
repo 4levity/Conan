@@ -49,9 +49,10 @@ public class Id3v2Tag extends MediaTag {
                 setValue(hdr);
                 loadFrames(raf);
                 
-                // TODO: optionally, recreate "clean" tag from this,
-                // by pushing all the old tag's metadata into new tag.
-
+                // todo: do this "automatically" from registry?
+                new VirtualDateNode(MediaProperty.RELEASE_DATE,this);
+                new VirtualDateNode(MediaProperty.RECORDING_DATE,this);
+                
                 return this;
             } 
             // else header version didn't match

@@ -1,6 +1,9 @@
 package info.jlibrarian.mediatree;
 
+import info.jlibrarian.propertytree.PropertySearchResults;
+import info.jlibrarian.propertytree.PropertySearchResults.Result;
 import info.jlibrarian.propertytree.PropertyTree;
+import info.jlibrarian.specialtypes.VariablePrecisionTime;
 
 /* 
  * defines a virtual value node representing some sort of date; 
@@ -70,8 +73,9 @@ import info.jlibrarian.propertytree.PropertyTree;
  * 
  * 3. "TYE/TYER is release date, TDRC might be": In ALL ID3v2 versions, interpret the frames 
  * 		TYE/TYER/TDRC as release date (common usage), although the spec says otherwise. Except in 
- * 		ID3v2.4 if BOTH the TDRC and TDRL frames are present and have different values, or if the tag
- * 		was created by Conan, interpret according to spec. If writing v2.4, use TDRL for release date.
+ * 		ID3v2.4 if BOTH the TDRC and TDRL frames are present, or if the tag
+ * 		was created by Conan, interpret according to spec. If writing v2.4, use TDRL for release date
+ * 		(and make sure that Conan will somehow recognize that the tag was created by Conan.)
  * 
  * 		PRO: Simple approach that reflects expected behavior by "most" users that there is
  * 			just one date associated with each track. Tags converted to 2.4 or created in compliant
@@ -83,7 +87,7 @@ import info.jlibrarian.propertytree.PropertyTree;
  * 
  * Solution for now:
  * 		- Every tag gets a "smart" virtual node for recording date and release date
- * 		- value-generation behavior of these nodes will be configurable
+ * 		- value-generation behavior of these nodes could be configurable
  */
 public class VirtualDateNode extends PropertyTree<MediaProperty> {
 	
@@ -94,14 +98,127 @@ public class VirtualDateNode extends PropertyTree<MediaProperty> {
 
 	@Override
 	public void setValue(Object o) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("cannot yet set virtual "+this.getNodeProperty().getShortName());
 	}
 
 	@Override
 	public Object getValue() {
-		// TODO Auto-generated method stub
-		return null;
+		// find and assemble date appropriately depending on property at this node and type of parent
+		// TODO: behavior should be configurable via registry (see comment at top of file)
+		
+		// VirtualDateNode may only be used for datatype VariablePrecisionTime
+		VariablePrecisionTime result=null;
+		
+		MediaProperty parent=this.getParent().getNodeProperty();
+
+		if(parent.isTypeOf(MediaProperty.ID3V2TAG)) {
+			if(this.getNodeProperty().isTypeOf(MediaProperty.RELEASE_DATE)) {
+				result = getId3v2ReleaseDate();
+			} else if(this.getNodeProperty().isTypeOf(MediaProperty.RECORDING_DATE)) {
+				result = getId3v2RecordingDate();
+			}
+		} else if(parent.isTypeOf(MediaProperty.VORBISCOMMENTBLOCK)) {
+			if(this.getNodeProperty().isTypeOf(MediaProperty.RELEASE_DATE)) {
+				result = getVorbisReleaseDate();
+			} else if(this.getNodeProperty().isTypeOf(MediaProperty.RECORDING_DATE)) {
+				result = getVorbisRecordingDate();
+			}
+		}
+		// TODO: handle ORIGINAL DATE, other types of dates, user configurable, default/unknown?
+		
+		return result;
+	}
+
+	private VariablePrecisionTime getId3v2ReleaseDate() {
+		/* id3v1, v2.2, v2.3 */
+		VariablePrecisionTime id3year_yyyy=(VariablePrecisionTime)(getParent().queryBestResult(MediaProperty.ID3_YEAR));
+		Integer id3v2date_mmdd=(Integer)getParent().queryBestResult(MediaProperty.ID3V2_DATE);
+		Integer id3v2time_hhmm=(Integer)getParent().queryBestResult(MediaProperty.ID3V2_TIME);
+		String id3v2recordingdates_text=(String)getParent().queryBestResult(MediaProperty.ID3V2_RECORDINGDATES);
+		/* id3v2.4+ */
+		VariablePrecisionTime id3v2recordingdate=(VariablePrecisionTime)getParent().queryBestResult(MediaProperty.ID3V2_RECORDINGDATE);
+		VariablePrecisionTime id3v2releasedate=(VariablePrecisionTime)getParent().queryBestResult(MediaProperty.ID3V2_RELEASEDATE);
+		
+		VariablePrecisionTime result=null;
+		
+		if(id3v2recordingdate != null && id3v2releasedate != null) {
+			result = id3v2releasedate;
+		} else if (id3v2recordingdate != null) {
+			result = id3v2recordingdate;
+		} else if (id3year_yyyy != null) {
+			result = new VariablePrecisionTime(id3year_yyyy);
+			if(id3v2date_mmdd != null) {
+				result.set_MMDD(id3v2date_mmdd.toString());
+				if(id3v2time_hhmm != null) {
+					result.set_hhmm(id3v2time_hhmm.toString());
+				}
+			}
+			if(id3v2recordingdates_text != null) {
+				result.setExtraData(id3v2recordingdates_text);
+			}
+		}
+		
+		return result;
+	}
+
+	private VariablePrecisionTime getId3v2RecordingDate() {
+		return (VariablePrecisionTime)getParent().queryBestResult(MediaProperty.ID3V2_RECORDINGDATE);
+	}
+
+	private VariablePrecisionTime getVorbisReleaseDate() {
+		return vorbisDate(false);
+	}
+	private VariablePrecisionTime getVorbisRecordingDate() {
+		return vorbisDate(true);
+	}
+
+
+	// recordingDate = false : look for release date
+	private VariablePrecisionTime vorbisDate(boolean recordingDate) {
+		PropertySearchResults<MediaProperty> query=getParent().query(MediaProperty.VORBISFIELD_DATE);
+		if(query==null)
+			return null;
+		
+		VariablePrecisionTime dateUnspecified=null;
+		VariablePrecisionTime dateRelease=null;
+		VariablePrecisionTime dateRecorded=null;
+		VariablePrecisionTime dateOther=null;
+		
+		// TODO: PropertySearchResults should give us an iterator maybe?
+		// go through all vorbis date fields and find best ones
+		int numResults=query.getNumResults();
+		for(int ix=0;ix<numResults && (dateUnspecified==null || dateRelease==null || dateRecorded==null);ix++) {
+			PropertySearchResults<MediaProperty>.Result candidate=query.getResult(ix);
+			VariablePrecisionTime t =(VariablePrecisionTime) candidate.getValue();
+			String extra=t.getExtraData();
+			if(extra==null && dateUnspecified==null) {
+				dateUnspecified=t;
+			} else if(extra!=null) {
+				// TODO: better guessing at meaning of qualifer? language support?
+				extra=extra.toLowerCase();
+				boolean isRelease=extra.indexOf("release")>=0;
+				boolean isRecorded=extra.indexOf("recorded")>=0;
+				
+				if(dateRelease==null && isRelease) {
+					dateRelease=t;
+				} else if(dateRecorded==null && !isRelease && isRecorded) {
+					dateRecorded=t;
+				} else if(dateOther==null && !isRelease && !isRecorded) {
+					dateOther=t;
+				}
+			}
+		}
+		
+		if(recordingDate) {
+			return dateRecorded;
+		} // else guess at release date
+		if(dateRelease != null) {
+			return dateRelease;
+		}
+		if(dateUnspecified != null) {
+			return dateUnspecified;
+		}
+		return dateOther;
 	}
 
 }

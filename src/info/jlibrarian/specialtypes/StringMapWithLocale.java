@@ -78,7 +78,7 @@ public class StringMapWithLocale extends StringMap {
 	@Override
 	public boolean setFromString(String value) {
 		if(value.length()>4) {
-			if(value.charAt(4)==0) {
+			if(value.charAt(3)==0) {
 				if(this.initLocale(value.substring(0, 3))) {
 					value=value.substring(4);
 				}

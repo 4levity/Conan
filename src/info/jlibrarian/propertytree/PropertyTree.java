@@ -299,7 +299,7 @@ public abstract class PropertyTree<PROPERTY extends Property> {
             if(sfs.setFromString((String)o)) {
             	return sfs;
             } else {
-            	log(Level.WARNING,"String to "+targetType.getSimpleName()+" conversion failed on \""+o.toString()+"\"");
+            	log(Level.WARNING,"String to "+targetType.getSimpleName()+" conversion failed on \""+StringUtils.stripControlCharacters(o.toString())+"\"");
                 return null;
             }
         } else if(!targetType.isAssignableFrom(o.getClass())) {

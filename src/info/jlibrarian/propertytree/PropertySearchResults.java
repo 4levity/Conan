@@ -40,7 +40,8 @@ public class PropertySearchResults<PROPERTY extends Property> {
 			return nodes.size();
 		}
 		public Object getValue() {
-			return nodes.get(0).getValue();
+			PropertyTree<PROPERTY> i=nodes.get(0);
+			return i.getValue();
 		}
 		public PROPERTY getProperty() {
 			return nodes.get(0).getNodeProperty();
