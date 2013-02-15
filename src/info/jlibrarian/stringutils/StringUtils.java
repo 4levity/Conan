@@ -22,4 +22,26 @@ public class StringUtils {
 		
 		return result;
 	}
+	public static String trimNonNumeric(String src/*boolean allowNegative,boolean allowDecimal*/) {
+		if(src==null) {
+			return ""; // cuz I'm a nice guy
+		}
+		if(src.isEmpty()) {
+			return src;
+		}
+		if(src.length()==1) {
+			return src.matches("\\d")?src:"";
+		}
+		if(!src.matches("[-]{0,1}\\d+\\.{0,1}\\d+.*")) {
+			// TODO: did I get that right? it does seem to let pass valid strings at least..
+			return "";
+		}
+		for(int ix=1;ix<src.length();ix++) {
+			char c=src.charAt(ix);
+			if(!Character.isDigit(c) && c!='.') {
+				return src.substring(0, ix);
+			}
+		}
+		return src;
+	}
 }

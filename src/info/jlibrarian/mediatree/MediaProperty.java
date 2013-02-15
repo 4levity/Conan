@@ -6,6 +6,7 @@ import info.jlibrarian.specialtypes.FileMetadata;
 import info.jlibrarian.specialtypes.FlacHeader;
 import info.jlibrarian.specialtypes.GenreList;
 import info.jlibrarian.specialtypes.Id3v2TagHeader;
+import info.jlibrarian.specialtypes.ReplayGain;
 import info.jlibrarian.specialtypes.SequencePosition;
 import info.jlibrarian.specialtypes.StringMap;
 import info.jlibrarian.specialtypes.StringMapWithLocale;
@@ -69,12 +70,14 @@ public enum MediaProperty implements Property {
     ORIGINAL_FILENAME ("Original filename",String.class,true),
     ORIGINAL_LYRICIST ("Original lyricist",String.class,true),
     ORIGINAL_MEDIA ("Original media",String.class,true),
+    PLAY_COUNTER ("Play counter",Long.class,true),
     PLAYLISTDELAY_MS ("Playlist delay (ms)",Long.class,true),
     PRODUCTIONNOTICE ("Production notice",String.class,true),
     PUBLISHER ("Publisher",String.class,true),
     RECORDING_DATE ("Recording date",VariablePrecisionTime.class,true),
     RELEASE_DATE ("Release date",VariablePrecisionTime.class,true),
     REMIXER ("Remixer",String.class,true),
+    REPLAYGAIN ("ReplayGain Track Data",ReplayGain.class,true),
     TERMSOFUSE ("Terms of Use",StringMapWithLocale.class,true),
     TITLE ("Title",String.class,true),
     TITLE_SORTORDER ("Title sort order",String.class,true),
@@ -91,14 +94,6 @@ public enum MediaProperty implements Property {
     URL_USER ("User URL map",StringMap.class,true),
     USERTEXT ("User text",StringMap.class,true),
 
-    // ReplayGain 1.0 http://www.replaygain.org
-    // TODO: make ReplayGain a single special type, represented by virtual value field that can search inside id3 USERTEXT and Vorbis comment fields (etc) to get value
-    REPLAYGAIN_TRACK_GAIN ("ReplayGain Track Gain",String.class,true),
-    REPLAYGAIN_TRACK_PEAK ("ReplayGain Track Peak",String.class,true),
-    REPLAYGAIN_ALBUM_GAIN ("ReplayGain Album Gain",String.class,true),
-    REPLAYGAIN_ALBUM_PEAK ("ReplayGain Album Peak",String.class,true),
-    REPLAYGAIN_REFERENCE_LOUDNESS ("ReplayGain Reference Loudness",String.class,true),
-
     // Vorbis-specific fields.. 
     VORBISFIELD_ENCODERSOFTWARE ("Vorbis field/Encoder software",String.class,true),
     VORBISFIELD_ENCODERSETTINGS ("Vorbis field/Encoder settings",String.class,true),
@@ -107,6 +102,11 @@ public enum MediaProperty implements Property {
     VORBISFIELD_DISCNUMBER ("Vorbis field/Disc number",Integer.class,true),
     VORBISFIELD_DISCTOTAL ("Vorbis field/Disc total",Integer.class,true),
     VORBISFIELD_DATE ("Vorbis field/Date",VariablePrecisionTime.class,true),
+    VORBIS_REPLAYGAIN_TRACK_GAIN ("ReplayGain Track Gain",Float.class,true),
+    VORBIS_REPLAYGAIN_TRACK_PEAK ("ReplayGain Track Peak",Double.class,true),
+    VORBIS_REPLAYGAIN_ALBUM_GAIN ("ReplayGain Album Gain",Float.class,true),
+    VORBIS_REPLAYGAIN_ALBUM_PEAK ("ReplayGain Album Peak",Double.class,true),
+    VORBIS_REPLAYGAIN_REFERENCE_LOUDNESS ("ReplayGain Reference Loudness",Float.class,true),
     
  // generic Vorbis Comment fields..
     VORBISFIELD_UNKNOWN ("Unknown Vorbis Comment",String.class),

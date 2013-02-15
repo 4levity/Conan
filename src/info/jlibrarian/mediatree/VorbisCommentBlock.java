@@ -93,6 +93,7 @@ public class VorbisCommentBlock extends MediaTag {
         new VirtualDateNode(MediaProperty.RELEASE_DATE,this);
         new VirtualDateNode(MediaProperty.RECORDING_DATE,this);
         
+        new VirtualReplayGainNode(MediaProperty.REPLAYGAIN,this);
 
         /* in a vorbis comment, the encoder is stored in one field and the encoder settings 
          * are stored in another field. mediatree defines the core property "ENCODER" to mean

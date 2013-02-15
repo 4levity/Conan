@@ -239,6 +239,28 @@ public abstract class PropertyTree<PROPERTY extends Property> {
         return (Long)gotValue;
     }
     
+    public Double getDouble() {
+        Object gotValue=getValue();
+        if (gotValue != null) {
+            if (!Double.class.isAssignableFrom(gotValue.getClass())) {            	
+                throw new ClassCastException("don't know how to convert "
+                		+gotValue.getClass().getName()+" to Double");
+            }
+        }
+        return (Double)gotValue;
+    }
+    
+    public Float getFloat() {
+        Object gotValue=getValue();
+        if (gotValue != null) {
+            if (!Float.class.isAssignableFrom(gotValue.getClass())) {            	
+                throw new ClassCastException("don't know how to convert "
+                		+gotValue.getClass().getName()+" to Float");
+            }
+        }
+        return (Float)gotValue;
+    }
+    
     public File getFile() {
         Object gotValue=getValue();
         if(gotValue==null)
@@ -259,19 +281,41 @@ public abstract class PropertyTree<PROPERTY extends Property> {
         if(targetType.equals(Long.class) 
                 && String.class.isAssignableFrom(o.getClass()) ) {
             // automatically convert string initializer to Long storage
+        	String string=StringUtils.trimNonNumeric(o.toString());
             try {
-                o=new Long(Long.parseLong(o.toString()));
+                o=new Long(Long.parseLong(string));
             } catch (NumberFormatException ex) {
-                log(Level.WARNING,"String to Long conversion failed on "+o.toString());
+                log(Level.WARNING,"String to Long conversion failed on "+StringUtils.stripControlCharacters(o.toString()));
                 return null;
             }
         } else if(targetType.equals(Integer.class) 
                 && String.class.isAssignableFrom(o.getClass()) ) {
             // automatically convert string initializer to Integer storage
+        	String string=StringUtils.trimNonNumeric(o.toString());
             try {
-                o=new Integer(Integer.parseInt(o.toString()));
+                o=new Integer(Integer.parseInt(string));
             } catch (NumberFormatException ex) {
-            	log(Level.WARNING,"String to Integer conversion failed on "+o.toString());
+            	log(Level.WARNING,"String to Integer conversion failed on "+StringUtils.stripControlCharacters(o.toString()));
+                return null;
+            }
+        } else if(targetType.equals(Float.class) 
+                && String.class.isAssignableFrom(o.getClass()) ) {
+            // automatically convert string initializer to Float storage
+        	String string=StringUtils.trimNonNumeric(o.toString());
+            try {
+                o=new Float(Float.parseFloat(string));
+            } catch (NumberFormatException ex) {
+            	log(Level.WARNING,"String to Float conversion failed on "+StringUtils.stripControlCharacters(o.toString()));
+                return null;
+            }
+        } else if(targetType.equals(Double.class) 
+                && String.class.isAssignableFrom(o.getClass()) ) {
+            // automatically convert string initializer to Double storage
+        	String string=StringUtils.trimNonNumeric(o.toString());
+            try {
+                o=new Double(Double.parseDouble(string));
+            } catch (NumberFormatException ex) {
+            	log(Level.WARNING,"String to Double conversion failed on "+StringUtils.stripControlCharacters(o.toString()));
                 return null;
             }
         } else if(SettableFromString.class.isAssignableFrom(targetType)

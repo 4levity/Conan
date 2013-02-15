@@ -52,6 +52,7 @@ public class Id3v2Tag extends MediaTag {
                 // todo: do this "automatically" from registry?
                 new VirtualDateNode(MediaProperty.RELEASE_DATE,this);
                 new VirtualDateNode(MediaProperty.RECORDING_DATE,this);
+                new VirtualReplayGainNode(MediaProperty.REPLAYGAIN,this);
                 
                 return this;
             } 

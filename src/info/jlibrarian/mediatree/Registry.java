@@ -174,6 +174,10 @@ registerId3v2("COMR","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_COMMERC
 registerId3v2("GEO","2.2.*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_ENCAPSULATEDFILE,false);
 registerId3v2("GEOB","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_ENCAPSULATEDFILE,false);
 
+registerId3v2("CNT","2.2.*",Id3v2PlayCountFrame.class,MediaProperty.PLAY_COUNTER,false);
+registerId3v2("PCNT","2.3+",Id3v2PlayCountFrame.class,MediaProperty.PLAY_COUNTER,false);
+registerVorbis("PLAYCOUNT",VorbisTextField.class,MediaProperty.PLAY_COUNTER);
+
 registerId3v2("ENCR","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_ENCRYPTEDMETAFRAME);
 
 registerId3v2("EQUA","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_EQUALIZATION,false);
@@ -212,11 +216,11 @@ registerId3v2("RVA","2.2.*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_RELATIV
 registerId3v2("RVAD","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_RELATIVEVOLUMEADJUSTMENT,false);
 registerId3v2("RVA2","2.4+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_RELATIVEVOLUMEADJUSTMENT_2);
 registerId3v2("RGAD","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_REPLAYGAINADJUSTMENT,false);
-registerVorbis("REPLAYGAIN_TRACK_GAIN",VorbisTextField.class,MediaProperty.REPLAYGAIN_TRACK_GAIN);
-registerVorbis("REPLAYGAIN_TRACK_PEAK",VorbisTextField.class,MediaProperty.REPLAYGAIN_TRACK_PEAK);
-registerVorbis("REPLAYGAIN_ALBUM_GAIN",VorbisTextField.class,MediaProperty.REPLAYGAIN_ALBUM_GAIN);
-registerVorbis("REPLAYGAIN_ALBUM_PEAK",VorbisTextField.class,MediaProperty.REPLAYGAIN_ALBUM_PEAK);
-registerVorbis("REPLAYGAIN_REFERENCE_LOUDNESS",VorbisTextField.class,MediaProperty.REPLAYGAIN_REFERENCE_LOUDNESS);
+registerVorbis("REPLAYGAIN_TRACK_GAIN",VorbisTextField.class,MediaProperty.VORBIS_REPLAYGAIN_TRACK_GAIN);
+registerVorbis("REPLAYGAIN_TRACK_PEAK",VorbisTextField.class,MediaProperty.VORBIS_REPLAYGAIN_TRACK_PEAK);
+registerVorbis("REPLAYGAIN_ALBUM_GAIN",VorbisTextField.class,MediaProperty.VORBIS_REPLAYGAIN_ALBUM_GAIN);
+registerVorbis("REPLAYGAIN_ALBUM_PEAK",VorbisTextField.class,MediaProperty.VORBIS_REPLAYGAIN_ALBUM_PEAK);
+registerVorbis("REPLAYGAIN_REFERENCE_LOUDNESS",VorbisTextField.class,MediaProperty.VORBIS_REPLAYGAIN_REFERENCE_LOUDNESS);
 
 
 registerId3v2("RVRB","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_REVERB,false);

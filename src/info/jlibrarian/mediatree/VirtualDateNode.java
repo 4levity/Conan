@@ -1,7 +1,6 @@
 package info.jlibrarian.mediatree;
 
 import info.jlibrarian.propertytree.PropertySearchResults;
-import info.jlibrarian.propertytree.PropertySearchResults.Result;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.specialtypes.VariablePrecisionTime;
 
