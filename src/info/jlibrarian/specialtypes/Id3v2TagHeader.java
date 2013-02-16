@@ -2,7 +2,6 @@ package info.jlibrarian.specialtypes; /* Original source code (c) 2013 C. Ivan C
 
 import info.jlibrarian.mediatree.Id3v2Tag;
 import info.jlibrarian.mediatree.MediaFileUtil;
-import info.jlibrarian.mediatree.MediaProperty;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.stringutils.UnsynchronizingByteBuffer;
 import info.jlibrarian.stringutils.VersionString;
@@ -33,7 +32,7 @@ public class Id3v2TagHeader {
     public Id3v2TagHeader() {
     }
     
-    public boolean load(RandomAccessFile f,PropertyTree<MediaProperty> owner) 
+    public boolean load(RandomAccessFile f,PropertyTree owner) 
             throws IOException {        
 
         byte id3v2Header[]=new byte[10];
@@ -102,7 +101,7 @@ public class Id3v2TagHeader {
     }
 
 
-    private boolean loadExtendedHeader(RandomAccessFile f,PropertyTree<MediaProperty> owner)
+    private boolean loadExtendedHeader(RandomAccessFile f,PropertyTree owner)
             throws IOException {
         if(VersionString.compareVersions(version, "2.3.*") == 0)  {
             // in id3 v2.3 only, extended header needs to be deunsynchronized
@@ -193,7 +192,7 @@ public class Id3v2TagHeader {
      * @param owner
      * @return
      */
-    public byte[] generateHeaderAndExt(int tagDataSize,int paddingSize,PropertyTree<?> owner) {    	UnsynchronizingByteBuffer bb=new UnsynchronizingByteBuffer(10).enableUnsynchronizing(false);
+    public byte[] generateHeaderAndExt(int tagDataSize,int paddingSize,PropertyTree owner) {    	UnsynchronizingByteBuffer bb=new UnsynchronizingByteBuffer(10).enableUnsynchronizing(false);
     	UnsynchronizingByteBuffer xhdrPayload=new UnsynchronizingByteBuffer(0).enableUnsynchronizing(true);
 
 		bb.put('I'); bb.put('D'); bb.put('3');
@@ -333,7 +332,7 @@ public class Id3v2TagHeader {
     	return bb.getAll();
     }
     
-    public byte[] generateFooter(int tagDataSize,PropertyTree<?> owner) {
+    public byte[] generateFooter(int tagDataSize,PropertyTree owner) {
     	if(this.footerPresent) {
     		// TODO: implement, or insert comments scoffing at feature
     		throw new UnsupportedOperationException("generateFooter not yet implemented");

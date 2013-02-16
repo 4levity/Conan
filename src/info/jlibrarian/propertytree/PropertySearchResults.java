@@ -11,17 +11,17 @@ import java.util.Collections;
  * each result has one value (Object, runtime class type implied by property) 
  * 		plus each result has a list of one or more nodes having that value (supporting evidence for property=value)
  */
-public class PropertySearchResults<PROPERTY extends Property> {
+public class PropertySearchResults {
 
 	// a single result (i.e. a single *consistent* value with a list of nodes all matching the same value)
 	public class Result implements Comparable<Result> {
-		private ArrayList<PropertyTree<PROPERTY>> nodes;		
-		public Result(PropertyTree<PROPERTY> firstMatchingNode) {
+		private ArrayList<PropertyTree> nodes;		
+		public Result(PropertyTree firstMatchingNode) {
 			super();
-			nodes=new ArrayList<PropertyTree<PROPERTY>>(1);
+			nodes=new ArrayList<PropertyTree>(1);
 			nodes.add(firstMatchingNode);
 		}
-		public void add(PropertyTree<PROPERTY> nextMatchingNode) {
+		public void add(PropertyTree nextMatchingNode) {
 			// NOTE: remove check to improve performance
 			if(nodes.get(0).getValue().equals(nextMatchingNode.getValue())) {
 				nodes.add(nextMatchingNode);
@@ -40,13 +40,13 @@ public class PropertySearchResults<PROPERTY extends Property> {
 			return nodes.size();
 		}
 		public Object getValue() {
-			PropertyTree<PROPERTY> i=nodes.get(0);
+			PropertyTree i=nodes.get(0);
 			return i.getValue();
 		}
-		public PROPERTY getProperty() {
+		public Property getProperty() {
 			return nodes.get(0).getNodeProperty();
 		}
-		public PropertyTree<PROPERTY> getNode(int result) {
+		public PropertyTree getNode(int result) {
 			if(nodes.size()>result) {
 				return nodes.get(result);
 			}
@@ -57,7 +57,7 @@ public class PropertySearchResults<PROPERTY extends Property> {
 	int totalNodes;
 	boolean sorted;
 	
-	PropertySearchResults(PropertyTree<PROPERTY> firstNode) {
+	PropertySearchResults(PropertyTree firstNode) {
 		results=new ArrayList<Result>(1); // size 1; guessing there will not be any conflicting values
 		results.add(new Result(firstNode));
 		sorted=true;
@@ -99,11 +99,11 @@ public class PropertySearchResults<PROPERTY extends Property> {
 	public boolean isUnanimous() {
 		return results.size()==1;
 	}
-	public PROPERTY getProperty() {
+	public Property getProperty() {
 		// these should all be the same so no need to sort
 		return results.get(0).getProperty();
 	}
-	public void addResult(PropertyTree<PROPERTY> node) {
+	public void addResult(PropertyTree node) {
 		Object value=node.getValue();
 		Result match=getMatchingResult(value);
 		if(match==null) {
@@ -134,7 +134,7 @@ public class PropertySearchResults<PROPERTY extends Property> {
 	@Override
 	public String toString() {
 		sort();
-		PROPERTY p=this.getProperty();
+		Property p=this.getProperty();
         String result="Query ("+this.totalNodes+" elements) "+p.toString();
     	if(this.isUnanimous()) {
     		result+=": ";

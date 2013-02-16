@@ -1,5 +1,6 @@
 package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.stringutils.ResizingByteBuffer;
 
@@ -13,7 +14,7 @@ import java.io.RandomAccessFile;
 
 public class Id3v2RawFrame extends Id3v2Frame {
 	ResizingByteBuffer rawFrameContents=null;
-    public Id3v2RawFrame(MediaProperty property, PropertyTree<MediaProperty> parent) {
+    public Id3v2RawFrame(Property property, PropertyTree parent) {
         super(property, parent);
     }
 

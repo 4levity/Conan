@@ -1,5 +1,6 @@
 package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.stringutils.ResizingByteBuffer;
 
@@ -14,7 +15,7 @@ import java.util.logging.Level;
 
 public class Id3v2URLFrame extends Id3v2Frame {
     URL url=null;
-    public Id3v2URLFrame(MediaProperty property, PropertyTree<MediaProperty> parent) {
+    public Id3v2URLFrame(Property property, PropertyTree parent) {
         super(property, parent);
     }
 

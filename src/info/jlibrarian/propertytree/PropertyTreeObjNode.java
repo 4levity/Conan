@@ -1,9 +1,9 @@
 package info.jlibrarian.propertytree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 
-public class PropertyTreeObjNode<PROPERTY extends Property> extends PropertyTree<PROPERTY> {
+public class PropertyTreeObjNode extends PropertyTree {
     Object obj;
-    public PropertyTreeObjNode(PROPERTY prop,PropertyTree<PROPERTY> parent) {
+    public PropertyTreeObjNode(Property prop,PropertyTree parent) {
         super(prop,parent);
         this.obj=null;
     }

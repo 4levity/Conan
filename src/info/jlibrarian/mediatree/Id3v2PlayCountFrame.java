@@ -1,5 +1,6 @@
 package info.jlibrarian.mediatree;
 
+import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.stringutils.ResizingByteBuffer;
 
@@ -12,7 +13,7 @@ public class Id3v2PlayCountFrame extends Id3v2Frame {
 	Long playCounter;
 	
     // constructor has to look like this; supported id3 tag frames instantiated by reflection
-	public Id3v2PlayCountFrame(MediaProperty property,PropertyTree<MediaProperty> parent) {
+	public Id3v2PlayCountFrame(Property property,PropertyTree parent) {
 		super(property, parent);
 	}
 

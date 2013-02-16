@@ -15,19 +15,19 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class PropertyTree<PROPERTY extends Property> {
-    private final PROPERTY property;
-    private PropertyTree<PROPERTY> parent;
-    private List<PropertyTree<PROPERTY>> children;
+public abstract class PropertyTree {
+    private Property property;
+    private PropertyTree parent;
+    private List<PropertyTree> children;
     
-    public PropertyTree(PROPERTY property,PropertyTree<PROPERTY> parent) {
+    public PropertyTree(Property property,PropertyTree parent) {
         this.property=property;
         this.parent=parent;
         this.children=null;
         if(parent!=null)
             parent.addChild(this);
     }
-    final public PROPERTY getNodeProperty() {
+    final public Property getNodeProperty() {
         return property;
     }
     public abstract void setValue(Object o);
@@ -37,23 +37,26 @@ public abstract class PropertyTree<PROPERTY extends Property> {
  * 		optionally only look up values that are direct children of given property/superproperty
  * 		if none match, return null set.
  */
-    final public PropertySearchResults<PROPERTY> query(PROPERTY target,PROPERTY searchWithin) {
-    	ArrayList<PROPERTY> targetList=null;
+    final public PropertySearchResults query(Property target,Property searchWithin) {
+    	ArrayList<Property> targetList=null;
     	if(target!=null) {
-    		targetList=new ArrayList<PROPERTY>(1);
+    		targetList=new ArrayList<Property>(1);
     		targetList.add(target);
     	}
-    	Map<PROPERTY, PropertySearchResults<PROPERTY>> results=this.doQuery(null, targetList, searchWithin);
+    	Map<Property, PropertySearchResults> results=this.doQuery(null, targetList, searchWithin);
     	if(results==null) {
     		return null;
     	}
     	return results.get(target);
     }
-    final public PropertySearchResults<PROPERTY> query(PROPERTY target) {
+    final public PropertySearchResults query(Property target) {
     	return this.query(target, null);
     }
-    final private Map<PROPERTY,PropertySearchResults<PROPERTY>> doQuery(Map<PROPERTY,PropertySearchResults<PROPERTY>> results,ArrayList<PROPERTY> targetList,PROPERTY searchWithin) {    	
-    	PropertyTree<PROPERTY> parent=this.getParent();
+    final private Map<Property,PropertySearchResults> doQuery(Map<Property,
+    		PropertySearchResults> results,
+    		ArrayList<Property> targetList,
+    		Property searchWithin) {    	
+    	PropertyTree parent=this.getParent();
     	boolean searchHere=false;
     	if(searchWithin==null) {
     		searchHere=true;
@@ -70,7 +73,7 @@ public abstract class PropertyTree<PROPERTY extends Property> {
         			results=addThisResult(results,targetList);
     			}
     		} else {
-        		for(PROPERTY target : targetList) {
+        		for(Property target : targetList) {
             		if(this.getNodeProperty().isTypeOf(target)) {
                 		if(this.getValue()!=null) {
                 			results=addThisResult(results,targetList);
@@ -80,7 +83,7 @@ public abstract class PropertyTree<PROPERTY extends Property> {
     		}
     	}
     	if(this.children!=null) {
-        	for(PropertyTree<PROPERTY> child : this.children) {
+        	for(PropertyTree child : this.children) {
         		results=child.doQuery(results, targetList, searchWithin);
         	}
     	}
@@ -88,8 +91,8 @@ public abstract class PropertyTree<PROPERTY extends Property> {
     }
 
 	// we have found a match at this node and need to add it to the result set
-    final private Map<PROPERTY, PropertySearchResults<PROPERTY>> addThisResult(
-			Map<PROPERTY, PropertySearchResults<PROPERTY>> results,ArrayList<PROPERTY> targetProperties) {
+    final private Map<Property, PropertySearchResults> addThisResult(
+			Map<Property, PropertySearchResults> results,ArrayList<Property> targetProperties) {
 		if(results==null) {
 	    	// first match, need to allocate a result set 
 	    	// guess what size map to create
@@ -99,14 +102,14 @@ public abstract class PropertyTree<PROPERTY extends Property> {
 	    	} else {
 	    		expectedResults=10;
 	    	}
-	    	results=new HashMap<PROPERTY,PropertySearchResults<PROPERTY>>(expectedResults);
+	    	results=new HashMap<Property,PropertySearchResults>(expectedResults);
 
 	    	// put this node in results
-			results.put(this.getNodeProperty(),new PropertySearchResults<PROPERTY>(this));
+			results.put(this.getNodeProperty(),new PropertySearchResults(this));
 		} else {
-			PropertySearchResults<PROPERTY> resultForThisProp=results.get(this.getNodeProperty());
+			PropertySearchResults resultForThisProp=results.get(this.getNodeProperty());
 			if(resultForThisProp==null) {
-				results.put(this.getNodeProperty(), new PropertySearchResults<PROPERTY>(this));
+				results.put(this.getNodeProperty(), new PropertySearchResults(this));
 			} else {
 				resultForThisProp.addResult(this);
 			}
@@ -117,24 +120,24 @@ public abstract class PropertyTree<PROPERTY extends Property> {
      * optionally only look up values that are direct children of given property/superproperty
      * if none match, return null.
      */
-    final public Object queryBestResult(PROPERTY target,PROPERTY searchWithin) {
-    	PropertySearchResults<PROPERTY> queryResult=this.query(target, searchWithin);
+    final public Object queryBestResult(Property target,Property searchWithin) {
+    	PropertySearchResults queryResult=this.query(target, searchWithin);
     	if(queryResult!=null) {
     		return queryResult.getFirstValue();
     	}
     	return null;
     }
-    final public Object queryBestResult(PROPERTY target) {
+    final public Object queryBestResult(Property target) {
     	return this.queryBestResult(target, null);
     }
-    final public PropertyTree<PROPERTY> queryBestResultNode(PROPERTY target,PROPERTY searchWithin) {
-    	PropertySearchResults<PROPERTY> queryResult=this.query(target, searchWithin);
+    final public PropertyTree queryBestResultNode(Property target,Property searchWithin) {
+    	PropertySearchResults queryResult=this.query(target, searchWithin);
     	if(queryResult!=null) {
     		return queryResult.getResult(0).getNode(0);
     	}
     	return null;
     }
-    final public PropertyTree<PROPERTY> queryBestResultNode(PROPERTY target) {
+    final public PropertyTree queryBestResultNode(Property target) {
     	return this.queryBestResultNode(target, null);
     }
 /* lookup list: return hashmap<property,#1 lookup set>, given set of properties
@@ -142,10 +145,10 @@ public abstract class PropertyTree<PROPERTY extends Property> {
  * 		(same result as repeatedly calling lookup but ideally in one traversal)
  * 		if none match, return null hashset.
  */
-    final public Map<PROPERTY,PropertySearchResults<PROPERTY>> query(ArrayList<PROPERTY> targetList,PROPERTY searchWithin) {
+    final public Map<Property,PropertySearchResults> query(ArrayList<Property> targetList,Property searchWithin) {
     	return doQuery(null,targetList,searchWithin);
     }
-    final public Map<PROPERTY,PropertySearchResults<PROPERTY>> query(ArrayList<PROPERTY> targetList) {
+    final public Map<Property,PropertySearchResults> query(ArrayList<Property> targetList) {
     	return this.doQuery(null,targetList,null);
     }
 /* lookup all: return hashmap<property,#1 lookup set>, for any property represented
@@ -153,20 +156,20 @@ public abstract class PropertyTree<PROPERTY extends Property> {
  * if this node has null value and no descendants with non-null values, 
  * return null set
  */
-    final public Map<PROPERTY,PropertySearchResults<PROPERTY>> query() {
+    final public Map<Property,PropertySearchResults> query() {
     	return this.doQuery(null, null, null);
     }
     
-    final protected PropertyTree<PROPERTY> getParent() {
+    final protected PropertyTree getParent() {
         return parent;
     }
-    private boolean addChild(PropertyTree<PROPERTY> newChild) {
+    private boolean addChild(PropertyTree newChild) {
         if(children==null)
-            children=new LinkedList<PropertyTree<PROPERTY>>();
+            children=new LinkedList<PropertyTree>();
         children.add(newChild);
         return true;
     }
-    final public Iterator<PropertyTree<PROPERTY>> getChildren() {
+    final public Iterator<PropertyTree> getChildren() {
         if(children==null)
             return null;
         return children.iterator();
@@ -202,7 +205,7 @@ public abstract class PropertyTree<PROPERTY extends Property> {
         if(children==null)
             return;
 
-        for(PropertyTree<PROPERTY> child : children) {
+        for(PropertyTree child : children) {
             child.forceSubtreeValid();
         }
     }
@@ -359,10 +362,10 @@ public abstract class PropertyTree<PROPERTY extends Property> {
 		return false;
 	}*/
 
-/*    public boolean canCreateChild(PROPERTY newProperty) {
+/*    public boolean canCreateChild(Property newProperty) {
 		return false;
 	}
-	public boolean createChild(PROPERTY newProperty,Object newValue) {
+	public boolean createChild(Property newProperty,Object newValue) {
 		
 	}*/
 
@@ -376,7 +379,7 @@ public abstract class PropertyTree<PROPERTY extends Property> {
         for(int i=indent;i>0;i--)
             s += "   ";
         s += this.describeNode() + System.getProperty("line.separator");
-        for(Iterator<PropertyTree<PROPERTY>> j=getChildren();j !=null && j.hasNext();) {
+        for(Iterator<PropertyTree> j=getChildren();j !=null && j.hasNext();) {
             s += j.next().describeTree(indent+1);
         }
         return s;
@@ -403,7 +406,6 @@ public abstract class PropertyTree<PROPERTY extends Property> {
     }
     
     @Override
-    @SuppressWarnings("unchecked")
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -411,7 +413,7 @@ public abstract class PropertyTree<PROPERTY extends Property> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final PropertyTree<PROPERTY> other = (PropertyTree<PROPERTY>) obj;
+        final PropertyTree other = (PropertyTree) obj;
         if (this.getValue() != other.getValue() && (this.getValue() == null || !this.getValue().equals(other.getValue()))) {
             return false;
         }
@@ -428,10 +430,10 @@ public abstract class PropertyTree<PROPERTY extends Property> {
     static {
         logger=Logger.getLogger("info.jlibrarian.mediatree");
     };
-    public static void log(PropertyTree<?> node,Level level,String msg,Throwable ex) {
+    public static void log(PropertyTree node,Level level,String msg,Throwable ex) {
     	PropertyTree.logger.log(level,(node==null?msg:msg+" / at "+node.describePath()),ex);
     }
-    public static void log(PropertyTree<?> node,Level level,String msg) {
+    public static void log(PropertyTree node,Level level,String msg) {
        	PropertyTree.logger.log(level,(node==null?msg:msg+" / at "+node.describePath()));
     }
     public static void setLogLevel(Level newLevel) {
@@ -450,9 +452,9 @@ public abstract class PropertyTree<PROPERTY extends Property> {
             return false;
         return setParent(null);
     }
-    final protected boolean dropChild(PropertyTree<PROPERTY> childMatch) {
+    final protected boolean dropChild(PropertyTree childMatch) {
         boolean found=false;
-        for(Iterator<PropertyTree<PROPERTY>> c=children.iterator();c.hasNext();) {
+        for(Iterator<PropertyTree> c=children.iterator();c.hasNext();) {
             if(c.next() == childMatch) {
                 c.remove();
             }
@@ -462,11 +464,19 @@ public abstract class PropertyTree<PROPERTY extends Property> {
     final protected void dropChildren() {
         children=null;
     }
-    final private boolean setParent(PropertyTree<PROPERTY> newParent) {
+    final private boolean setParent(PropertyTree newParent) {
         if(parent!=null) {
         	throw new UnsupportedOperationException("MetaTree: tried to reparent a node, not possible");
         }
         parent=newParent;
         return true;
     }
+
+	public void clarifyProperty(Property newProperty) {
+		if(newProperty==null)
+			return;
+		if(!newProperty.isTypeOf(this.getNodeProperty()))
+			return;
+		this.property=newProperty;
+	}
 }

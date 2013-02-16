@@ -1,6 +1,7 @@
 package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 
+import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.stringutils.VersionString;
 
 import java.io.File;
@@ -337,8 +338,8 @@ registerId3v2("WPUB","2.3+",Id3v2URLFrame.class,MediaProperty.URL_PUBLISHER,fals
 registerId3v2("WXX","2.2.*",Id3v2TextFrame.class,MediaProperty.URL_USER,false);
 registerId3v2("WXXX","2.3+",Id3v2TextFrame.class,MediaProperty.URL_USER,false);
 
-registerId3v2("TXX","2.2.*",Id3v2TextFrame.class,MediaProperty.USERTEXT);
-registerId3v2("TXXX","2.3+",Id3v2TextFrame.class,MediaProperty.USERTEXT);
+registerId3v2("TXX","2.2.*",Id3v2UserTextFrame.class,MediaProperty.USERTEXT);
+registerId3v2("TXXX","2.3+",Id3v2UserTextFrame.class,MediaProperty.USERTEXT);
 
 registerId3v2("USER","2.3+",Id3v2TextFrame.class,MediaProperty.TERMSOFUSE);
 
@@ -380,16 +381,16 @@ registerVorbis("TOTALTRACKS",VorbisTextField.class,MediaProperty.VORBISFIELD_TRA
     public static class VorbisCommentConfig {
         String fieldName;
         Class<? extends FrameNode> fieldClass;
-        MediaProperty fieldProperty;
+        Property fieldProperty;
         boolean alternate;
-        public VorbisCommentConfig(String fieldName, Class<? extends FrameNode> fieldClass, MediaProperty fieldProperty) {
+        public VorbisCommentConfig(String fieldName, Class<? extends FrameNode> fieldClass, Property fieldProperty) {
             this.fieldName = fieldName;
             this.fieldClass = fieldClass;
             this.fieldProperty = fieldProperty;
             alternate=false;
         }
 
-        public VorbisCommentConfig(String fieldName, Class<? extends FrameNode> fieldClass, MediaProperty fieldProperty, boolean alternate) {
+        public VorbisCommentConfig(String fieldName, Class<? extends FrameNode> fieldClass, Property fieldProperty, boolean alternate) {
             this.fieldName = fieldName;
             this.fieldClass = fieldClass;
             this.fieldProperty = fieldProperty;
@@ -457,7 +458,7 @@ registerVorbis("TOTALTRACKS",VorbisTextField.class,MediaProperty.VORBISFIELD_TRA
         return match;
 	}
 
-    public static String describeId3v2Support(MediaProperty p) {
+    public static String describeId3v2Support(Property p) {
         String supp="";
         for(Id3v2FrameConfig cfg : id3v2Fields) {
             if(cfg.frameProperty == p) {
@@ -469,13 +470,13 @@ registerVorbis("TOTALTRACKS",VorbisTextField.class,MediaProperty.VORBISFIELD_TRA
         return supp.length()>0?supp:"n/a";
     }
     
-    private static void registerVorbis(String field, Class<? extends FrameNode> type, MediaProperty prop) {
+    private static void registerVorbis(String field, Class<? extends FrameNode> type, Property prop) {
         vorbisFields.add(new VorbisCommentConfig(field,type,prop));
     }
-    private static void registerVorbis(String field, Class<? extends FrameNode> type, MediaProperty prop,boolean alt) {
+    private static void registerVorbis(String field, Class<? extends FrameNode> type, Property prop,boolean alt) {
         vorbisFields.add(new VorbisCommentConfig(field,type,prop,alt));
     }
-    public static String describeVorbisCommentSupport(MediaProperty p) {
+    public static String describeVorbisCommentSupport(Property p) {
         String supp="";
         for(VorbisCommentConfig cfg : vorbisFields) {
             if(cfg.fieldProperty==p) {
@@ -495,4 +496,10 @@ registerVorbis("TOTALTRACKS",VorbisTextField.class,MediaProperty.VORBISFIELD_TRA
         }
         return null;
     }
+	public static String getPrefixUserText() {
+		return "USERTEXT:";
+	}
+	public static String getPrefixUserData() {
+		return "USERDATA:";
+	}
 }

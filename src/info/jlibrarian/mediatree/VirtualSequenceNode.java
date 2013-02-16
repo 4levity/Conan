@@ -1,5 +1,6 @@
 package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.specialtypes.SequencePosition;
 
@@ -17,9 +18,9 @@ import info.jlibrarian.specialtypes.SequencePosition;
  *
  * @author ivan
  */
-public class VirtualSequenceNode extends PropertyTree<MediaProperty> {
-    MediaProperty pPosition,pTotal;
-    public VirtualSequenceNode(MediaProperty p,PropertyTree<MediaProperty> parent,MediaProperty pPos,MediaProperty pTot) {
+public class VirtualSequenceNode extends PropertyTree {
+    Property pPosition,pTotal;
+    public VirtualSequenceNode(Property p,PropertyTree parent,Property pPos,Property pTot) {
         super(p,parent);
         pPosition=pPos;
         pTotal=pTot;
@@ -32,14 +33,14 @@ public class VirtualSequenceNode extends PropertyTree<MediaProperty> {
         
         Integer position;
         try {
-			position= Integer.parseInt((String)this.getParent().queryBestResult(pPosition));
+			position= (Integer) this.getParent().queryBestResult(pPosition);
 		} catch (NumberFormatException e) {
 			position=null;
 		}
         
         Integer total;
         try {
-        	total = Integer.parseInt((String)this.getParent().queryBestResult(pTotal));
+        	total = (Integer) this.getParent().queryBestResult(pTotal);
 		} catch (NumberFormatException e) {
 			total=null;
 		}

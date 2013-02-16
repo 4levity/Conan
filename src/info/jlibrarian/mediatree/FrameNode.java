@@ -1,5 +1,6 @@
 package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.specialtypes.PayloadContainer;
 
@@ -10,13 +11,13 @@ import java.io.RandomAccessFile;
 import java.util.logging.Level;
 
 
-public abstract class FrameNode extends PropertyTree<MediaProperty>
+public abstract class FrameNode extends PropertyTree
 	implements PayloadContainer {
     Long offset=null;
     int dataLength=-1;
     String frameIdentifier=null;
 
-    public FrameNode(MediaProperty property, PropertyTree<MediaProperty> parent) {
+    public FrameNode(Property property, PropertyTree parent) {
         super(property, parent);
     }
     abstract protected byte[] load_from_current_position(String frameId,int dataLen,RandomAccessFile openFile) 

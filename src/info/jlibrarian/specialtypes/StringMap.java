@@ -17,6 +17,10 @@ public class StringMap extends java.util.HashMap<String, String>
     public StringMap() {
     	super();
     }
+    public StringMap(String strings) {
+    	super();
+    	this.setFromString(strings);
+    }
 
 	@Override
 	public boolean setFromString(String value) {

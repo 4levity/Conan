@@ -1,16 +1,17 @@
 package info.jlibrarian.mediatree;
 
+import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.propertytree.PropertyTree;
 
 /* 
  * defines a virtual-value node (no object payload) representing a value 
  * which is a concatenated composite of two other sibling properties.
  */
-public class VirtualConcatenateNode extends PropertyTree<MediaProperty> {
-	MediaProperty part1,part2;
+public class VirtualConcatenateNode extends PropertyTree {
+	Property part1,part2;
 	String separator;
-	public VirtualConcatenateNode(MediaProperty property, PropertyTree<MediaProperty> parent,
-			MediaProperty part1,MediaProperty part2,String separator) {
+	public VirtualConcatenateNode(Property property, PropertyTree parent,
+			Property part1,Property part2,String separator) {
 		super(property, parent);
 		this.part1=part1;
 		this.part2=part2;

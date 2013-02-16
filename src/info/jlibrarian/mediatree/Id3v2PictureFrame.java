@@ -1,6 +1,7 @@
 package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 
+import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.specialtypes.FileMetadata;
 import info.jlibrarian.specialtypes.Id3PictureType;
@@ -20,7 +21,7 @@ public class Id3v2PictureFrame extends Id3v2Frame {
     FileMetadata embeddedImageLink=null;
 
     // constructor has to look like this; supported id3 tag frames instantiated by reflection
-    public Id3v2PictureFrame(MediaProperty prop,PropertyTree<MediaProperty> parent) {
+    public Id3v2PictureFrame(Property prop,PropertyTree parent) {
         super(prop, parent);
     }
 

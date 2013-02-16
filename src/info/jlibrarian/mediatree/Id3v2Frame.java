@@ -1,5 +1,6 @@
 package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.specialtypes.Id3v2FrameFlags;
 import info.jlibrarian.stringutils.ResizingByteBuffer;
@@ -20,7 +21,7 @@ import java.util.logging.Level;
 
 public abstract class Id3v2Frame extends FrameNode {
     protected Id3v2FrameFlags nonDefaultFlags=null; // null if all flags are normal and 0 appended header bytes
-    public Id3v2Frame(MediaProperty property, PropertyTree<MediaProperty> parent) {
+    public Id3v2Frame(Property property, PropertyTree  parent) {
         super(property, parent);
     }
     public Id3v2FrameFlags getFlags() {

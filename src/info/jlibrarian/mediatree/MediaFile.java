@@ -1,5 +1,6 @@
 package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.propertytree.PropertyTreeObjNode;
 import info.jlibrarian.specialtypes.FileMetadata;
@@ -16,10 +17,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MediaFile extends PropertyTreeObjNode<MediaProperty> implements PayloadContainer {
+public class MediaFile extends PropertyTreeObjNode implements PayloadContainer {
 	File actualFile;
 
-	public MediaFile(MediaProperty prop,PropertyTree<MediaProperty> parent) {
+	public MediaFile(Property prop,PropertyTree parent) {
         super(prop,parent);
         this.actualFile=null;
     }
@@ -103,7 +104,7 @@ public class MediaFile extends PropertyTreeObjNode<MediaProperty> implements Pay
             // load every appropriate tag in the file
             try {
                 Constructor<? extends MediaTag> con = tagConfig.tagClass
-                        .getDeclaredConstructor(MediaProperty.class,PropertyTree.class);
+                        .getDeclaredConstructor(Property.class,PropertyTree.class);
                 if(con!=null)
                     tag=con.newInstance(tagConfig.tagProperty,this)
                             .load(rf, tagConfig.tagVersions);

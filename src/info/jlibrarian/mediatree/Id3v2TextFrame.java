@@ -1,5 +1,6 @@
 package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.stringutils.ResizingByteBuffer;
 import info.jlibrarian.stringutils.SettableFromString;
@@ -19,7 +20,7 @@ public class Id3v2TextFrame extends Id3v2Frame {
     protected byte originalEncodingType=-1;
     private Object nativeValue=null; 
 
-    public Id3v2TextFrame(MediaProperty property, PropertyTree<MediaProperty> parent) {
+    public Id3v2TextFrame(Property property, PropertyTree parent) {
         super(property, parent);
     }
 

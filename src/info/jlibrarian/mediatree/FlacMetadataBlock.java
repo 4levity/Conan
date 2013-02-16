@@ -1,5 +1,6 @@
 package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.specialtypes.FlacHeader;
 
@@ -16,7 +17,7 @@ import java.util.logging.Level;
  * @author ivan
  */
 public class FlacMetadataBlock extends MediaTag {
-    public FlacMetadataBlock(MediaProperty prop, PropertyTree<MediaProperty> parent) {
+    public FlacMetadataBlock(Property prop, PropertyTree parent) {
         super(prop, parent);
     }
 

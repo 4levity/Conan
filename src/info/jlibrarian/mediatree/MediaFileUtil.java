@@ -1,5 +1,7 @@
 package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.propertytree.Property;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -79,14 +81,14 @@ public class MediaFileUtil {
                 .toLowerCase();
     }
 
-    private static class Sorter implements Comparator<MediaProperty> {
-        public int compare(MediaProperty arg0, MediaProperty arg1) {
-            return arg0.getShortName().compareTo(arg1.getShortName());
+    private static class Sorter implements Comparator<Property> {
+        public int compare(Property arg0, Property arg1) {
+            return arg0.getName().compareTo(arg1.getName());
         }
     }
     public static String supportReport(boolean abbrev) {
-        ArrayList<MediaProperty> props= new ArrayList<MediaProperty>();
-        for(MediaProperty p : MediaProperty.values() ) {
+        ArrayList<Property> props= new ArrayList<Property>();
+        for(Property p : MediaProperty.values() ) {
             props.add(p);
         }
         Collections.sort(props, new Sorter());
@@ -98,9 +100,9 @@ public class MediaFileUtil {
         }
         
         String r=String.format(fmt,"Property","Description","Data type","Id3v2 field(s)","Vorbis field(s)");
-        for(MediaProperty p : props ) {
+        for(Property p : props ) {
             r+=String.format(fmt,
-                    p.getShortName(),
+                    p.getName(),
                     p.getDescription(),
                     p.getDataType().getSimpleName(),
                     Registry.describeId3v2Support(p),

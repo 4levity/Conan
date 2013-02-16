@@ -1,5 +1,6 @@
 package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
+import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.propertytree.PropertyTreeObjNode;
 
@@ -9,16 +10,16 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 
-public class MediaFolder extends PropertyTreeObjNode<MediaProperty> {
+public class MediaFolder extends PropertyTreeObjNode {
     public MediaFolder() {
         super(MediaProperty.FOLDER,null);
     }
 
-    public MediaFolder(PropertyTree<MediaProperty> parent) {
+    public MediaFolder(PropertyTree parent) {
         super(MediaProperty.FOLDER,parent);
     }
 
-    public MediaFolder(MediaProperty prop, PropertyTree<MediaProperty> parent) {
+    public MediaFolder(Property prop, PropertyTree parent) {
         super(prop, parent);
     }
 
@@ -86,7 +87,7 @@ public class MediaFolder extends PropertyTreeObjNode<MediaProperty> {
         } else {
             try {
                 Constructor<? extends MediaFile> cons =
-                        fType.fileClass.getDeclaredConstructor(MediaProperty.class,PropertyTree.class);
+                        fType.fileClass.getDeclaredConstructor(Property.class,PropertyTree.class);
                 if(cons!=null) {
                     newFile=((MediaFile)cons.newInstance(fType.fileProperty,this))
                             .load(f);

@@ -15,6 +15,7 @@ import info.jlibrarian.stringutils.ResizingByteBuffer;
 
 import java.io.File;
 import java.net.URL;
+import java.util.HashMap;
 
 public enum MediaProperty implements Property {
 	// file system objects. (note: image files are stored as MediaProperty.PICTURE)
@@ -92,7 +93,7 @@ public enum MediaProperty implements Property {
     URL_PAYMENT ("Payment URL",URL.class,true),
     URL_PUBLISHER ("Publisher URL",URL.class,true),
     URL_USER ("User URL map",StringMap.class,true),
-    USERTEXT ("User text",StringMap.class,true),
+    USERTEXT ("User text",String.class,true),
 
     // Vorbis-specific fields.. 
     VORBISFIELD_ENCODERSOFTWARE ("Vorbis field/Encoder software",String.class,true),
@@ -237,5 +238,27 @@ public enum MediaProperty implements Property {
 	public boolean getIsUniqueAttribute() {
 		return this.isUniqueAttribute;
 	}
+	@Override
+	public String getName() {
+		return getShortName();
+	}
 
+	private static HashMap<String,Property> extendedProperties=new HashMap<String,Property>(); 
+	public static Property getPropertyByName(String name) {
+		return getPropertyByName(name,null);
+	}
+	public static Property getPropertyByName(String name, Property createUnderProperty) {
+		Property p=null;
+		try {
+			p=MediaProperty.valueOf(name);
+		} catch (IllegalArgumentException e) {
+			String uppercaseName=name.toUpperCase();
+			p=extendedProperties.get(uppercaseName);
+			if(createUnderProperty!=null && p==null) {
+				p=new ExtendedProperty(name,createUnderProperty);
+				extendedProperties.put(uppercaseName,p);
+			}
+		}
+		return p;
+	}
 }

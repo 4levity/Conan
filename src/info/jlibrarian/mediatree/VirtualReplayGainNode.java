@@ -1,12 +1,13 @@
 package info.jlibrarian.mediatree;
 
+import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.specialtypes.ReplayGain;
 
-public class VirtualReplayGainNode extends PropertyTree<MediaProperty> {
+public class VirtualReplayGainNode extends PropertyTree {
 
-	public VirtualReplayGainNode(MediaProperty property,
-			PropertyTree<MediaProperty> parent) {
+	public VirtualReplayGainNode(Property property,
+			PropertyTree parent) {
 		super(property, parent);
 		// TODO Auto-generated constructor stub
 	}
@@ -19,7 +20,7 @@ public class VirtualReplayGainNode extends PropertyTree<MediaProperty> {
 	@Override
 	public Object getValue() {
 		ReplayGain rg=null;
-		MediaProperty parent=this.getParent().getNodeProperty();
+		Property parent=this.getParent().getNodeProperty();
 		
 		if(parent.isTypeOf(MediaProperty.ID3V2TAG)) {
 			rg = getId3v2ReplayGain();
@@ -32,8 +33,8 @@ public class VirtualReplayGainNode extends PropertyTree<MediaProperty> {
 	}
 
 	private ReplayGain getVorbisReplayGain() {
-		PropertyTree<MediaProperty> parent=this.getParent();
-		PropertyTree<MediaProperty> n;
+		PropertyTree parent=this.getParent();
+		PropertyTree n;
 		
 		n=parent.queryBestResultNode(MediaProperty.VORBIS_REPLAYGAIN_TRACK_GAIN);
 		Float gainTrack=(n==null?null:n.getFloat());
@@ -53,8 +54,20 @@ public class VirtualReplayGainNode extends PropertyTree<MediaProperty> {
 	}
 
 	private ReplayGain getId3v2ReplayGain() {
-		// TODO Auto-generated method stub
-		return null;
+		Float gainTrack=null;
+		Float gainAlbum=null;
+		Float referenceLoudness=null;
+		Double peakTrack=null;
+		Double peakAlbum=null;
+		// only method supported is via USERTEXT (TXXX) frames
+		//Id3v2Tag parent=(Id3v2Tag) this.getParent();
+
+
+		if(gainTrack==null && gainAlbum==null && referenceLoudness==null && peakTrack==null && peakAlbum==null) {
+			return null;
+		}
+		return new ReplayGain(gainTrack,gainAlbum,peakTrack,peakAlbum,referenceLoudness);
+	
 	}
 
 }

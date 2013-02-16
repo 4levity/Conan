@@ -1,5 +1,6 @@
 package info.jlibrarian.mediatree;
 
+import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.propertytree.PropertySearchResults;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.specialtypes.VariablePrecisionTime;
@@ -88,16 +89,16 @@ import info.jlibrarian.specialtypes.VariablePrecisionTime;
  * 		- Every tag gets a "smart" virtual node for recording date and release date
  * 		- value-generation behavior of these nodes could be configurable
  */
-public class VirtualDateNode extends PropertyTree<MediaProperty> {
+public class VirtualDateNode extends PropertyTree {
 	
-	public VirtualDateNode(MediaProperty property,
-			PropertyTree<MediaProperty> parent) {
+	public VirtualDateNode(Property property,
+			PropertyTree parent) {
 		super(property, parent);
 	}
 
 	@Override
 	public void setValue(Object o) {
-		throw new UnsupportedOperationException("cannot yet set virtual "+this.getNodeProperty().getShortName());
+		throw new UnsupportedOperationException("cannot yet set virtual "+this.getNodeProperty().getName());
 	}
 
 	@Override
@@ -108,7 +109,7 @@ public class VirtualDateNode extends PropertyTree<MediaProperty> {
 		// VirtualDateNode may only be used for datatype VariablePrecisionTime
 		VariablePrecisionTime result=null;
 		
-		MediaProperty parent=this.getParent().getNodeProperty();
+		Property parent=this.getParent().getNodeProperty();
 
 		if(parent.isTypeOf(MediaProperty.ID3V2TAG)) {
 			if(this.getNodeProperty().isTypeOf(MediaProperty.RELEASE_DATE)) {
@@ -174,7 +175,7 @@ public class VirtualDateNode extends PropertyTree<MediaProperty> {
 
 	// recordingDate = false : look for release date
 	private VariablePrecisionTime vorbisDate(boolean recordingDate) {
-		PropertySearchResults<MediaProperty> query=getParent().query(MediaProperty.VORBISFIELD_DATE);
+		PropertySearchResults query=getParent().query(MediaProperty.VORBISFIELD_DATE);
 		if(query==null)
 			return null;
 		
@@ -187,7 +188,7 @@ public class VirtualDateNode extends PropertyTree<MediaProperty> {
 		// go through all vorbis date fields and find best ones
 		int numResults=query.getNumResults();
 		for(int ix=0;ix<numResults && (dateUnspecified==null || dateRelease==null || dateRecorded==null);ix++) {
-			PropertySearchResults<MediaProperty>.Result candidate=query.getResult(ix);
+			PropertySearchResults.Result candidate=query.getResult(ix);
 			VariablePrecisionTime t =(VariablePrecisionTime) candidate.getValue();
 			String extra=t.getExtraData();
 			if(extra==null && dateUnspecified==null) {

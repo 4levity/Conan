@@ -13,7 +13,7 @@ import info.jlibrarian.specialtypes.ImageAttributes;
 public class FlacPicture extends FrameNode {
     FileMetadata embeddedImageLink=null;
 
-	public FlacPicture(PropertyTree<MediaProperty> parent) {
+	public FlacPicture(PropertyTree parent) {
 		super(MediaProperty.PICTURE, parent);
 	}
 

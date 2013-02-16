@@ -3,6 +3,7 @@ package info.jlibrarian.conan;
 import info.jlibrarian.mediatree.MediaFileUtil;
 import info.jlibrarian.mediatree.MediaFolder;
 import info.jlibrarian.mediatree.MediaProperty;
+import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.propertytree.PropertySearchResults;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.stringutils.StringUtils;
@@ -18,7 +19,7 @@ import java.util.logging.Level;
 public class ConanApp {
     public static void main(String[] args) {
     	ArrayList<File> targets=new ArrayList<File>();
-    	ArrayList<MediaProperty> queries=new ArrayList<MediaProperty>();
+    	ArrayList<Property> queries=new ArrayList<Property>();
     	Level logLevel=Level.WARNING;
     	int maxResults=-1;
     	
@@ -30,7 +31,8 @@ public class ConanApp {
     			if(arg+1<args.length) {
         			if(args[arg].equalsIgnoreCase("--query")) {
         				arg++;
-        				queries.add(MediaProperty.valueOf(args[arg]));
+        				Property qp=MediaProperty.getPropertyByName(args[arg]);
+        				queries.add(qp);
         				System.out.println("** Query property: "+queries.get(queries.size()-1));
         			} else if(args[arg].equalsIgnoreCase("--log")) {
         				arg++;
@@ -58,7 +60,7 @@ public class ConanApp {
     	PropertyTree.setLogLevel(logLevel);
     	
     	for(File f : targets) {
-    		PropertyTree<MediaProperty> root;
+    		PropertyTree root;
     		if(f.isDirectory()) {
     			root=null;
     			try {
@@ -68,7 +70,7 @@ public class ConanApp {
 					e.printStackTrace();
 				}
     			if(root!=null) {
-    				Map<MediaProperty, PropertySearchResults<MediaProperty>> queryResults;
+    				Map<Property, PropertySearchResults> queryResults;
     				if(queries.size()>0) {
     					queryResults=root.query(queries);
     				} else {
@@ -76,9 +78,9 @@ public class ConanApp {
     				}
 
     				if(queryResults!=null) {
-        				Set<Entry<MediaProperty, PropertySearchResults<MediaProperty>>> entries=queryResults.entrySet();
+        				Set<Entry<Property, PropertySearchResults>> entries=queryResults.entrySet();
         				if(entries!=null) {
-            				for(Entry<MediaProperty, PropertySearchResults<MediaProperty>> entry : entries) {
+            				for(Entry<Property, PropertySearchResults> entry : entries) {
             					if(maxResults<0) {
                 					System.out.println(
                 							StringUtils.lineWrap(
@@ -86,7 +88,7 @@ public class ConanApp {
                 							,80)
                 									);
             					} else if(maxResults==0) {
-            						System.out.println(entry.getKey()+"("+entry.getKey().getShortName()+"): "+entry.getValue().getNumResults()
+            						System.out.println(entry.getKey()+"("+entry.getKey().getName()+"): "+entry.getValue().getNumResults()
             								+" results in "+entry.getValue().getTotalNodes()+" total nodes");
             					} else {
             						// TODO: limit results
@@ -140,7 +142,7 @@ public class ConanApp {
 		System.out.println("usage: java -jar conan.jar [options] folder1 [folder2 [folder3...]]");
 		System.out.println("");
 		System.out.println("options:");
-		System.out.println("  --query PROPERTYNAME");
+		System.out.println("  --query PropertyNAME");
 		System.out.println("       query this property on each folder after loading (default is to query ");
 		System.out.println("       all properties). can be repeated to query a list of properties.");
 		System.out.println("");

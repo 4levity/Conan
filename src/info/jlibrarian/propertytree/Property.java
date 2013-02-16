@@ -23,4 +23,8 @@ public interface Property {
      * conflicts should be expected.
      */
     public boolean getIsUniqueAttribute();
+    
+    public String getName();
+    
+    public String getDescription();
 }

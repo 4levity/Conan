@@ -1,6 +1,7 @@
 package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 import info.jlibrarian.mediatree.Registry.Id3v2FrameConfig;
+import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.specialtypes.Id3v2TagHeader;
 import info.jlibrarian.stringutils.StringUtils;
@@ -21,7 +22,7 @@ import java.util.logging.Level;
 public class Id3v2Tag extends MediaTag {
     private Id3v2TagHeader originalHeader=null;
 
-    public Id3v2Tag(MediaProperty prop, PropertyTree<MediaProperty> parent) {
+    public Id3v2Tag(Property prop, PropertyTree parent) {
         super(prop, parent);
     }
     
@@ -246,7 +247,7 @@ public class Id3v2Tag extends MediaTag {
             String frameId, int frameSize, RandomAccessFile openFile) throws IOException {
         FrameNode newFrame=null;
         try {
-            Constructor<? extends FrameNode> cons = fc.frameClass.getConstructor(MediaProperty.class,PropertyTree.class);
+            Constructor<? extends FrameNode> cons = fc.frameClass.getConstructor(Property.class,PropertyTree.class);
             if (cons != null) {
                 newFrame = (FrameNode) cons.newInstance(fc.frameProperty,this);
             }
@@ -292,10 +293,10 @@ public class Id3v2Tag extends MediaTag {
 	public byte[] generate(int targetLength,int preferredPadding) {
 		// create frames first
 		UnsynchronizingByteBuffer frames=new UnsynchronizingByteBuffer(targetLength-10);
-		Iterator<PropertyTree<MediaProperty>> children = this.getChildren();
+		Iterator<PropertyTree> children = this.getChildren();
 		int length;
 		while(children.hasNext()) {
-			PropertyTree<MediaProperty> c=children.next();
+			PropertyTree c=children.next();
 			if(Id3v2Frame.class.isInstance(c)) {
 				length=frames.getLength();
 				try {
