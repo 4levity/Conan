@@ -87,7 +87,7 @@ public class ReplayGain {
 
 	@Override
 	public String toString() {
-		return "ReplayGain [gainTrack_dB=" + gainTrack_dB + ", gainAlbum_dB="
+		return "[gainTrack_dB=" + gainTrack_dB + ", gainAlbum_dB="
 				+ gainAlbum_dB + ", peakTrack=" + peakTrack + ", peakAlbum="
 				+ peakAlbum + ", gainReference_dB=" + gainReference_dB + "]";
 	}

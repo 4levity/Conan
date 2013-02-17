@@ -2,6 +2,11 @@ package info.jlibrarian.mediatree;
 
 import info.jlibrarian.propertytree.Property;
 
+/*
+ * Represents a property created at runtime, e.g. user text field identifier
+ * 
+ * Do not instantiate directly, instead use MediaProperty.getPropertyByName()
+ */
 public class ExtendedProperty implements Property {
 	String name;
 	Property superType;
@@ -14,7 +19,7 @@ public class ExtendedProperty implements Property {
 
 	@Override
 	public Class<?> getDataType() {
-		return superType.getClass();
+		return superType.getDataType();
 	}
 
 	@Override
@@ -40,7 +45,7 @@ public class ExtendedProperty implements Property {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.toUpperCase().hashCode());
 		result = prime * result
 				+ ((superType == null) ? 0 : superType.hashCode());
 		return result;
@@ -58,7 +63,7 @@ public class ExtendedProperty implements Property {
 		if (name == null) {
 			if (other.name != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!name.equalsIgnoreCase(other.name))
 			return false;
 		if (superType != other.superType)
 			return false;
@@ -73,6 +78,12 @@ public class ExtendedProperty implements Property {
 	@Override
 	public String getDescription() {
 		return "(Extended property)";
+	}
+
+	@Override
+	public Property extended(String name, boolean create) {
+		// TODO: make extended property interface more elegant?
+		throw new UnsupportedOperationException("internal error: extended properties cannot have extended properties");
 	}
 
 }

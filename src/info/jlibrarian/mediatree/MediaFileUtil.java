@@ -106,7 +106,7 @@ public class MediaFileUtil {
                     p.getDescription(),
                     p.getDataType().getSimpleName(),
                     Registry.describeId3v2Support(p),
-                    Registry.describeVorbisCommentSupport(p));
+                    Registry.describeVorbisSupport(p));
         }
         return r;
     }

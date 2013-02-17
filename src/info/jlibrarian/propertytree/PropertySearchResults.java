@@ -104,6 +104,7 @@ public class PropertySearchResults {
 		return results.get(0).getProperty();
 	}
 	public void addResult(PropertyTree node) {
+		// todo: don't call getValue again right here!
 		Object value=node.getValue();
 		Result match=getMatchingResult(value);
 		if(match==null) {
@@ -133,6 +134,14 @@ public class PropertySearchResults {
 	
 	@Override
 	public String toString() {
+		Property p=this.getProperty();
+        return "Query ("+this.totalNodes+" elements) "+p.toString();
+	}
+	
+	/*
+	 * maxResults=-1 for no maximum
+	 */
+	public String formattedResults(boolean showNodes,int maxResults) {
 		sort();
 		Property p=this.getProperty();
         String result="Query ("+this.totalNodes+" elements) "+p.toString();
@@ -143,23 +152,34 @@ public class PropertySearchResults {
     	} else {
             result+=": SET { ";
     	}
+    	
+    	int numResults=0;
         if(this.results != null) {
             for(Result r : this.results) {
-        		if(r.getProperty().getIsUniqueAttribute()) {
-        			// prints out each unique value (most likely first), do not print nodes
-        			result += StringUtils.stripControlCharacters(r.getValue().toString())
-        			 		+" ["+r.size();
-        			if(r.size()==1) {
-            			result+=" result] ";
-          			} else {
-            			result+=" results] ";
-          			}
-        		} else {
-        			// for nonunique attributes, print the full list of nodes
-        			for(int i=0;i<r.size();i++) {
-            			result+=r.getNode(i).describeNode()+"  ";
-        			}
-        		}
+            	if(maxResults==-1 || numResults<maxResults) {
+            		numResults++;
+            		
+                	if(showNodes) {
+//                		if(!r.getProperty().getIsUniqueAttribute()) {
+                			// print the full list of nodes
+                			for(int i=0;i<r.size();i++) {
+                				PropertyTree node=r.getNode(i);
+                				Object val=node.getValue();
+                    			result+=r.getNode(i).describeNode()
+                    					+(val==null?"":"="+val.toString())
+                    					+"  ";
+                			}
+                		} else {
+                			// prints out each unique value (starting with most results), do not print nodes
+                			result += StringUtils.stripControlCharacters(r.getValue().toString())
+                			 		+" ["+r.size();
+                			if(r.size()==1) {
+                    			result+=" result] ";
+                  			} else {
+                    			result+=" results] ";
+                  			}
+                		}
+            	}
             }
         }
     	if(!this.isUnanimous()) {

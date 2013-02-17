@@ -27,4 +27,6 @@ public interface Property {
     public String getName();
     
     public String getDescription();
+    
+    public Property extended(String name,boolean create);
 }

@@ -174,6 +174,7 @@ public abstract class PropertyTree {
             return null;
         return children.iterator();
     }
+    /*
     public boolean isValueValid() {
     	// override to define how to determine if the assigned value is valid/allowed
     	Object o=getValue();
@@ -186,7 +187,7 @@ public abstract class PropertyTree {
             return false;
         } // else default is to assume valid
         return true;
-    }
+    }*/
 
     public void forceValueValid() {
     	// override to define a way to force an invalid/disallowed value to be valid/allowed
@@ -279,47 +280,38 @@ public abstract class PropertyTree {
     	if(o==null) {
     		return null;
     	}
-    	
+    	Object original=o;
     	Class<?> targetType = this.property.getDataType();
         if(targetType.equals(Long.class) 
                 && String.class.isAssignableFrom(o.getClass()) ) {
             // automatically convert string initializer to Long storage
-        	String string=StringUtils.trimNonNumeric(o.toString());
-            try {
-                o=new Long(Long.parseLong(string));
-            } catch (NumberFormatException ex) {
-                log(Level.WARNING,"String to Long conversion failed on "+StringUtils.stripControlCharacters(o.toString()));
-                return null;
-            }
+        	o=StringUtils.toLong(o.toString());
+        	if(o==null) {
+        		log(Level.WARNING,"String to Long conversion failed on "+StringUtils.stripControlCharacters(original.toString()));
+        		return null;
+        	}
         } else if(targetType.equals(Integer.class) 
                 && String.class.isAssignableFrom(o.getClass()) ) {
             // automatically convert string initializer to Integer storage
-        	String string=StringUtils.trimNonNumeric(o.toString());
-            try {
-                o=new Integer(Integer.parseInt(string));
-            } catch (NumberFormatException ex) {
-            	log(Level.WARNING,"String to Integer conversion failed on "+StringUtils.stripControlCharacters(o.toString()));
-                return null;
+        	o=StringUtils.toInteger(o.toString());
+        	if(o==null) {
+            	log(Level.WARNING,"String to Integer conversion failed on "+StringUtils.stripControlCharacters(original.toString()));
+        		return null;
             }
         } else if(targetType.equals(Float.class) 
                 && String.class.isAssignableFrom(o.getClass()) ) {
             // automatically convert string initializer to Float storage
-        	String string=StringUtils.trimNonNumeric(o.toString());
-            try {
-                o=new Float(Float.parseFloat(string));
-            } catch (NumberFormatException ex) {
-            	log(Level.WARNING,"String to Float conversion failed on "+StringUtils.stripControlCharacters(o.toString()));
-                return null;
+        	o=StringUtils.toFloat(o.toString());
+        	if(o==null) {
+            	log(Level.WARNING,"String to Float conversion failed on "+StringUtils.stripControlCharacters(original.toString()));
+        		return null;
             }
         } else if(targetType.equals(Double.class) 
                 && String.class.isAssignableFrom(o.getClass()) ) {
-            // automatically convert string initializer to Double storage
-        	String string=StringUtils.trimNonNumeric(o.toString());
-            try {
-                o=new Double(Double.parseDouble(string));
-            } catch (NumberFormatException ex) {
-            	log(Level.WARNING,"String to Double conversion failed on "+StringUtils.stripControlCharacters(o.toString()));
-                return null;
+        	o=StringUtils.toDouble(o.toString());
+        	if(o==null) {
+            	log(Level.WARNING,"String to Double conversion failed on "+StringUtils.stripControlCharacters(original.toString()));
+        		return null;
             }
         } else if(SettableFromString.class.isAssignableFrom(targetType)
         		&& String.class.isAssignableFrom(o.getClass()) ) {
@@ -344,10 +336,10 @@ public abstract class PropertyTree {
                 ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
             }
             if(sfs.setFromString((String)o)) {
-            	return sfs;
+            	o=sfs;
             } else {
             	log(Level.WARNING,"String to "+targetType.getSimpleName()+" conversion failed on \""+StringUtils.stripControlCharacters(o.toString())+"\"");
-                return null;
+        		return null;
             }
         } else if(!targetType.isAssignableFrom(o.getClass())) {
             String msg="runtime type mismatch: can't assign "+o.getClass().getName()+" to "+targetType.getName();
@@ -385,8 +377,8 @@ public abstract class PropertyTree {
         return s;
     }
     public String describeNode() {
-        return  (getNodeProperty()==null?"null":StringUtils.stripControlCharacters(getNodeProperty().toString()))
-                +"="+ toString() + (isValueValid()?"":" (invalid)"); 
+        return  "["+(getNodeProperty()==null?"null":StringUtils.stripControlCharacters(getNodeProperty().toString()))
+        			+"]";//+"="+ toString() /*+ (isValueValid()?"":" (invalid)")*/; 
     }
 	public String describePath() {
 		if(parent==null)
@@ -396,13 +388,14 @@ public abstract class PropertyTree {
 
     @Override
     public String toString() {
-        Object val=getValue();
+    	return describeNode();
+/*        Object val=getValue();
         if(val==null)
             return null;
         if(val.getClass().isAssignableFrom(File.class))
             return ((File)getValue()).getName();
         //else
-        return StringUtils.stripControlCharacters(val.toString());
+        return StringUtils.stripControlCharacters(val.toString());*/
     }
     
     @Override
@@ -472,11 +465,11 @@ public abstract class PropertyTree {
         return true;
     }
 
-	public void clarifyProperty(Property newProperty) {
+	public void changeProperty(Property newProperty) {
 		if(newProperty==null)
 			return;
-		if(!newProperty.isTypeOf(this.getNodeProperty()))
-			return;
+/*		if(!newProperty.isTypeOf(this.getNodeProperty()))
+			return;*/
 		this.property=newProperty;
 	}
 }

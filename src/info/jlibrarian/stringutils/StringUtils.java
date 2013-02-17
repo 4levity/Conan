@@ -44,4 +44,48 @@ public class StringUtils {
 		}
 		return src;
 	}
+	public static Long toLong(Object obj) {
+		if(obj==null)
+			return null;
+    	String string=StringUtils.trimNonNumeric(obj.toString());
+    	Long o=null;
+        try {
+            o=new Long(Long.parseLong(string));
+        } catch (NumberFormatException ex) {
+        }
+        return o;
+	}
+	public static Integer toInteger(Object obj) {
+		if(obj==null)
+			return null;
+    	String string=StringUtils.trimNonNumeric(obj.toString());
+    	Integer o=null;
+        try {
+            o=new Integer(Integer.parseInt(string));
+        } catch (NumberFormatException ex) {
+        }
+        return o;
+	}
+	public static Float toFloat(Object obj) {
+		if(obj==null)
+			return null;
+    	String string=StringUtils.trimNonNumeric(obj.toString());
+    	Float o=null;
+        try {
+            o=new Float(Float.parseFloat(string));
+        } catch (NumberFormatException ex) {
+        }
+        return o;
+	}
+	public static Double toDouble(Object obj) {
+		if(obj==null)
+			return null;
+    	String string=StringUtils.trimNonNumeric(obj.toString());
+    	Double o=null;
+        try {
+            o=new Double(Double.parseDouble(string));
+        } catch (NumberFormatException ex) {
+        }
+        return o;
+	}
 }

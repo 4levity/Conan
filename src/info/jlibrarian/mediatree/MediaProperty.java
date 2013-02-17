@@ -12,6 +12,7 @@ import info.jlibrarian.specialtypes.StringMap;
 import info.jlibrarian.specialtypes.StringMapWithLocale;
 import info.jlibrarian.specialtypes.VariablePrecisionTime;
 import info.jlibrarian.stringutils.ResizingByteBuffer;
+import info.jlibrarian.stringutils.StringUtils;
 
 import java.io.File;
 import java.net.URL;
@@ -78,7 +79,7 @@ public enum MediaProperty implements Property {
     RECORDING_DATE ("Recording date",VariablePrecisionTime.class,true),
     RELEASE_DATE ("Release date",VariablePrecisionTime.class,true),
     REMIXER ("Remixer",String.class,true),
-    REPLAYGAIN ("ReplayGain Track Data",ReplayGain.class,true),
+    REPLAYGAIN ("ReplayGain",ReplayGain.class,true),
     TERMSOFUSE ("Terms of Use",StringMapWithLocale.class,true),
     TITLE ("Title",String.class,true),
     TITLE_SORTORDER ("Title sort order",String.class,true),
@@ -92,8 +93,14 @@ public enum MediaProperty implements Property {
     URL_OFFICIALINTERNETRADIOSTATION ("Official Internet radio station URL",URL.class,true),
     URL_PAYMENT ("Payment URL",URL.class,true),
     URL_PUBLISHER ("Publisher URL",URL.class,true),
+
+    // TODO: this should be a Map<String,Url>
     URL_USER ("User URL map",StringMap.class,true),
-    USERTEXT ("User text",String.class,true),
+    
+    // special parent types for runtime-created user properties
+    USERTEXT ("User text",String.class),
+    USERDATA ("User data",ResizingByteBuffer.class),
+
 
     // Vorbis-specific fields.. 
     VORBISFIELD_ENCODERSOFTWARE ("Vorbis field/Encoder software",String.class,true),
@@ -103,14 +110,17 @@ public enum MediaProperty implements Property {
     VORBISFIELD_DISCNUMBER ("Vorbis field/Disc number",Integer.class,true),
     VORBISFIELD_DISCTOTAL ("Vorbis field/Disc total",Integer.class,true),
     VORBISFIELD_DATE ("Vorbis field/Date",VariablePrecisionTime.class,true),
-    VORBIS_REPLAYGAIN_TRACK_GAIN ("ReplayGain Track Gain",Float.class,true),
-    VORBIS_REPLAYGAIN_TRACK_PEAK ("ReplayGain Track Peak",Double.class,true),
-    VORBIS_REPLAYGAIN_ALBUM_GAIN ("ReplayGain Album Gain",Float.class,true),
-    VORBIS_REPLAYGAIN_ALBUM_PEAK ("ReplayGain Album Peak",Double.class,true),
-    VORBIS_REPLAYGAIN_REFERENCE_LOUDNESS ("ReplayGain Reference Loudness",Float.class,true),
+    
+    // these numeric values use string storage because of specific formatting requirements http://www.replaygain.org
+    REPLAYGAIN_TRACK_GAIN ("ReplayGain Track Gain",String.class,true),
+    REPLAYGAIN_TRACK_PEAK ("ReplayGain Track Peak",String.class,true),
+    REPLAYGAIN_ALBUM_GAIN ("ReplayGain Album Gain",String.class,true),
+    REPLAYGAIN_ALBUM_PEAK ("ReplayGain Album Peak",String.class,true),
+    REPLAYGAIN_REFERENCE_LOUDNESS ("ReplayGain Reference Loudness",String.class,true),
     
  // generic Vorbis Comment fields..
-    VORBISFIELD_UNKNOWN ("Unknown Vorbis Comment",String.class),
+// this is replaced with general property USERTEXT 
+//    VORBISFIELD_UNKNOWN ("Unknown Vorbis Comment",String.class),
 
 // Id3v2-specific frame types..
     ID3_YEAR ("ID3 year (YYYY)",VariablePrecisionTime.class,true),
@@ -125,10 +135,17 @@ public enum MediaProperty implements Property {
     ID3V2_ORIGINALDATE ("ID3v2 original release date",VariablePrecisionTime.class,true),
     
 // generic or unsupported Id3v2 frame types..
-    ID3V2TEXTFRAME ("Id3v2 unknown text frame",String.class),
-    ID3V2UNKNOWNFRAME ("Id3v2 unknown frame",ResizingByteBuffer.class),
+
+    // now userdata
+    //    ID3V2UNKNOWNFRAME ("Id3v2 unknown frame",ResizingByteBuffer.class),
+    //    ID3V22UNKNOWNFRAME ("Id3v2 unknown frame (v2.2)",ResizingByteBuffer.class),
+
+    // now usertext
+    //    ID3V2TEXTFRAME ("Id3v2 unknown text frame",String.class),
+    
+    // todo: new USERURL for unknown URL and WXXX frames
     ID3V2URLFRAME ("Id3v2 unknown URL frame",URL.class),
-    ID3V22UNKNOWNFRAME ("Id3v2 unknown frame (v2.2)",ResizingByteBuffer.class),
+
     ID3V2FRAME_AUDIOENCRYPTION ("Id3v2 frame/Audio encryption",ResizingByteBuffer.class,true),
     ID3V2FRAME_AUDIOSEEKPOINTINDEX ("Id3v2 frame/Audio seek point index",ResizingByteBuffer.class,true),
     ID3V2FRAME_COMMERCIAL ("Id3v2 frame/Commercial",ResizingByteBuffer.class,true),
@@ -218,6 +235,14 @@ public enum MediaProperty implements Property {
     public String getShortName() {
         return super.toString();
     }
+    
+    public Property extended(String name) {
+    	return extended(name,false);
+    }
+    public Property extended(String name,boolean create) {
+    	String xName=this.getName()+"."+StringUtils.stripControlCharacters(name.toUpperCase().replaceAll("\\s","_"));
+    	return MediaProperty.getPropertyByName(xName,create?this:null);
+    }
 
     @Override
     public String toString() {
@@ -247,16 +272,18 @@ public enum MediaProperty implements Property {
 	public static Property getPropertyByName(String name) {
 		return getPropertyByName(name,null);
 	}
-	public static Property getPropertyByName(String name, Property createUnderProperty) {
+	private static Property getPropertyByName(String name, Property createUnderProperty) {
 		Property p=null;
 		try {
 			p=MediaProperty.valueOf(name);
 		} catch (IllegalArgumentException e) {
-			String uppercaseName=name.toUpperCase();
-			p=extendedProperties.get(uppercaseName);
-			if(createUnderProperty!=null && p==null) {
-				p=new ExtendedProperty(name,createUnderProperty);
-				extendedProperties.put(uppercaseName,p);
+			if(createUnderProperty!= null) {
+				String uppercaseName=createUnderProperty.getName()+"."+name.toUpperCase();
+				p=extendedProperties.get(uppercaseName);
+				if(p==null) {
+					p=new ExtendedProperty(name,createUnderProperty);
+					extendedProperties.put(uppercaseName,p);
+				}
 			}
 		}
 		return p;

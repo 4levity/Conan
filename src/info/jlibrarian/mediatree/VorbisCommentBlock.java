@@ -1,51 +1,17 @@
 package info.jlibrarian.mediatree; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 
-import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.propertytree.PropertyTree;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 
 public class VorbisCommentBlock extends MediaTag {
     
     public VorbisCommentBlock(PropertyTree parent) {
         super(MediaProperty.VORBISCOMMENTBLOCK, parent);
-    }
-
-    private void loadSupportedField(Registry.VorbisCommentConfig cfg, String fieldId, 
-            int length, RandomAccessFile openFile) throws IOException {
-        VorbisField newField=null;
-        try {
-            Constructor<? extends FrameNode> cons = cfg.fieldClass
-                    .getConstructor(Property.class,PropertyTree.class);
-            if (cons != null) {
-                newField = (VorbisField) cons.newInstance(cfg.fieldProperty,this);
-                newField.load(fieldId, length, openFile);
-            }
-        } catch (NoSuchMethodException ex) {
-        	log(Level.SEVERE,"reflection FAIL",ex);
-            ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
-        } catch (SecurityException ex) {
-        	log(Level.SEVERE,"reflection FAIL",ex);
-            ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
-        } catch (InstantiationException ex) {
-        	log(Level.SEVERE,"reflection FAIL",ex);
-            ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
-        } catch (IllegalAccessException ex) {
-        	log(Level.SEVERE,"reflection FAIL",ex);
-            ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
-        } catch (IllegalArgumentException ex) {
-        	log(Level.SEVERE,"reflection FAIL",ex);
-            ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
-        } catch (InvocationTargetException ex) {
-        	log(Level.SEVERE,"reflection FAIL",ex);
-            ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
-        }
     }
 
     public MediaTag load(RandomAccessFile raf,String versions) throws IOException {
@@ -72,13 +38,17 @@ public class VorbisCommentBlock extends MediaTag {
             int length=(int)(MediaFileUtil.read32bitLittleEndianUnsignedInt(raf));
             String fieldId=VorbisField.readFieldId(raf,length,this);
             
-            Registry.VorbisCommentConfig cfg = Registry.getConfigByField(fieldId);
+            Registry.GeneralNameValueConfig cfg = Registry.getVorbisConfigByField(fieldId);
+            if(cfg==null) {
+            	cfg=Registry.getGeneralConfigByField(fieldId);
+            }
             VorbisField newField=null;
             int valueLength = length - fieldId.length() -1;
             if(cfg != null) {
-                this.loadSupportedField(cfg, fieldId, valueLength, raf);
+                newField=new VorbisField(cfg.fieldProperty,this);
+                newField.load(fieldId, valueLength, raf);
             } else {
-                newField=new VorbisTextField(MediaProperty.VORBISFIELD_UNKNOWN,this);
+                newField=new VorbisField(MediaProperty.USERTEXT.extended(fieldId, true),this);
                 newField.load(fieldId, valueLength , raf);                
             }
             
@@ -130,6 +100,6 @@ public class VorbisCommentBlock extends MediaTag {
 
 	@Override
 	public String describeNode() {
-		return "[VCB]";
+		return "[VorbisComment]";
 	}
 }

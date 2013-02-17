@@ -214,27 +214,17 @@ public class Id3v2Tag extends MediaTag {
                 
                 if(fc!=null) {
                     newFrame=loadSupportedFrame(fc,frameId,frameSize,raf);
-                } else if(frameId.startsWith("T") 
-                        && !(frameId.equals("TXXX")) 
-                        && !(frameId.equals("TXX"))) {
-                	// special frames TXXX/TXX are not regular text frames
-                	// TODO: support?
-                    newFrame=new Id3v2TextFrame(MediaProperty.ID3V2TEXTFRAME,this);
+                } else if(frameId.startsWith("T")) {
+                    newFrame=new Id3v2TextFrame(MediaProperty.USERTEXT.extended(frameId,true),this);
                     newFrame.load(frameId, frameSize,raf);
-                } else if(frameId.startsWith("W") 
-                        && !(frameId.equals("WXXX"))
-                        && !(frameId.equals("WXX"))) {
-                	// special frames WXXX/WXX are not regular URL frames
+                } else if(frameId.startsWith("W")) {
+                	// special frames WXXX/WXX are not regular URL frames, should be new USERURL type
                     newFrame=new Id3v2URLFrame(MediaProperty.ID3V2URLFRAME,this);
                     newFrame.load(frameId, frameSize,raf);
-                } else if(frameId.length() == 3) {
-                    newFrame=new Id3v2RawFrame(MediaProperty.ID3V22UNKNOWNFRAME,this);
-                    newFrame.load(frameId, frameSize,raf);
-                } else {
-                    newFrame=new Id3v2RawFrame(MediaProperty.ID3V2UNKNOWNFRAME,this);
+                } else  {
+                    newFrame=new Id3v2RawFrame(MediaProperty.USERDATA.extended(frameId,true),this);
                     newFrame.load(frameId, frameSize,raf);
                 }
-                // TODO: need to ignore or unload invalid/empty frames
             } else {
                 break;// TODO: handle padding measurement
             }

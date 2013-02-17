@@ -72,14 +72,7 @@ public abstract class FrameNode extends PropertyTree
 
     @Override
     public String describeNode() {
-        String description="Frame:"+this.frameIdentifier;
-        Object val=this.getValue();
-        if(val!=null) {
-        	if(val.getClass()==String.class) {
-        		description+="="+String.format("%.15s", val);
-        	}
-        }
-        return description;
+        return "Frame:"+this.frameIdentifier;
    }
 /*
     @Override

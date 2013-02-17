@@ -19,37 +19,41 @@ import java.util.logging.Level;
 public class ConanApp {
     public static void main(String[] args) {
     	ArrayList<File> targets=new ArrayList<File>();
-    	ArrayList<Property> queries=new ArrayList<Property>();
+    	ArrayList<String> queryStrings=new ArrayList<String>();
+    	ArrayList<Property> queryProperties=new ArrayList<Property>();
     	Level logLevel=Level.WARNING;
     	int maxResults=-1;
+    	boolean showNodes=false;
     	
     	if(args.length==0) {
     		printUsage();
     	} else {
     		int arg=0;
     		while(arg<args.length) {
-    			if(arg+1<args.length) {
-        			if(args[arg].equalsIgnoreCase("--query")) {
+    			if(args[arg].equalsIgnoreCase("--query")) {
+    				if(arg+1<args.length) {
         				arg++;
-        				Property qp=MediaProperty.getPropertyByName(args[arg]);
-        				queries.add(qp);
-        				System.out.println("** Query property: "+queries.get(queries.size()-1));
-        			} else if(args[arg].equalsIgnoreCase("--log")) {
-        				arg++;
-        				logLevel=Level.parse(args[arg]);
-        				System.out.println("** Setting log level to "+logLevel.getLocalizedName());
-        			} else if(args[arg].equalsIgnoreCase("--maxresults")) {
-        				arg++;
-        				try {
+        				queryStrings.add(args[arg]);
+    				}
+    			} else if(args[arg].equalsIgnoreCase("--log")) {
+    				if(arg+1<args.length) {
+	    				arg++;
+	    				logLevel=Level.parse(args[arg]);
+	    				System.out.println("** Setting log level to "+logLevel.getLocalizedName());
+    				}
+    			} else if(args[arg].equalsIgnoreCase("--maxresults")) {
+    				if(arg+1<args.length) {
+	    				arg++;
+	    				try {
 							maxResults=Integer.parseInt(args[arg]);
 						} catch (NumberFormatException e) {
 							printUsage();
 							return;
 						}
-        				System.out.println("** Setting maxresults to "+maxResults);
-        			} else {
-        				targets.add(new File(args[arg]));
-        			}
+	    				System.out.println("** Setting maxresults to "+maxResults);
+    				}
+    			} else if(args[arg].equalsIgnoreCase("--shownodes")) {
+    				showNodes=true;
     			} else {
     				targets.add(new File(args[arg]));
     			}
@@ -70,9 +74,24 @@ public class ConanApp {
 					e.printStackTrace();
 				}
     			if(root!=null) {
+    				System.out.println("** Loaded all from "+f);
+    				for(String pStr : queryStrings) {
+    					Property p=MediaProperty.getPropertyByName(pStr);
+    					if(p!=null) {
+    						queryProperties.add(p);
+            				System.out.println("** Query property: "+queryProperties.get(queryProperties.size()-1));
+    					} else {
+    						System.out.println("** Unknown property: "+pStr);
+    						printUsage();
+    						return;
+    					}
+    				}
+
+    				
+    				
     				Map<Property, PropertySearchResults> queryResults;
-    				if(queries.size()>0) {
-    					queryResults=root.query(queries);
+    				if(queryProperties.size()>0) {
+    					queryResults=root.query(queryProperties);
     				} else {
     					queryResults=root.query();
     				}
@@ -84,7 +103,7 @@ public class ConanApp {
             					if(maxResults<0) {
                 					System.out.println(
                 							StringUtils.lineWrap(
-                									StringUtils.stripControlCharacters(entry.getValue().toString())
+                									StringUtils.stripControlCharacters(entry.getValue().formattedResults(showNodes,-1))
                 							,80)
                 									);
             					} else if(maxResults==0) {
@@ -94,7 +113,7 @@ public class ConanApp {
             						// TODO: limit results
                 					System.out.println(
                 							StringUtils.lineWrap(
-                									StringUtils.stripControlCharacters(entry.getValue().toString())
+                									StringUtils.stripControlCharacters(entry.getValue().formattedResults(showNodes,maxResults))
                 							,80)
                 									);
             					}

@@ -29,7 +29,8 @@ import java.util.logging.Level;
 public class Registry {
     private static HashMap<String,FileType> fileTypes=new HashMap<String,FileType>();
     private static ArrayList<Id3v2FrameConfig> id3v2Fields=new ArrayList<Id3v2FrameConfig>();
-    private static ArrayList<VorbisCommentConfig> vorbisFields=new ArrayList<VorbisCommentConfig>();
+    private static ArrayList<GeneralNameValueConfig> vorbisFields=new ArrayList<GeneralNameValueConfig>();
+    private static ArrayList<GeneralNameValueConfig> generalFields=new ArrayList<GeneralNameValueConfig>();
     //private static ArrayList<VirtualTagField> virtualFields=new ArrayList<VirtualTagField>();
     static {
 /**
@@ -56,76 +57,76 @@ fileTypes.put("png", new FileType(MediaFile.class,MediaProperty.PICTURE));
 
 registerId3v2("TAL","2.2.*",Id3v2TextFrame.class,MediaProperty.ALBUM,false);
 registerId3v2("TALB","2.3+",Id3v2TextFrame.class,MediaProperty.ALBUM,false);
-registerVorbis("ALBUM",VorbisTextField.class,MediaProperty.ALBUM);
+registerVorbis("ALBUM",VorbisField.class,MediaProperty.ALBUM);
 
 registerId3v2("TSOA","2.4+",Id3v2TextFrame.class,MediaProperty.ALBUM_SORTORDER,false);
 registerId3v2("XSOA","2.3.*",Id3v2TextFrame.class,MediaProperty.ALBUM_SORTORDER,false);
-registerVorbis("ALBUMSORT",VorbisTextField.class,MediaProperty.ALBUM_SORTORDER);
+registerVorbis("ALBUMSORT",VorbisField.class,MediaProperty.ALBUM_SORTORDER);
 
 registerId3v2("TP2","2.2.*",Id3v2TextFrame.class,MediaProperty.ALBUMARTIST,false);
 registerId3v2("TPE2","2.3+",Id3v2TextFrame.class,MediaProperty.ALBUMARTIST,false);
-registerVorbis("ALBUMARTIST",VorbisTextField.class,MediaProperty.ALBUMARTIST);
-registerVorbis("ALBUM ARTIST",VorbisTextField.class,MediaProperty.ALBUMARTIST,true); //alt
+registerVorbis("ALBUMARTIST",VorbisField.class,MediaProperty.ALBUMARTIST);
+registerVorbis("ALBUM ARTIST",VorbisField.class,MediaProperty.ALBUMARTIST,true); //alt
 
 registerId3v2("TSO2","2.3+",Id3v2TextFrame.class,MediaProperty.ALBUMARTIST_SORTORDER,false);
-registerVorbis("ALBUMARTISTSORT",VorbisTextField.class,MediaProperty.ALBUMARTIST_SORTORDER);
+registerVorbis("ALBUMARTISTSORT",VorbisField.class,MediaProperty.ALBUMARTIST_SORTORDER);
 
 registerId3v2("TP1","2.2.*",Id3v2TextFrame.class,MediaProperty.ARTIST,false);
 registerId3v2("TPE1","2.3+",Id3v2TextFrame.class,MediaProperty.ARTIST,false);
-registerVorbis("ARTIST",VorbisTextField.class,MediaProperty.ARTIST);
+registerVorbis("ARTIST",VorbisField.class,MediaProperty.ARTIST);
 
 registerId3v2("TSOP","2.4+",Id3v2TextFrame.class,MediaProperty.ARTIST_SORTORDER,false);
 registerId3v2("XSOP","2.3.*",Id3v2TextFrame.class,MediaProperty.ARTIST_SORTORDER,false);
-registerVorbis("ARTISTSORT",VorbisTextField.class,MediaProperty.ARTIST_SORTORDER);
+registerVorbis("ARTISTSORT",VorbisField.class,MediaProperty.ARTIST_SORTORDER);
 
 registerId3v2("TBP","2.2.*",Id3v2TextFrame.class,MediaProperty.BEATSPERMINUTE,false);
 registerId3v2("TBPM","2.3+",Id3v2TextFrame.class,MediaProperty.BEATSPERMINUTE,false);
-registerVorbis("BPM",VorbisTextField.class,MediaProperty.BEATSPERMINUTE); 
+registerVorbis("BPM",VorbisField.class,MediaProperty.BEATSPERMINUTE); 
 
 /*
  * comments
  */
 registerId3v2("COM","2.2.*",Id3v2TextFrame.class,MediaProperty.COMMENTS);
 registerId3v2("COMM","2.3+",Id3v2TextFrame.class,MediaProperty.COMMENTS);
-registerVorbis("COMMENT",VorbisTextField.class,MediaProperty.COMMENTS);
+registerVorbis("COMMENT",VorbisField.class,MediaProperty.COMMENTS);
 
 
 registerId3v2("TCM","2.2.*",Id3v2TextFrame.class,MediaProperty.COMPOSER,false);
 registerId3v2("TCOM","2.3+",Id3v2TextFrame.class,MediaProperty.COMPOSER,false);
-registerVorbis("COMPOSER",VorbisTextField.class,MediaProperty.COMPOSER);
+registerVorbis("COMPOSER",VorbisField.class,MediaProperty.COMPOSER);
 
 registerId3v2("TSOC","2.3+",Id3v2TextFrame.class,MediaProperty.COMPOSER_SORTORDER,false);
-registerVorbis("COMPOSERSORT",VorbisTextField.class,MediaProperty.COMPOSER_SORTORDER);
+registerVorbis("COMPOSERSORT",VorbisField.class,MediaProperty.COMPOSER_SORTORDER);
 
 registerId3v2("TP3","2.2.*",Id3v2TextFrame.class,MediaProperty.CONDUCTOR,false);
 registerId3v2("TPE3","2.3+",Id3v2TextFrame.class,MediaProperty.CONDUCTOR,false);
-registerVorbis("CONDUCTOR",VorbisTextField.class,MediaProperty.CONDUCTOR);
+registerVorbis("CONDUCTOR",VorbisField.class,MediaProperty.CONDUCTOR);
 
 registerId3v2("TIT1","2.3+",Id3v2TextFrame.class,MediaProperty.CONTENTGROUP,false);
 registerId3v2("TT1","2.2.*",Id3v2TextFrame.class,MediaProperty.CONTENTGROUP,false);
-registerVorbis("GROUPING",VorbisTextField.class,MediaProperty.CONTENTGROUP);
+registerVorbis("GROUPING",VorbisField.class,MediaProperty.CONTENTGROUP);
 
 registerId3v2("TCOP","2.3+",Id3v2TextFrame.class,MediaProperty.COPYRIGHTMESSAGE,false);
 registerId3v2("TCR","2.2.*",Id3v2TextFrame.class,MediaProperty.COPYRIGHTMESSAGE,false);
-registerVorbis("COPYRIGHT",VorbisTextField.class,MediaProperty.COPYRIGHTMESSAGE);
+registerVorbis("COPYRIGHT",VorbisField.class,MediaProperty.COPYRIGHTMESSAGE);
 
 registerId3v2("TPA","2.2.*",Id3v2TextFrame.class,MediaProperty.DISC_SEQUENCE,false);
 registerId3v2("TPOS","2.3+",Id3v2TextFrame.class,MediaProperty.DISC_SEQUENCE,false);
 
 registerId3v2("TSST","2.4+",Id3v2TextFrame.class,MediaProperty.DISCSUBTITLE,false);
-registerVorbis("DISCSUBTITLE",VorbisTextField.class,MediaProperty.DISCSUBTITLE);
+registerVorbis("DISCSUBTITLE",VorbisField.class,MediaProperty.DISCSUBTITLE);
 
 registerId3v2("PIC","2.2.*",Id3v2PictureFrame.class,MediaProperty.PICTURE,true);
 registerId3v2("APIC","2.3+",Id3v2PictureFrame.class,MediaProperty.PICTURE,true);
 
 registerId3v2("TEN","2.2.*",Id3v2TextFrame.class,MediaProperty.ENCODEDBY,false);
 registerId3v2("TENC","2.3+",Id3v2TextFrame.class,MediaProperty.ENCODEDBY,false);
-registerVorbis("ENCODEDBY",VorbisTextField.class,MediaProperty.ENCODEDBY,true);
+registerVorbis("ENCODEDBY",VorbisField.class,MediaProperty.ENCODEDBY,true);
 
 registerId3v2("TSS","2.2.*",Id3v2TextFrame.class,MediaProperty.ENCODER,false);
 registerId3v2("TSSE","2.3+",Id3v2TextFrame.class,MediaProperty.ENCODER,false);
-registerVorbis("ENCODER",VorbisTextField.class,MediaProperty.VORBISFIELD_ENCODERSOFTWARE);
-registerVorbis("ENCODING",VorbisTextField.class,MediaProperty.VORBISFIELD_ENCODERSETTINGS);
+registerVorbis("ENCODER",VorbisField.class,MediaProperty.VORBISFIELD_ENCODERSOFTWARE);
+registerVorbis("ENCODING",VorbisField.class,MediaProperty.VORBISFIELD_ENCODERSETTINGS);
 
 registerId3v2("TOWN","2.3+",Id3v2TextFrame.class,MediaProperty.FILEOWNER,false);
 
@@ -148,8 +149,8 @@ registerId3v2("TDRC","2.4+",Id3v2TextFrame.class,MediaProperty.ID3V2_RECORDINGDA
 registerId3v2("TDRL","2.4+",Id3v2TextFrame.class,MediaProperty.ID3V2_RELEASEDATE,false);
 registerId3v2("TDOR","2.4+",Id3v2TextFrame.class,MediaProperty.ID3V2_ORIGINALDATE,false);
 
-registerVorbis("DATE",VorbisTextField.class,MediaProperty.VORBISFIELD_DATE);
-registerVorbis("RELEASED",VorbisTextField.class,MediaProperty.RELEASE_DATE,true);//alt
+registerVorbis("DATE",VorbisField.class,MediaProperty.VORBISFIELD_DATE);
+registerVorbis("RELEASED",VorbisField.class,MediaProperty.RELEASE_DATE,true);//alt
 
 /*
  * Content type fields 
@@ -157,8 +158,8 @@ registerVorbis("RELEASED",VorbisTextField.class,MediaProperty.RELEASE_DATE,true)
  */ 
 registerId3v2("TCO","2.2.*",Id3v2TextFrame.class,MediaProperty.GENRES,false);
 registerId3v2("TCON","2.3+",Id3v2TextFrame.class,MediaProperty.GENRES,false);
-registerVorbis("GENRE",VorbisTextField.class,MediaProperty.GENRES);
-registerVorbis("STYLE",VorbisTextField.class,MediaProperty.GENRES,true);//alt
+registerVorbis("GENRE",VorbisField.class,MediaProperty.GENRES);
+registerVorbis("STYLE",VorbisField.class,MediaProperty.GENRES,true);//alt
 
 
 
@@ -177,7 +178,7 @@ registerId3v2("GEOB","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_ENCAPSU
 
 registerId3v2("CNT","2.2.*",Id3v2PlayCountFrame.class,MediaProperty.PLAY_COUNTER,false);
 registerId3v2("PCNT","2.3+",Id3v2PlayCountFrame.class,MediaProperty.PLAY_COUNTER,false);
-registerVorbis("PLAYCOUNT",VorbisTextField.class,MediaProperty.PLAY_COUNTER);
+registerVorbis("PLAYCOUNT",VorbisField.class,MediaProperty.PLAY_COUNTER);
 
 registerId3v2("ENCR","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_ENCRYPTEDMETAFRAME);
 
@@ -217,11 +218,12 @@ registerId3v2("RVA","2.2.*",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_RELATIV
 registerId3v2("RVAD","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_RELATIVEVOLUMEADJUSTMENT,false);
 registerId3v2("RVA2","2.4+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_RELATIVEVOLUMEADJUSTMENT_2);
 registerId3v2("RGAD","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_REPLAYGAINADJUSTMENT,false);
-registerVorbis("REPLAYGAIN_TRACK_GAIN",VorbisTextField.class,MediaProperty.VORBIS_REPLAYGAIN_TRACK_GAIN);
-registerVorbis("REPLAYGAIN_TRACK_PEAK",VorbisTextField.class,MediaProperty.VORBIS_REPLAYGAIN_TRACK_PEAK);
-registerVorbis("REPLAYGAIN_ALBUM_GAIN",VorbisTextField.class,MediaProperty.VORBIS_REPLAYGAIN_ALBUM_GAIN);
-registerVorbis("REPLAYGAIN_ALBUM_PEAK",VorbisTextField.class,MediaProperty.VORBIS_REPLAYGAIN_ALBUM_PEAK);
-registerVorbis("REPLAYGAIN_REFERENCE_LOUDNESS",VorbisTextField.class,MediaProperty.VORBIS_REPLAYGAIN_REFERENCE_LOUDNESS);
+
+registerGeneral("REPLAYGAIN_TRACK_GAIN",VorbisField.class,MediaProperty.REPLAYGAIN_TRACK_GAIN);
+registerGeneral("REPLAYGAIN_TRACK_PEAK",VorbisField.class,MediaProperty.REPLAYGAIN_TRACK_PEAK);
+registerGeneral("REPLAYGAIN_ALBUM_GAIN",VorbisField.class,MediaProperty.REPLAYGAIN_ALBUM_GAIN);
+registerGeneral("REPLAYGAIN_ALBUM_PEAK",VorbisField.class,MediaProperty.REPLAYGAIN_ALBUM_PEAK);
+registerGeneral("REPLAYGAIN_REFERENCE_LOUDNESS",VorbisField.class,MediaProperty.REPLAYGAIN_REFERENCE_LOUDNESS);
 
 
 registerId3v2("RVRB","2.3+",Id3v2RawFrame.class,MediaProperty.ID3V2FRAME_REVERB,false);
@@ -250,13 +252,13 @@ registerId3v2("TLEN","2.3+",Id3v2TextFrame.class,MediaProperty.LENGTH_MS,false);
 
 registerId3v2("TEXT","2.3+",Id3v2TextFrame.class,MediaProperty.LYRICIST,false);
 registerId3v2("TXT","2.2.*",Id3v2TextFrame.class,MediaProperty.LYRICIST,false);
-registerVorbis("LYRICIST",VorbisTextField.class,MediaProperty.LYRICIST);
+registerVorbis("LYRICIST",VorbisField.class,MediaProperty.LYRICIST);
 
 registerId3v2("ULT","2.2.*",Id3v2TextFrame.class,MediaProperty.LYRICS);
 registerId3v2("USLT","2.3+",Id3v2TextFrame.class,MediaProperty.LYRICS);
 
 registerId3v2("TMOO","2.4+",Id3v2TextFrame.class,MediaProperty.MOOD,false);
-registerVorbis("MOOD",VorbisTextField.class,MediaProperty.MOOD);
+registerVorbis("MOOD",VorbisField.class,MediaProperty.MOOD);
 
 registerId3v2("TMCL","2.4+",Id3v2TextFrame.class,MediaProperty.MUSICIANS,false);
 
@@ -274,7 +276,7 @@ registerId3v2("TOLY","2.3+",Id3v2TextFrame.class,MediaProperty.ORIGINAL_LYRICIST
 
 registerId3v2("TMED","2.3+",Id3v2TextFrame.class,MediaProperty.ORIGINAL_MEDIA,false);
 registerId3v2("TMT","2.2.*",Id3v2TextFrame.class,MediaProperty.ORIGINAL_MEDIA,false);
-registerVorbis("MEDIA",VorbisTextField.class,MediaProperty.ORIGINAL_MEDIA);
+registerVorbis("MEDIA",VorbisField.class,MediaProperty.ORIGINAL_MEDIA);
 
 registerId3v2("TDLY","2.3+",Id3v2TextFrame.class,MediaProperty.PLAYLISTDELAY_MS,false);
 registerId3v2("TDY","2.2.*",Id3v2TextFrame.class,MediaProperty.PLAYLISTDELAY_MS,false);
@@ -283,20 +285,20 @@ registerId3v2("TPRO","2.4+",Id3v2TextFrame.class,MediaProperty.PRODUCTIONNOTICE,
 
 registerId3v2("TPB","2.2.*",Id3v2TextFrame.class,MediaProperty.PUBLISHER,false);
 registerId3v2("TPUB","2.3+",Id3v2TextFrame.class,MediaProperty.PUBLISHER,false);
-registerVorbis("LABEL",VorbisTextField.class,MediaProperty.PUBLISHER,true); // alt
-registerVorbis("ORGANIZATION",VorbisTextField.class,MediaProperty.PUBLISHER);
+registerVorbis("LABEL",VorbisField.class,MediaProperty.PUBLISHER,true); // alt
+registerVorbis("ORGANIZATION",VorbisField.class,MediaProperty.PUBLISHER);
 
 registerId3v2("TP4","2.2.*",Id3v2TextFrame.class,MediaProperty.REMIXER,false);
 registerId3v2("TPE4","2.3+",Id3v2TextFrame.class,MediaProperty.REMIXER,false);
-registerVorbis("REMIXER",VorbisTextField.class,MediaProperty.REMIXER);
+registerVorbis("REMIXER",VorbisField.class,MediaProperty.REMIXER);
 
 registerId3v2("TIT2","2.3+",Id3v2TextFrame.class,MediaProperty.TITLE,false);
 registerId3v2("TT2","2.2.*",Id3v2TextFrame.class,MediaProperty.TITLE,false);
-registerVorbis("TITLE",VorbisTextField.class,MediaProperty.TITLE);
+registerVorbis("TITLE",VorbisField.class,MediaProperty.TITLE);
 
 registerId3v2("TSOT","2.4+",Id3v2TextFrame.class,MediaProperty.TITLE_SORTORDER,false);
 registerId3v2("XSOT","2.3.*",Id3v2TextFrame.class,MediaProperty.TITLE_SORTORDER,false);
-registerVorbis("TITLESORT",VorbisTextField.class,MediaProperty.TITLE_SORTORDER);
+registerVorbis("TITLESORT",VorbisField.class,MediaProperty.TITLE_SORTORDER);
 
 registerId3v2("TRCK","2.3+",Id3v2TextFrame.class,MediaProperty.TRACK_SEQUENCE,false);
 registerId3v2("TRK","2.2.*",Id3v2TextFrame.class,MediaProperty.TRACK_SEQUENCE,false);
@@ -304,8 +306,8 @@ registerId3v2("TRK","2.2.*",Id3v2TextFrame.class,MediaProperty.TRACK_SEQUENCE,fa
 
 registerId3v2("TIT3","2.3+",Id3v2TextFrame.class,MediaProperty.TRACKSUBTITLE,false);
 registerId3v2("TT3","2.2.*",Id3v2TextFrame.class,MediaProperty.TRACKSUBTITLE,false);
-registerVorbis("SUBTITLE",VorbisTextField.class,MediaProperty.TRACKSUBTITLE);
-registerVorbis("VERSION",VorbisTextField.class,MediaProperty.TRACKSUBTITLE,true); // alt?
+registerVorbis("SUBTITLE",VorbisField.class,MediaProperty.TRACKSUBTITLE);
+registerVorbis("VERSION",VorbisField.class,MediaProperty.TRACKSUBTITLE,true); // alt?
 
 //registerId3v2("DATE","2.2.*", Id3v2TextFrame.class,MediaProperty.RECORDINGDATE);
 // id3 gets recording date by instantiating a DateView child of the tag
@@ -343,17 +345,17 @@ registerId3v2("TXXX","2.3+",Id3v2UserTextFrame.class,MediaProperty.USERTEXT);
 
 registerId3v2("USER","2.3+",Id3v2TextFrame.class,MediaProperty.TERMSOFUSE);
 
-registerVorbis("DISCNUMBER",VorbisTextField.class,MediaProperty.VORBISFIELD_DISCNUMBER);
-registerVorbis("DISC",VorbisTextField.class,MediaProperty.VORBISFIELD_DISCNUMBER,true); //alt
-registerVorbis("DISCC",VorbisTextField.class,MediaProperty.VORBISFIELD_DISCNUMBER,true); //alt
+registerVorbis("DISCNUMBER",VorbisField.class,MediaProperty.VORBISFIELD_DISCNUMBER);
+registerVorbis("DISC",VorbisField.class,MediaProperty.VORBISFIELD_DISCNUMBER,true); //alt
+registerVorbis("DISCC",VorbisField.class,MediaProperty.VORBISFIELD_DISCNUMBER,true); //alt
 
-registerVorbis("DISCTOTAL",VorbisTextField.class,MediaProperty.VORBISFIELD_DISCTOTAL);
-registerVorbis("TOTALDISCS",VorbisTextField.class,MediaProperty.VORBISFIELD_DISCTOTAL,true); // alt
+registerVorbis("DISCTOTAL",VorbisField.class,MediaProperty.VORBISFIELD_DISCTOTAL);
+registerVorbis("TOTALDISCS",VorbisField.class,MediaProperty.VORBISFIELD_DISCTOTAL,true); // alt
 
-registerVorbis("TRACKNUMBER",VorbisTextField.class,MediaProperty.VORBISFIELD_TRACKNUMBER);
+registerVorbis("TRACKNUMBER",VorbisField.class,MediaProperty.VORBISFIELD_TRACKNUMBER);
 
-registerVorbis("TRACKTOTAL",VorbisTextField.class,MediaProperty.VORBISFIELD_TRACKTOTAL);
-registerVorbis("TOTALTRACKS",VorbisTextField.class,MediaProperty.VORBISFIELD_TRACKTOTAL,true); // alt
+registerVorbis("TRACKTOTAL",VorbisField.class,MediaProperty.VORBISFIELD_TRACKTOTAL);
+registerVorbis("TOTALTRACKS",VorbisField.class,MediaProperty.VORBISFIELD_TRACKTOTAL,true); // alt
     }
     public static class FileType {
         public static class TagConfig {
@@ -378,19 +380,19 @@ registerVorbis("TOTALTRACKS",VorbisTextField.class,MediaProperty.VORBISFIELD_TRA
             return this;
         }
     }
-    public static class VorbisCommentConfig {
+    public static class GeneralNameValueConfig {
         String fieldName;
         Class<? extends FrameNode> fieldClass;
         Property fieldProperty;
         boolean alternate;
-        public VorbisCommentConfig(String fieldName, Class<? extends FrameNode> fieldClass, Property fieldProperty) {
+        public GeneralNameValueConfig(String fieldName, Class<? extends FrameNode> fieldClass, Property fieldProperty) {
             this.fieldName = fieldName;
             this.fieldClass = fieldClass;
             this.fieldProperty = fieldProperty;
             alternate=false;
         }
 
-        public VorbisCommentConfig(String fieldName, Class<? extends FrameNode> fieldClass, Property fieldProperty, boolean alternate) {
+        public GeneralNameValueConfig(String fieldName, Class<? extends FrameNode> fieldClass, Property fieldProperty, boolean alternate) {
             this.fieldName = fieldName;
             this.fieldClass = fieldClass;
             this.fieldProperty = fieldProperty;
@@ -470,15 +472,31 @@ registerVorbis("TOTALTRACKS",VorbisTextField.class,MediaProperty.VORBISFIELD_TRA
         return supp.length()>0?supp:"n/a";
     }
     
+    private static void registerGeneral(String field, Class<? extends FrameNode> type, Property prop) {
+        generalFields.add(new GeneralNameValueConfig(field,type,prop));
+    }
+/*    
+    private static void registerGeneral(String field, Class<? extends FrameNode> type, Property prop,boolean alt) {
+        generalFields.add(new GeneralNameValueConfig(field,type,prop,alt));
+    }
+    */
+
     private static void registerVorbis(String field, Class<? extends FrameNode> type, Property prop) {
-        vorbisFields.add(new VorbisCommentConfig(field,type,prop));
+        vorbisFields.add(new GeneralNameValueConfig(field,type,prop));
     }
     private static void registerVorbis(String field, Class<? extends FrameNode> type, Property prop,boolean alt) {
-        vorbisFields.add(new VorbisCommentConfig(field,type,prop,alt));
+        vorbisFields.add(new GeneralNameValueConfig(field,type,prop,alt));
     }
-    public static String describeVorbisCommentSupport(Property p) {
+    public static String describeVorbisSupport(Property p) {
+    	return describeSupport(p,vorbisFields);
+    }
+    public static String describeGeneralSupport(Property p) {
+    	return describeSupport(p,generalFields);
+    }
+    private static String describeSupport(Property p,
+			List<GeneralNameValueConfig> fieldSet) {
         String supp="";
-        for(VorbisCommentConfig cfg : vorbisFields) {
+        for(GeneralNameValueConfig cfg : fieldSet) {
             if(cfg.fieldProperty==p) {
                 if(supp.length()>0)
                     supp+=", ";
@@ -487,19 +505,19 @@ registerVorbis("TOTALTRACKS",VorbisTextField.class,MediaProperty.VORBISFIELD_TRA
             }
         }
         return supp.length()>0?supp:"n/a";
-    }
-    public static VorbisCommentConfig getConfigByField(String field) {
-        for(VorbisCommentConfig cfg : vorbisFields) {
+	}
+	public static GeneralNameValueConfig getVorbisConfigByField(String field) {
+		return Registry.getConfigByField(field,vorbisFields);
+	}
+	public static GeneralNameValueConfig getGeneralConfigByField(String field) {
+		return Registry.getConfigByField(field,generalFields);
+	}
+	private static GeneralNameValueConfig getConfigByField(String field,ArrayList<GeneralNameValueConfig> fieldSet) {
+        for(GeneralNameValueConfig cfg : fieldSet) {
             if(cfg.fieldName.equalsIgnoreCase(field)) {
                 return cfg;
             }
         }
         return null;
     }
-	public static String getPrefixUserText() {
-		return "USERTEXT:";
-	}
-	public static String getPrefixUserData() {
-		return "USERDATA:";
-	}
 }
