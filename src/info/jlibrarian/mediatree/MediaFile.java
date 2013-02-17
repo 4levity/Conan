@@ -40,7 +40,7 @@ public class MediaFile extends PropertyTreeObjNode implements PayloadContainer {
     	
         dropChildren();
         if(!getFile().isDirectory() && getFile().exists()) {
-            log(this,Level.INFO,"Loading file "+getFile().toString());            
+            log(this,Level.INFO,"Loading file");            
             
             String mimeType;
             if(getExtension().equals("jpg") || getExtension().equals("jpeg")) {
@@ -171,4 +171,10 @@ public class MediaFile extends PropertyTreeObjNode implements PayloadContainer {
 	public File getFile() {
 		return this.actualFile;
 	}
+	@Override
+	public String describeNode() {
+		// since this is a simple object, we can include it in the description
+		return super.describeNode()+getFile().getName();
+	}
+    
 }

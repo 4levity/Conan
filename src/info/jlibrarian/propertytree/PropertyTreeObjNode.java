@@ -25,11 +25,4 @@ public class PropertyTreeObjNode extends PropertyTree {
     public void setValue(Object o) {
         obj=convertObject(o);
     }
-
-	@Override
-	public String describeNode() {
-		// since this is a simple object, we can include it in the description
-		return super.describeNode()+(this.obj==null?"":obj.toString());
-	}
-    
  }

@@ -36,7 +36,7 @@ public class MediaFolder extends PropertyTreeObjNode {
         dropChildren();
         setValue(loadFile);
         if(getFile().isDirectory() && getFile().exists()) {
-            log(Level.INFO,"Loading folder: "+getFile().toString());
+            log(Level.INFO,"Loading folder");
             for(File f : getFile().listFiles()) {
                 // TODO: configurable behavior with symlinks
                 if(f.isFile()) {
@@ -120,4 +120,10 @@ public class MediaFolder extends PropertyTreeObjNode {
         delete();
         return false;
     }
+	@Override
+	public String describeNode() {
+		// since this is a simple object, we can include it in the description
+		return super.describeNode()+(this.getFile()==null?"":this.getFile().getName());
+	}
+    
 }

@@ -7,11 +7,14 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -420,9 +423,29 @@ public abstract class PropertyTree {
         return hash;
     }    
     private static Logger logger;
+    private static Handler consoleHandler;
     static {
         logger=Logger.getLogger("info.jlibrarian.mediatree");
-    };
+        
+        consoleHandler = null;
+        // find existing console handler
+        Logger topLogger = java.util.logging.Logger.getLogger("");
+        for (Handler handler : topLogger.getHandlers()) {
+            if (handler instanceof ConsoleHandler) {
+                consoleHandler = handler;
+                break;
+            }
+        }
+        if (consoleHandler == null) {
+            consoleHandler = new ConsoleHandler();
+            topLogger.addHandler(consoleHandler);
+        }
+
+        //set default log level
+        PropertyTree.setLogLevel(Level.SEVERE);
+        
+    }
+    
     public static void log(PropertyTree node,Level level,String msg,Throwable ex) {
     	PropertyTree.logger.log(level,(node==null?msg:msg+" / at "+node.describePath()),ex);
     }
@@ -431,6 +454,14 @@ public abstract class PropertyTree {
     }
     public static void setLogLevel(Level newLevel) {
     	PropertyTree.logger.setLevel(newLevel);
+    	PropertyTree.consoleHandler.setLevel(newLevel);
+    	/*
+    	Logger parentLogger=logger.getParent();
+        if(parentLogger!=null) {
+        	parentLogger.setLevel(newLevel);
+        }
+        */
+        
     }
     public void log(Level level,String msg) {
     	PropertyTree.log(this,level,msg);

@@ -342,7 +342,7 @@ public class Id3v2TagHeader {
 
     @Override
     public String toString() {
-        return "Id3v2Tag version "+version+" ("+tagSize+" bytes at offset "+tagOffset+")";
+        return "header at "+tagOffset+" total "+tagSize+" bytes";
     }
 
 	public String getVersion() {
