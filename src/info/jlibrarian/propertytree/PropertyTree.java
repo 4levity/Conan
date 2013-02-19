@@ -7,7 +7,6 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -64,7 +63,6 @@ public abstract class PropertyTree {
     	if(searchWithin==null) {
     		searchHere=true;
     	} else if(parent!=null) {
-    		// TODO: go through code and figure out where else to change property== to property.isTypeOf!
     		if(parent.getNodeProperty().isTypeOf(searchWithin)) {
     			searchHere=true;
     		}

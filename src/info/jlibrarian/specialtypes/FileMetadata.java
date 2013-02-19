@@ -65,10 +65,12 @@ public class FileMetadata {
 					this.crc32 = null;
 					this.imageAttributes = null;
 				}
+				if(fileData!=null) {
+					this.scanFileData(fileData);
+				}
 			}
 			
 			if(fileData != null) {
-				this.scanFileData(fileData);
 				this.imageAttributes = new ImageAttributes(picType,fileData);				
 			}
 		}

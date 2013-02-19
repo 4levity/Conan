@@ -6,8 +6,6 @@ import info.jlibrarian.propertytree.PropertyTreeObjNode;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 
 public class MediaFolder extends PropertyTreeObjNode {
@@ -40,27 +38,28 @@ public class MediaFolder extends PropertyTreeObjNode {
             for(File f : getFile().listFiles()) {
                 // TODO: configurable behavior with symlinks
                 if(f.isFile()) {
-                    MediaFile newFile;
+                    PropertyTree newFile;
                     if (MediaFileUtil.isLink(f)) {
                     	log(Level.INFO,"Not loading symlink file: "+f.toString());
-                        newFile = new MediaFile(MediaProperty.SYMLINKFILE,this);
+                        newFile = new PropertyTreeObjNode(MediaProperty.SYMLINKFILE,this);
                         // Just create a file object, but don't try to load it
                         newFile.setValue(f);
-                    } else if(!addRegularFile(f)) {
-                    	log(Level.INFO,"Failed to add file object to folder: "+f.toString());
+                    } else {
+                        newFile=new MediaFile(this);
+                        ((MediaFile)newFile).load(f);
                     }
                 } else if(f.isDirectory()) {
-                    MediaFolder newFolder;
+                    PropertyTree newFolder;
                     if (MediaFileUtil.isLink(f)) {
                     	log(Level.INFO,"Not loading symlink folder: "+f.toString());
-                        newFolder = new MediaFolder(MediaProperty.SYMLINKFOLDER,this);
+                        newFolder = new PropertyTreeObjNode(MediaProperty.SYMLINKFOLDER,this);
                         // Just create a folder object, but don't try to load it
                         newFolder.setValue(f);
                     } else {
                         newFolder = new MediaFolder(this);
-                        if(loadSubFolders)
-                            newFolder=newFolder.load(f,true);
-                        else {
+                        if(loadSubFolders) {
+                            newFolder=((MediaFolder)newFolder).load(f,true);
+                        } else {
                         	log(Level.INFO,"Not loading folder: "+f.toString());
                             newFolder.setValue(f); // just set this node without loading files/subfolders
                         }
@@ -72,54 +71,12 @@ public class MediaFolder extends PropertyTreeObjNode {
                 }
             }
             return this;
-        }
+        } //else
         log(Level.WARNING,"Doesn't exist or not a directory: "+getFile().toString());
         delete();
         return null;
     }
 
-    private boolean addRegularFile(File f) throws IOException {
-        Registry.FileType fType=Registry.getFileType(f);
-        MediaFile newFile=null;
-        if(fType==null) {
-            newFile=new MediaFile(MediaProperty.OTHERFILE,this);
-            newFile.load(f);
-        } else {
-            try {
-                Constructor<? extends MediaFile> cons =
-                        fType.fileClass.getDeclaredConstructor(Property.class,PropertyTree.class);
-                if(cons!=null) {
-                    newFile=((MediaFile)cons.newInstance(fType.fileProperty,this))
-                            .load(f);
-                }
-                
-            } catch (InstantiationException ex) {
-            	log(Level.SEVERE,"reflection FAIL - InstantiationException: "+ex.toString());
-                ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
-            } catch (IllegalAccessException ex) {
-            	log(Level.SEVERE,"reflection FAIL - IllegalAccessException: "+ex.toString());
-                ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
-            } catch (IllegalArgumentException ex) {
-            	log(Level.SEVERE,"reflection FAIL - IllegalArgumentException: "+ex.toString());
-                ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
-            } catch (InvocationTargetException ex) {
-            	log(Level.SEVERE,"reflection FAIL - InvocationTargetException: "+ex.toString());
-                ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
-            } catch (NoSuchMethodException ex) {
-            	log(Level.SEVERE,"reflection FAIL - NoSuchMethodException: "+ex.toString());
-                ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
-            } catch (SecurityException ex) {
-            	log(Level.SEVERE,"reflection FAIL - SecurityException: "+ex.toString());
-                ex.printStackTrace(); throw new RuntimeException("reflection FAIL");
-            }
-        }
-        if(newFile!=null)
-            return true;
-
-        log(Level.WARNING,"Creating regular file node failed: "+f.toString());
-        delete();
-        return false;
-    }
 	@Override
 	public String describeNode() {
 		// since this is a simple object, we can include it in the description

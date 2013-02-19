@@ -47,21 +47,6 @@ public class ImageAttributes implements ImageObserver {
     }
 
     protected boolean scanImage(byte[] imageData) {
-    	/* OLD METHOD: 
-    	 * Load entire image with ImageIcon 
-    	 * -- uses lots of memory
-    	 * -- slow
-    	 * -- (cannot determine bits per pixel or index color type
-        Image img=new ImageIcon(imageData).getImage();
-        if(img!=null) {
-            // TODO: validate h/w/bpp/ix         
-            this.imgHeight=img.getHeight(this);
-            this.imgWidth=img.getWidth(this);
-            if(this.imgHeight>0)
-                return true;
-        }
-        */
-
     	 ImageInfo ii = new ImageInfo();
     	 ii.setInput(new ByteArrayInputStream(imageData));
     	 if (ii.check()) {

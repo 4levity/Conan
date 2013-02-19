@@ -5,6 +5,7 @@ import info.jlibrarian.propertytree.Property;
 import info.jlibrarian.propertytree.PropertyTree;
 import info.jlibrarian.specialtypes.FileMetadata;
 import info.jlibrarian.specialtypes.Id3PictureType;
+import info.jlibrarian.specialtypes.ImageAttributes;
 import info.jlibrarian.stringutils.ResizingByteBuffer;
 import info.jlibrarian.stringutils.VersionString;
 
@@ -61,8 +62,7 @@ public class Id3v2PictureFrame extends Id3v2Frame {
             return frameData;
         }
         byte picType=frameData[mimeEnd+1];
-        // TODO: if picType validates, CHANGE (clarify) the property of this node from PICTURE to a more specific property e.g. "cover art" or "a bright coloured fish"
-        
+		
         int descrEnd=mimeEnd+2;
         String description;
         if(this.originalTextEncoding==1 || this.originalTextEncoding==2) {
@@ -88,9 +88,10 @@ public class Id3v2PictureFrame extends Id3v2Frame {
             descrEnd++;                  
         }
         this.picDataFrameOffset = descrEnd;
-        this.embeddedImageLink = new FileMetadata(this,null,mimeType,description,
+        this.setValue(new FileMetadata(this,null,mimeType,description,
         		Id3PictureType.getId3PictureType(picType), 
-                Arrays.copyOfRange(frameData, this.picDataFrameOffset, frameData.length));
+                Arrays.copyOfRange(frameData, this.picDataFrameOffset, frameData.length)));
+        
         return frameData;
     }
 
@@ -110,5 +111,38 @@ public class Id3v2PictureFrame extends Id3v2Frame {
 	public void setValue(Object o) {
 		// instance must encapsulate a FileMetadata
 		this.embeddedImageLink=(FileMetadata) this.convertObject(o);
+		Id3v2PictureFrame.updateNodePictureType(this);
+	}
+	
+	static public void updateNodePictureType(PropertyTree node) {
+		if(node==null) {
+			return;
+		}
+		if (!FileMetadata.class.isAssignableFrom(node.getNodeProperty().getDataType())) {
+			// not a file node?
+			return;
+		}
+		FileMetadata fm = (FileMetadata) node.getValue();
+		if(fm==null) {
+			// no metadata?
+			return;
+		}
+		ImageAttributes attr=fm.getImageAttributes();
+		if(attr==null) {
+			// not an image?
+			return;
+		}
+		
+		// determine property from metadata
+		Property newProperty=MediaProperty.PICTURE;
+		Id3PictureType pictureType=attr.getId3PictureType();
+		if(pictureType!=null) {
+			newProperty = newProperty.extended(pictureType.getDescription(),true);
+		}
+
+		// set property
+		if(!newProperty.equals(node.getNodeProperty())) {
+			node.changeProperty(newProperty);
+		}
 	}
 }

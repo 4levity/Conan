@@ -45,6 +45,8 @@ public class Id3v2Tag extends MediaTag {
         hdr=new Id3v2TagHeader();
         if(hdr.load(raf,this))
         {
+        	// TODO: just read the header and instantiate the correct version, we don't need to search for three versions three times
+        	
             if(VersionString.compareVersions(hdr.getVersion(),versions)==0) {
                 originalHeader=hdr;
                 setValue(hdr);
@@ -210,7 +212,7 @@ public class Id3v2Tag extends MediaTag {
                     if((fc == null) && VersionString.compareVersions(originalHeader.getVersion(),"2.4.*")==0) {
                     	fc=Registry.getId3v2FrameConfig(frameId,"2.3.0");
                     }
-}
+                }
                 
                 if(fc!=null) {
                     newFrame=loadSupportedFrame(fc,frameId,frameSize,raf);

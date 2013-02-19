@@ -20,8 +20,12 @@ import java.util.logging.Logger;
 public class MediaFile extends PropertyTreeObjNode implements PayloadContainer {
 	File actualFile;
 
-	public MediaFile(Property prop,PropertyTree parent) {
-        super(prop,parent);
+	public MediaFile(PropertyTree parent) {
+        super(MediaProperty.FILE,parent);
+        this.actualFile=null;
+    }
+	public MediaFile() {
+        super(MediaProperty.FILE,null);
         this.actualFile=null;
     }
     /**
@@ -36,10 +40,15 @@ public class MediaFile extends PropertyTreeObjNode implements PayloadContainer {
      */
     public MediaFile load(File f) 
             throws IOException {
-    	actualFile=f;
-    	
+        
+        Registry.FileType fType=Registry.getFileType(f);
+        if(fType!=null) {
+        	this.changeProperty(fType.fileProperty);
+        }        
+        
         dropChildren();
-        if(!getFile().isDirectory() && getFile().exists()) {
+        if(!f.isDirectory() && f.exists()) {
+        	this.actualFile=f;
             log(this,Level.INFO,"Loading file");            
             
             String mimeType;
@@ -53,28 +62,27 @@ public class MediaFile extends PropertyTreeObjNode implements PayloadContainer {
                 // TODO: guess at more mime types (at least supported image types)
             	mimeType=null;
             }
-            // TODO: for image files, guess at id3PictureType (e.g. cover art etc)
-            
-        	this.setValue(new FileMetadata(this,f.getName(),mimeType,null,null,null));
 
-        	boolean tagerror=false;
+            // TODO: for image files, guess at id3PictureType (e.g. cover art etc)
+            FileMetadata fm=new FileMetadata(this,f.getName(),mimeType,null,null,null);
+        	this.setValue(fm);
+        	if(fm.getImageAttributes()!=null) {
+        		this.changeProperty(MediaProperty.PICTURE);
+        	}
+
             try {
                 loadTags();
             } catch (IOException ex) {
 	        	log(this,Level.SEVERE,"error reading file: "+ex.toString());	            
-	        	tagerror=true;
             }
             // TODO: handle 0 byte FLAC/other files more gracefully than this..
-	        
-            if(tagerror) {
-                delete();
-                return null;
-            }
-            return this;
+        } else {
+	        log(this,Level.WARNING,"Warning: File does not exist or is a directory: "+getFile().toString());
+	        delete();
+	        return null;
         }
-        log(this,Level.WARNING,"Warning: File does not exist or is a directory: "+getFile().toString());
-        delete();
-        return null;
+        
+        return this;
     }
 
     /**
@@ -135,7 +143,6 @@ public class MediaFile extends PropertyTreeObjNode implements PayloadContainer {
 
     @Override
     public byte[] getPayload() throws IOException {
-        //todo: config value
         File f=getFile();
         if(f==null) {
             log(this,Level.WARNING,"getPayload() called for null file - "+this.describeNode());

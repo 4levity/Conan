@@ -1,5 +1,6 @@
 package info.jlibrarian.conan;
 
+import info.jlibrarian.mediatree.MediaFile;
 import info.jlibrarian.mediatree.MediaFileUtil;
 import info.jlibrarian.mediatree.MediaFolder;
 import info.jlibrarian.mediatree.MediaProperty;
@@ -64,64 +65,68 @@ public class ConanApp {
     	PropertyTree.setLogLevel(logLevel);
     	
     	for(File f : targets) {
-    		PropertyTree root;
+    		PropertyTree root=null;
     		if(f.isDirectory()) {
-    			root=null;
     			try {
 					root=new MediaFolder().load(f, true);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-    			if(root!=null) {
-    				System.out.println("** Loaded all from "+f);
-    				for(String pStr : queryStrings) {
-    					Property p=MediaProperty.getPropertyByName(pStr);
-    					if(p!=null) {
-    						queryProperties.add(p);
-            				System.out.println("** Query property: "+queryProperties.get(queryProperties.size()-1));
-    					} else {
-    						System.out.println("** Unknown property: "+pStr);
-    						printUsage();
-    						return;
-    					}
-    				}
+    		} else {
+    			try {
+					root=new MediaFile().load(f);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+    		}
 
-    				
-    				
-    				Map<Property, PropertySearchResults> queryResults;
-    				if(queryProperties.size()>0) {
-    					queryResults=root.query(queryProperties);
-    				} else {
-    					queryResults=root.query();
-    				}
+    		if(root!=null) {
+				System.out.println("** Loaded all from "+f);
+				for(String pStr : queryStrings) {
+					Property p=MediaProperty.getPropertyByName(pStr);
+					if(p!=null) {
+						queryProperties.add(p);
+        				System.out.println("** Query property: "+queryProperties.get(queryProperties.size()-1));
+					} else {
+						System.out.println("** Unknown property: "+pStr);
+						printUsage();
+						return;
+					}
+				}
 
-    				if(queryResults!=null) {
-        				Set<Entry<Property, PropertySearchResults>> entries=queryResults.entrySet();
-        				if(entries!=null) {
-            				for(Entry<Property, PropertySearchResults> entry : entries) {
-            					if(maxResults<0) {
-                					System.out.println(
-                							StringUtils.lineWrap(
-                									StringUtils.stripControlCharacters(entry.getValue().formattedResults(showNodes,-1))
-                							,80)
-                									);
-            					} else if(maxResults==0) {
-            						System.out.println(entry.getKey()+"("+entry.getKey().getName()+"): "+entry.getValue().getNumResults()
-            								+" results in "+entry.getValue().getTotalNodes()+" total nodes");
-            					} else {
-            						// TODO: limit results
-                					System.out.println(
-                							StringUtils.lineWrap(
-                									StringUtils.stripControlCharacters(entry.getValue().formattedResults(showNodes,maxResults))
-                							,80)
-                									);
-            					}
-            				}
+				
+				
+				Map<Property, PropertySearchResults> queryResults;
+				if(queryProperties.size()>0) {
+					queryResults=root.query(queryProperties);
+				} else {
+					queryResults=root.query();
+				}
+
+				if(queryResults!=null) {
+    				Set<Entry<Property, PropertySearchResults>> entries=queryResults.entrySet();
+    				if(entries!=null) {
+        				for(Entry<Property, PropertySearchResults> entry : entries) {
+        					if(maxResults<0) {
+            					System.out.println(
+            							StringUtils.lineWrap(
+            									StringUtils.stripControlCharacters(entry.getValue().formattedResults(showNodes,-1))
+            							,80)
+            									);
+        					} else if(maxResults==0) {
+        						System.out.println(entry.getKey()+"("+entry.getKey().getName()+"): "+entry.getValue().getNumResults()
+        								+" results in "+entry.getValue().getTotalNodes()+" total nodes");
+        					} else {
+            					System.out.println(
+            							StringUtils.lineWrap(
+            									StringUtils.stripControlCharacters(entry.getValue().formattedResults(showNodes,maxResults))
+            							,80)
+            									);
+        					}
         				}
-    				} else {
-    					System.out.println("** no results to query");
     				}
+				} else {
+					System.out.println("** no results to query");
     			}
     		} else {
         		System.out.println("loading file not supported yet, try folder");

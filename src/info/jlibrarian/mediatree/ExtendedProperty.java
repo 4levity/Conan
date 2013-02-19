@@ -82,7 +82,6 @@ public class ExtendedProperty implements Property {
 
 	@Override
 	public Property extended(String name, boolean create) {
-		// TODO: make extended property interface more elegant?
 		throw new UnsupportedOperationException("internal error: extended properties cannot have extended properties");
 	}
 

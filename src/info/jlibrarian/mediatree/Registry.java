@@ -42,17 +42,19 @@ public class Registry {
  * 
  * all file name extensions are converted to lower case.
  */
-fileTypes.put("flac",new FileType(MediaFile.class,MediaProperty.AUDIOFILE)
+fileTypes.put("flac",new FileType(MediaProperty.FLAC_FILE)
                             .addTagConfig(FlacMetadataBlock.class,MediaProperty.FLACMETADATA,null));
-fileTypes.put("mp3", new FileType(MediaFile.class,MediaProperty.AUDIOFILE)
+
+// TODO: this is silly, if id3tag detected just load and clarify property within Id3v2Tag class
+fileTypes.put("mp3", new FileType(MediaProperty.MP3_FILE)
                             .addTagConfig(Id3v2Tag.class,MediaProperty.ID3V22TAG,"2.2.*")
                             .addTagConfig(Id3v2Tag.class,MediaProperty.ID3V23TAG,"2.3.*")
                             .addTagConfig(Id3v2Tag.class,MediaProperty.ID3V24TAG,"2.4.*")
                             .addTagConfig(Id3v2Tag.class,MediaProperty.ID3V2XTAG,"2.5+"));
-fileTypes.put("wav",new FileType(MediaFile.class,MediaProperty.AUDIOFILE));
-fileTypes.put("jpg", new FileType(MediaFile.class,MediaProperty.PICTURE));
-fileTypes.put("jpeg", new FileType(MediaFile.class,MediaProperty.PICTURE));
-fileTypes.put("png", new FileType(MediaFile.class,MediaProperty.PICTURE));
+fileTypes.put("wav",new FileType(MediaProperty.WAV_FILE));
+fileTypes.put("jpg", new FileType(MediaProperty.PICTURE));
+fileTypes.put("jpeg", new FileType(MediaProperty.PICTURE));
+fileTypes.put("png", new FileType(MediaProperty.PICTURE));
 // MediaFolder loader will instantiate nodes for unrecognized files w/ MediaProperty.OTHERFILE 
 
 registerId3v2("TAL","2.2.*",Id3v2TextFrame.class,MediaProperty.ALBUM,false);
@@ -368,11 +370,9 @@ registerVorbis("TOTALTRACKS",VorbisField.class,MediaProperty.VORBISFIELD_TRACKTO
                 this.tagVersions = tagVersions;
             }
         }
-        public final Class<? extends MediaFile> fileClass;
         public final MediaProperty fileProperty;
         public List<TagConfig> tagInfo=new ArrayList<TagConfig>(1);
-        public FileType(Class<? extends MediaFile> fileCl, MediaProperty fileProp) {
-            this.fileClass = fileCl;
+        public FileType(MediaProperty fileProp) {
             this.fileProperty = fileProp;
         }
         public FileType addTagConfig(Class<? extends MediaTag> tagNodeClass,MediaProperty tagProp,String tagOpt) {

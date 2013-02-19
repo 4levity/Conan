@@ -50,8 +50,8 @@ public class FlacPicture extends FrameNode {
 		offs+=4;
 		byte[] imageData = Arrays.copyOfRange(frameData, offs, offs+imgDataLen);
 		
-		this.embeddedImageLink = new FileMetadata(this,null,mimeType,description,
-				Id3PictureType.getId3Picturetype((byte)(pictureTypeId & 0x7F)),imageData);
+		this.setValue(new FileMetadata(this,null,mimeType,description,
+				Id3PictureType.getId3PictureType(pictureTypeId),imageData));
 		ImageAttributes scannedAttrs=this.embeddedImageLink.getImageAttributes();
 		
 		if(imgWidthPx != scannedAttrs.getImgWidth()
@@ -62,6 +62,7 @@ public class FlacPicture extends FrameNode {
 					+imgHeightPx+"x"+imgWidthPx+"px, "+imgBitsPerPixel+"bpp, "+imgNumIndexedColors+"ixColors) != ("
 					+scannedAttrs.getImgWidth()+"x"+scannedAttrs.getImgHeight()+"px, "
 						+scannedAttrs.getImgBitsPerPixel()+"bpp, "+scannedAttrs.getImgIndexedColors()+"ixColors)");
+			// TODO: pick one?
 		}
 		
 		return frameData;
@@ -76,6 +77,7 @@ public class FlacPicture extends FrameNode {
 	public void setValue(Object o) {
 		// instance must encapsulate a FileMetadata
 		this.embeddedImageLink=(FileMetadata) this.convertObject(o);
+		Id3v2PictureFrame.updateNodePictureType(this);
 	}
 	
 }

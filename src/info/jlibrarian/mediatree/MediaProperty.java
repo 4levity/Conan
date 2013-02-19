@@ -21,22 +21,26 @@ import java.util.HashMap;
 public enum MediaProperty implements Property {
 	// file system objects. (note: image files are stored as MediaProperty.PICTURE)
     FOLDER ("Folder",File.class),
-    OTHERFILE ("Other file ",FileMetadata.class),
-    AUDIOFILE ("Audio file",FileMetadata.class),
     SYMLINKFILE ("Symbolic file link",File.class),
     SYMLINKFOLDER ("Symbolic folder link",File.class),
+    
+    // A file - on the file system or embedded in another file etc.
+    // File type might be clarified to AUDIOFILE or PICTURE/etc upon loading by a node class (MediaFile, Id3v2PictureFrame, FlacPicture, etc)
+    FILE ("Regular file",FileMetadata.class),    
+    FLAC_FILE ("FLAC file",FILE),
+    MP3_FILE ("MP3 file",FILE),
+    WAV_FILE ("WAV file",FILE),
+    // Extended types will be created under PICTURE for specific kinds of picture (cover art etc)
+    PICTURE ("Picture",FILE,true),
             
 // file tag/attachment objects..
     FLACMETADATA ("FLAC Metadata",FlacHeader.class,true),
     VORBISCOMMENTBLOCK ("Vorbis Comment block",String.class,true),
     ID3V2TAG ("ID3 v2 Tag",Id3v2TagHeader.class),
-    ID3V22TAG ("ID3 v2.2 Tag",MediaProperty.ID3V2TAG),
-    ID3V23TAG ("ID3 v2.3 Tag",MediaProperty.ID3V2TAG),
-    ID3V24TAG ("ID3 v2.4 Tag",MediaProperty.ID3V2TAG),
-    ID3V2XTAG ("ID3 v2.5+ Tag (untested)",MediaProperty.ID3V2TAG),
-
-    // TODO: each picture context (e.g. "cover art" or "a brightly coloured fish") should have unique property
-    PICTURE ("Picture",FileMetadata.class,true),
+    ID3V22TAG ("ID3 v2.2 Tag",ID3V2TAG),
+    ID3V23TAG ("ID3 v2.3 Tag",ID3V2TAG),
+    ID3V24TAG ("ID3 v2.4 Tag",ID3V2TAG),
+    ID3V2XTAG ("ID3 v2.5+ Tag (untested)",ID3V2TAG),
 
 // general music/media properties..
     ALBUM ("Album",String.class,true),
@@ -149,7 +153,10 @@ public enum MediaProperty implements Property {
     ID3V2FRAME_AUDIOENCRYPTION ("Id3v2 frame/Audio encryption",ResizingByteBuffer.class,true),
     ID3V2FRAME_AUDIOSEEKPOINTINDEX ("Id3v2 frame/Audio seek point index",ResizingByteBuffer.class,true),
     ID3V2FRAME_COMMERCIAL ("Id3v2 frame/Commercial",ResizingByteBuffer.class,true),
+
+    // TODO: this should be supported as FileMetadata
     ID3V2FRAME_ENCAPSULATEDFILE ("Id3v2 frame/Encapsulated file",ResizingByteBuffer.class,true),
+    
     ID3V2FRAME_ENCRYPTEDMETAFRAME ("Id3v2 frame/Encrypted meta frame",ResizingByteBuffer.class,true),
     ID3V2FRAME_ENCRYPTIONMETHODREGISTRATION ("Id3v2 frame/Encryption method registration",ResizingByteBuffer.class,true),
     ID3V2FRAME_EQUALIZATION ("Id3v2 frame/Equalization",ResizingByteBuffer.class,true),
@@ -240,8 +247,19 @@ public enum MediaProperty implements Property {
     	return extended(name,false);
     }
     public Property extended(String name,boolean create) {
-    	String xName=this.getName()+"."+StringUtils.stripControlCharacters(name.toUpperCase().replaceAll("\\s","_"));
-    	return MediaProperty.getPropertyByName(xName,create?this:null);
+    	
+    	// we hope to preserve uniqueness but smartly convert a name to property name
+    	// (1) uppercase (2) strip control characters (3) spaces to underscores (4) remove all other nonword chars 
+    	String xName=this.getName()+"."+StringUtils.stripControlCharacters(name.toUpperCase())
+    			.replaceAll("[/\\s]", "_")
+    			.replaceAll("\\W","");
+    	Property prop = MediaProperty.getPropertyByName(xName);
+    	
+    	if(prop == null && create) {
+			prop=new ExtendedProperty(xName,this);
+			extendedProperties.put(xName,prop);
+    	}
+    	return prop;
     }
 
     @Override
@@ -270,21 +288,11 @@ public enum MediaProperty implements Property {
 
 	private static HashMap<String,Property> extendedProperties=new HashMap<String,Property>(); 
 	public static Property getPropertyByName(String name) {
-		return getPropertyByName(name,null);
-	}
-	private static Property getPropertyByName(String name, Property createUnderProperty) {
 		Property p=null;
 		try {
 			p=MediaProperty.valueOf(name);
 		} catch (IllegalArgumentException e) {
-			if(createUnderProperty!= null) {
-				String uppercaseName=createUnderProperty.getName()+"."+name.toUpperCase();
-				p=extendedProperties.get(uppercaseName);
-				if(p==null) {
-					p=new ExtendedProperty(name,createUnderProperty);
-					extendedProperties.put(uppercaseName,p);
-				}
-			}
+			p=extendedProperties.get(name.toUpperCase());
 		}
 		return p;
 	}
