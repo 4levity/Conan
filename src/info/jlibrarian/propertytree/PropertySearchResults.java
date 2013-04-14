@@ -5,15 +5,26 @@ import info.jlibrarian.stringutils.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 
-/* 
- * result set of a PropertyTree search for a SINGLE given property
+/**
+ * This is a result set of a PropertyTree search for a SINGLE given property.
  * supplies a list of unique values for that property
  * each result has one value (Object, runtime class type implied by property) 
  * 		plus each result has a list of one or more nodes having that value (supporting evidence for property=value)
+ * 
+ * @author C. Ivan Cooper (ivan@4levity.net)
+ *
  */
 public class PropertySearchResults {
-
-	// a single result (i.e. a single *consistent* value with a list of nodes all matching the same value)
+	private ArrayList<Result> results;
+	private int totalNodes;
+	private boolean sorted;
+		
+	/**
+	 * 'Result' is a single search result (i.e. 1 property with a list of 1 or more nodes representing it).
+	 * 
+	 * @author C. Ivan Cooper (ivan@4levity.net)
+	 *
+	 */
 	public class Result implements Comparable<Result> {
 		private ArrayList<PropertyTree> nodes;		
 		public Result(PropertyTree firstMatchingNode) {
@@ -22,7 +33,7 @@ public class PropertySearchResults {
 			nodes.add(firstMatchingNode);
 		}
 		public void add(PropertyTree nextMatchingNode) {
-			// NOTE: remove check to improve performance
+			// TODO: remove check to improve performance
 			if(nodes.get(0).getValue().equals(nextMatchingNode.getValue())) {
 				nodes.add(nextMatchingNode);
 			} else {
@@ -53,18 +64,20 @@ public class PropertySearchResults {
 			return null;
 		}
 	}
-	private ArrayList<Result> results;
-	int totalNodes;
-	boolean sorted;
-	
-	PropertySearchResults(PropertyTree firstNode) {
+	protected PropertySearchResults(PropertyTree firstNode) {
 		results=new ArrayList<Result>(1); // size 1; guessing there will not be any conflicting values
 		results.add(new Result(firstNode));
 		sorted=true;
 		totalNodes=1;
 	}
 
-	// for unique attributes, this will return the one with the most matches in the result set (ties undefined)
+	/**
+	 * Get the first value in the search result.
+	 * 
+	 * For unique attributes, this will return the one with the highest rank/probability (e.g. most trusted)
+	 * 
+	 * @return	first value in search result
+	 */
 	public Object getFirstValue() {
 		return getValue(0);
 	}
@@ -103,7 +116,7 @@ public class PropertySearchResults {
 		// these should all be the same so no need to sort
 		return results.get(0).getProperty();
 	}
-	public void addResult(PropertyTree node) {
+	protected void addResult(PropertyTree node) {
 		// todo: don't call getValue again right here!
 		Object value=node.getValue();
 		Result match=getMatchingResult(value);
@@ -137,9 +150,13 @@ public class PropertySearchResults {
 		Property p=this.getProperty();
         return "Query ("+this.totalNodes+" elements) "+p.toString();
 	}
-	
-	/*
-	 * maxResults=-1 for no maximum
+
+	/**
+	 * Returns formatted text results for display in console/etc.
+	 * 
+	 * @param showNodes		if true, show source nodes instead of just name/value
+	 * @param maxResults	max results to show, or -1 for no limit
+	 * @return				formatted search results
 	 */
 	public String formattedResults(boolean showNodes,int maxResults) {
 		sort();

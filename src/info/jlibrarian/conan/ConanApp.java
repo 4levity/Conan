@@ -12,26 +12,35 @@ import info.jlibrarian.stringutils.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 
+/**
+ * This is the main app, either a command line utility or graphical editor.
+ * 
+ * @author C. Ivan Cooper (ivan@4levity.net)
+ *
+ */
 public class ConanApp {
-    public static void main(String[] args) {
-    	ArrayList<File> targets=new ArrayList<File>();
-    	ArrayList<String> queryStrings=new ArrayList<String>();
-    	ArrayList<Property> queryProperties=new ArrayList<Property>();
+    public void main(String[] args) {
+    	List<File> targets=new ArrayList<File>();
+    	List<String> queryStrings=new ArrayList<String>();
     	Level logLevel=Level.WARNING;
     	int maxResults=-1;
     	boolean showNodes=false;
+    	boolean interactiveMode=false;
     	
     	if(args.length==0) {
     		printUsage();
     	} else {
     		int arg=0;
     		while(arg<args.length) {
-    			if(args[arg].equalsIgnoreCase("--query")) {
+    			if (args[arg].equalsIgnoreCase("--ui")) {
+    				interactiveMode=true;
+    			} else if(args[arg].equalsIgnoreCase("--query")) {
     				if(arg+1<args.length) {
         				arg++;
         				queryStrings.add(args[arg]);
@@ -63,7 +72,28 @@ public class ConanApp {
     	}
     	
     	PropertyTree.setLogLevel(logLevel);
+
+    	if(interactiveMode) {
+    		// GUI
+    	} else {
+    		searchFiles(targets,queryStrings,maxResults,showNodes);
+    	} // else other command line modes
     	
+
+		System.out.println("Exit.");
+    }
+
+    /**
+     * Search for values in files and output results to console.
+     * 
+     * @param targets		list of file/folder objects to search 
+     * @param queryStrings	names of properties to search for
+     * @param maxResults	max number of results to show per property 
+     * @param showNodes		if true, show actual source nodes (e.g. id3 frame info) rather than just name/value
+     */
+    void searchFiles(List<File> targets,List<String> queryStrings,int maxResults,boolean showNodes) {
+    	List<Property> queryProperties=new ArrayList<Property>();
+
     	for(File f : targets) {
     		PropertyTree root=null;
     		if(f.isDirectory()) {
@@ -131,48 +161,33 @@ public class ConanApp {
     		} else {
         		System.out.println("loading file not supported yet, try folder");
     		}
-    		
     	}
-
-/*    	
-    	// load a folder/file location
-    	MediaFolder mf=new MediaFolder();
-    	try {
-    		//mf.load("/home/ivan/Music/The Polish Ambassador/2008 - I Found Him. Now I Must Kill Him",true);
-    		//mf.load("/home/ivan/Music/The Polish Ambassador",true);
-    		mf.load("/home/ivan/Music",true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-    	// single property search
-    	PropertySearchResults<MediaProperty> propResults=mf.query(MediaProperty.PICTURE);
-		propResults.print();
-		propResults.getResult(0).getNode(0).describeTree();
-
-		// all property search (flatten)
-		Map<MediaProperty, PropertySearchResults<MediaProperty>> multiResults=mf.query();
-		Set<Entry<MediaProperty, PropertySearchResults<MediaProperty>>> entries=multiResults.entrySet();
-		for(Entry<MediaProperty, PropertySearchResults<MediaProperty>> entry : entries) {
-			entry.getValue().print();
-		}
-		
-		*/
-	
-		System.out.println("Exit.");
     }
-
+    
 	private static void printUsage() {
 		System.out.println("usage: java -jar conan.jar [options] folder1 [folder2 [folder3...]]");
 		System.out.println("");
 		System.out.println("options:");
+		System.out.println("  --log LEVEL");
+		System.out.println("       set the logging verbosity. LEVEL can be INFO (show everything), WARNING,");
+		System.out.println("       or SEVERE (only show major issues).");
+		System.out.println("");
+		System.out.println("  --gui");
+		System.out.println("       start graphical editor (experimental)");
+		System.out.println("");
+		System.out.println("*** the following options have no effect in graphical mode ***");
+		System.out.println("");
 		System.out.println("  --query PropertyNAME");
 		System.out.println("       query this property on each folder after loading (default is to query ");
 		System.out.println("       all properties). can be repeated to query a list of properties.");
 		System.out.println("");
-		System.out.println("  --log LEVEL");
-		System.out.println("       set the logging verbosity. LEVEL can be INFO (show everything), WARNING,");
-		System.out.println("       or SEVERE (only show major issues).");
+		System.out.println("  --maxresults N");
+		System.out.println("       set the maximum number of results to return PER PROPERTY");
+		System.out.println("       * has no effect in graphical mode");
+		System.out.println("");
+		System.out.println("  --shownodes");
+		System.out.println("       show the source nodes (e.g. ID3 frames), not just property/value pairs");
+		System.out.println("       * has no effect in graphical mode");
 		System.out.println("");
 		
 /*		System.out.println("list of properties:");

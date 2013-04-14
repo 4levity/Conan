@@ -2,14 +2,16 @@ package info.jlibrarian.mediatree;
 
 import info.jlibrarian.propertytree.Property;
 
-/*
- * Represents a property created at runtime, e.g. user text field identifier
- * 
+/**
+ * Represents a property created at runtime, e.g. user text field identifier.
  * Do not instantiate directly, instead use MediaProperty.getPropertyByName()
+ * 
+ * @author C. Ivan Cooper (ivan@4levity.net)
+ *
  */
 public class ExtendedProperty implements Property {
-	String name;
-	Property superType;
+	private String name;
+	private Property superType;
 	
 	public ExtendedProperty(String name,Property superType) {
 		super();

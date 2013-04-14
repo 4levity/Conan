@@ -4,11 +4,13 @@ package info.jlibrarian.stringutils; /* Original source code (c) 2013 C. Ivan Co
 import java.util.Comparator;
 
 /**
- * compare two "version strings" supporting the special wildcards * and +
+ * Represents a comparable version string, also static methods for comparing Strings that are version strings.
+ * 
+ * compare two "version strings" supporting the special wildcards * and +.
  * the + wildcard is only valid as the last character of the version string
  * 
  * if any wildcards are used, this comparison is symmetric and reflexive, 
- * but NOT transitive -
+ * but it is NOT transitive -
  * e.g. a=b and b=c but maybe not a=c
  * 
  * If no wildcards are used, the comparison is also transitive.
@@ -82,13 +84,14 @@ public class VersionString implements Comparable<VersionString>,Comparator<Strin
 
         return vA_strings.length - vB_strings.length;
     }
+
     /**
      * generalizes a wildcard version string.
-     * "1.2.3" becomes "1.2.*"
+     * "1.2.foo" becomes "1.2.*"
      * "1.2.*" becomes "1.*"
      * "1.*" becomes "*"
      * "*" becomes "*"
-     * "duck" becomes "*"
+     * "foo" becomes "*"
      * 
      * @param v
      * @return
@@ -109,8 +112,10 @@ public class VersionString implements Comparable<VersionString>,Comparator<Strin
         new_v+="*"; // last field is a *
         return new_v;
     }
+    
     /**
-     * note: violates transitivity of equality
+     * compare two version strings as described in VersionString (violates transitivity of equality)
+     * 
      * @param s1
      * @param s2
      * @return result of comparison
@@ -118,8 +123,9 @@ public class VersionString implements Comparable<VersionString>,Comparator<Strin
     public int compare(String s1, String s2) {
         return compareVersions(s1,s2);
     }
+    
     /**
-     * note: violates transitivity of equality
+     * compare to other VersionString (violates transitivity of equality)
      * @param arg0
      * @return result of comparison
      */
@@ -133,7 +139,7 @@ public class VersionString implements Comparable<VersionString>,Comparator<Strin
         return version;
     }
     /**
-     * note: violates transitivity of equality
+     * Check whether this matches another version string (violates transitivity of equality)
      * @param obj
      * @return result of comparison
      */

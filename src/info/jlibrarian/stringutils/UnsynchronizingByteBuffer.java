@@ -1,7 +1,14 @@
 package info.jlibrarian.stringutils; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
-
+/**
+ * An automatically-resized byte array which can implement the ID3 "unsynchronization" encoding scheme.
+ * Can be used to generate ID3 tags which use unsynchronization. It might not be a good idea to use it.
+ * 
+ * @author C. Ivan Cooper (ivan@4levity.net)
+ *
+ */
 public class UnsynchronizingByteBuffer extends ResizingByteBuffer {
+	// TODO: consider deprecating/disabling creation of unsynchronized tags
 	int numBytesPut=0;
 
 	@Override

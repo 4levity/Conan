@@ -2,6 +2,25 @@ package info.jlibrarian.stringutils; /* Original source code (c) 2013 C. Ivan Co
 
 import java.util.Comparator;
 
+/**
+ * Represents a comparable wildcard string, also contains static functions for comparing wildcard strings.
+ * 
+ * A wildcard string is any String. If the wildcard string includes an asterisk '*', then for the purpose
+ * of comparison, only the characters before the asterisk need match the other wildcard string.
+ * 
+ * if any wildcards are used, this comparison is symmetric and reflexive, but it is NOT transitive -
+ * e.g. a=b and b=c but maybe not a=c
+ * 
+ * for example, these pairs of wildcard strings are all considered "equal"
+ * 		foobar	foobar
+ * 		foo*	foobar
+ * 		foobar	foo*
+ * 		*		foobar
+ * 		foobar	foobar*
+ * 
+ * @author C. Ivan Cooper (ivan@4levity.net)
+ *
+ */
 public class WildcardString implements Comparable<WildcardString>,Comparator<String> {
     private final String string;
     /**

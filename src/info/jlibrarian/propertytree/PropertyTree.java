@@ -17,6 +17,15 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * This defines a manipulable tree where each node represents a PROPERTY=VALUE assignment.
+ * 
+ * Each node must have a Property at time of instantiation, although the property may be changed later.
+ * .  subclasses must implement some method to return a value
+ * 
+ * @author C. Ivan Cooper (ivan@4levity.net)
+ *
+ */
 public abstract class PropertyTree {
     private Property property;
     private PropertyTree parent;
@@ -56,7 +65,7 @@ public abstract class PropertyTree {
     }
     final private Map<Property,PropertySearchResults> doQuery(Map<Property,
     		PropertySearchResults> results,
-    		ArrayList<Property> targetList,
+    		List<Property> targetList,
     		Property searchWithin) {    	
     	PropertyTree parent=this.getParent();
     	boolean searchHere=false;
@@ -93,7 +102,7 @@ public abstract class PropertyTree {
 
 	// we have found a match at this node and need to add it to the result set
     final private Map<Property, PropertySearchResults> addThisResult(
-			Map<Property, PropertySearchResults> results,ArrayList<Property> targetProperties) {
+			Map<Property, PropertySearchResults> results,List<Property> targetProperties) {
 		if(results==null) {
 	    	// first match, need to allocate a result set 
 	    	// guess what size map to create
@@ -146,10 +155,10 @@ public abstract class PropertyTree {
  * 		(same result as repeatedly calling lookup but ideally in one traversal)
  * 		if none match, return null hashset.
  */
-    final public Map<Property,PropertySearchResults> query(ArrayList<Property> targetList,Property searchWithin) {
+    final public Map<Property,PropertySearchResults> query(List<Property> targetList,Property searchWithin) {
     	return doQuery(null,targetList,searchWithin);
     }
-    final public Map<Property,PropertySearchResults> query(ArrayList<Property> targetList) {
+    final public Map<Property,PropertySearchResults> query(List<Property> targetList) {
     	return this.doQuery(null,targetList,null);
     }
 /* lookup all: return hashmap<property,#1 lookup set>, for any property represented
@@ -175,21 +184,25 @@ public abstract class PropertyTree {
             return null;
         return children.iterator();
     }
-    /*
-    public boolean isValueValid() {
-    	// override to define how to determine if the assigned value is valid/allowed
-    	Object o=getValue();
-        if(o==null)
-            return true;
-        if(this.getNodeProperty().getDataType().isAssignableFrom(String.class)) {
-            // default behavior for strings: no nulls or control characters allowed
-            if(StringUtils.stripControlCharacters(o.toString()).equals(o.toString()))
-                return true;
-            return false;
-        } // else default is to assume valid
-        return true;
-    }*/
 
+    final public void setConfidence(int new_confidence) { 
+        throw new UnsupportedOperationException("setConfidence not implemented");
+    }
+ 
+    final public double getConfidence() {
+    	// should be 1.0 if this node supposedly represents a "fact", or 0 > n > 1 if it is known to be a guess 
+        return 1.0; 
+    }
+
+    final public void forceSubtreeValid() {
+        if(children==null)
+            return;
+
+        for(PropertyTree child : children) {
+            child.forceSubtreeValid();
+        }
+    }
+    
     public void forceValueValid() {
     	// override to define a way to force an invalid/disallowed value to be valid/allowed
     	Object o=getValue();
@@ -203,25 +216,6 @@ public abstract class PropertyTree {
         return;
     }
 
-    final public void forceSubtreeValid() {
-        if(children==null)
-            return;
-
-        for(PropertyTree child : children) {
-            child.forceSubtreeValid();
-        }
-    }
-    
-    public double getConfidence() {
-    	// should be 1.0 if this node supposedly represents a "fact", or 0 > n > 1 if it is known to be a guess 
-        return 1.0; 
-    }
-
-    public void setConfidence(int new_confidence) { 
-        throw new UnsupportedOperationException("setConfidence not implemented");
-    }
-
- 
     public Integer getInteger() {
         Object gotValue=getValue();
         if (gotValue != null) {
@@ -349,18 +343,6 @@ public abstract class PropertyTree {
         }
         return o;
     }
-    
-	/*final public boolean setValue(MediaProperty property, Object newValue) {
-		// TODO: implement child creation by pushing properties to nodes
-		return false;
-	}*/
-
-/*    public boolean canCreateChild(Property newProperty) {
-		return false;
-	}
-	public boolean createChild(Property newProperty,Object newValue) {
-		
-	}*/
 
     // functions to create text representation of the tree 
     // TODO: XML!
@@ -390,13 +372,6 @@ public abstract class PropertyTree {
     @Override
     public String toString() {
     	return describeNode();
-/*        Object val=getValue();
-        if(val==null)
-            return null;
-        if(val.getClass().isAssignableFrom(File.class))
-            return ((File)getValue()).getName();
-        //else
-        return StringUtils.stripControlCharacters(val.toString());*/
     }
     
     @Override
@@ -453,13 +428,6 @@ public abstract class PropertyTree {
     public static void setLogLevel(Level newLevel) {
     	PropertyTree.logger.setLevel(newLevel);
     	PropertyTree.consoleHandler.setLevel(newLevel);
-    	/*
-    	Logger parentLogger=logger.getParent();
-        if(parentLogger!=null) {
-        	parentLogger.setLevel(newLevel);
-        }
-        */
-        
     }
     public void log(Level level,String msg) {
     	PropertyTree.log(this,level,msg);

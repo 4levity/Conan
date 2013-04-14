@@ -14,7 +14,7 @@ import java.util.logging.Level;
  * We are most interested in the streaminfo, Vorbis Comment and Picture tag.
  * (other blocks are ignored/skipped)  
  * 
- * @author ivan
+ * @author C. Ivan Cooper (ivan@4levity.net)
  */
 public class FlacMetadataBlock extends MediaTag {
     public FlacMetadataBlock(Property prop, PropertyTree parent) {

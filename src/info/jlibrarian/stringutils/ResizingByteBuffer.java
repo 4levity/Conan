@@ -1,6 +1,13 @@
 package info.jlibrarian.stringutils; /* Original source code (c) 2013 C. Ivan Cooper. Licensed under GPLv3, see file COPYING for terms. */
 
 import java.util.Arrays;
+
+/**
+ * A dynamically reallocated byte array
+ * 
+ * @author C. Ivan Cooper (ivan@4levity.net)
+ *
+ */
 public class ResizingByteBuffer {
 	protected byte[] buf;
 	protected int index;
@@ -185,8 +192,10 @@ public class ResizingByteBuffer {
 		if (getClass() != obj.getClass())
 			return false;
 		ResizingByteBuffer other = (ResizingByteBuffer) obj;
-		if (!Arrays.equals(buf, other.buf))
-			return false;
+		for(int ix = 0 ; ix<this.index ; ix++ ) {
+			if(buf[ix] != other.buf[ix]) 
+				return false;
+		}
 		return true;
 	}
 	
