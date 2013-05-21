@@ -25,7 +25,7 @@ import java.util.logging.Level;
  *
  */
 public class ConanApp {
-    public void main(String[] args) {
+    public static void main(String[] args) {
     	List<File> targets=new ArrayList<File>();
     	List<String> queryStrings=new ArrayList<String>();
     	Level logLevel=Level.WARNING;
@@ -45,6 +45,8 @@ public class ConanApp {
         				arg++;
         				queryStrings.add(args[arg]);
     				}
+    			} else if(args[arg].equalsIgnoreCase("--listproperties")) {
+    				printPropertyList();
     			} else if(args[arg].equalsIgnoreCase("--log")) {
     				if(arg+1<args.length) {
 	    				arg++;
@@ -83,7 +85,11 @@ public class ConanApp {
 		System.out.println("Exit.");
     }
 
-    /**
+    private static void printPropertyList() {
+		System.out.println(MediaFileUtil.supportReport(true));		
+	}
+
+	/**
      * Search for values in files and output results to console.
      * 
      * @param targets		list of file/folder objects to search 
@@ -91,7 +97,7 @@ public class ConanApp {
      * @param maxResults	max number of results to show per property 
      * @param showNodes		if true, show actual source nodes (e.g. id3 frame info) rather than just name/value
      */
-    void searchFiles(List<File> targets,List<String> queryStrings,int maxResults,boolean showNodes) {
+    static void searchFiles(List<File> targets,List<String> queryStrings,int maxResults,boolean showNodes) {
     	List<Property> queryProperties=new ArrayList<Property>();
 
     	for(File f : targets) {
@@ -181,6 +187,9 @@ public class ConanApp {
 		System.out.println("       query this property on each folder after loading (default is to query ");
 		System.out.println("       all properties). can be repeated to query a list of properties.");
 		System.out.println("");
+		System.out.println("  --listproperties");
+		System.out.println("       print entire list of supported properties");
+		System.out.println("");
 		System.out.println("  --maxresults N");
 		System.out.println("       set the maximum number of results to return PER PROPERTY");
 		System.out.println("       * has no effect in graphical mode");
@@ -194,7 +203,6 @@ public class ConanApp {
  		for(MediaProperty m : MediaProperty.values()) {
 			System.out.println(m.getShortName()+ " - " + m.getDescription());
 		}*/
-		System.out.println(MediaFileUtil.supportReport(true));		
 	}
 }
 

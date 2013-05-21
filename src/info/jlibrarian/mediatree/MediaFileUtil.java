@@ -5,6 +5,8 @@ import info.jlibrarian.propertytree.Property;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -46,10 +48,12 @@ public class MediaFileUtil {
     }
 
     public static boolean isLink(File f) throws IOException {
-        if (f.getName().toUpperCase().endsWith(".LNK"))
+    	return Files.isSymbolicLink(Paths.get(f.getPath()));
+    	
+/*        if (f.getName().toUpperCase().endsWith(".LNK"))
             return true;
-        return ! (f.getAbsolutePath().equals(f.getCanonicalPath()));
-        // TODO: this doesn't seem to work on relative paths
+        return ! (f.getAbsolutePath().equals(f.getCanonicalPath()));*/
+        // this doesn't seem to work on relative paths
     }
     
     public static long read32bitLittleEndianUnsignedInt(RandomAccessFile f) throws IOException {
