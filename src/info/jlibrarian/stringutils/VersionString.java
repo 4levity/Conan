@@ -26,10 +26,26 @@ import java.util.Comparator;
 public class VersionString implements Comparable<VersionString>,Comparator<String> {
     String version;
 
+    /**
+     * initialize empty version string or comparator
+     * @param
+     */
+    public VersionString() {
+        this.version = "";
+    }
+    /**
+     * initialize a version string from a string (all strings are valid)
+     * @param string representing a version
+     */
     public VersionString(String version) {
         this.version = version;
     }
     
+    /**
+     * compare two version strings using the VersionString equality and wildcard rules
+     * @param strings to compare
+     * @return 0 if match, negative if vA > vB, positive if vA < vB
+     */
     static public int compareVersions(String vA, String vB) {
         if(vA==null && vB==null) {
             return 0;
