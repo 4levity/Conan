@@ -18,26 +18,52 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.logging.Level;
 
-
+/**
+ * Id3v2Tag is a subclass of MediaTag (PropertyTreeObjNode)
+ * It represents one ID3v2 tag attached to a media file.
+ * Its parent and creator is a MediaFile.
+ * Its property will be clarified depending on what version of tag is loaded. 
+ * Its value is an Id3v2TagHeader object representing the flags/options selected in the tag.
+ * Its children are Id3v2Frame objects (various subclasses)
+ */
 public class Id3v2Tag extends MediaTag {
     private Id3v2TagHeader originalHeader=null;
 
+    /**
+     * Create tag node
+     * @param Property to assign
+     * @param Parent node
+     */
     public Id3v2Tag(Property prop, PropertyTree parent) {
         super(prop, parent);
     }
     
+    /**
+     * get ID3v2 version number of this tag
+     * @return version of tag (as string), or null if not available
+     */
     public String getVersion() {
         if(this.originalHeader==null)
             return null;
         return this.originalHeader.getVersion();
     }
 
+    /**
+     * identify whether tag was encoded with "unsynchronization" scheme
+     * @return true if tag is valid and unsynchronized, false otherwise
+     */
     public boolean isTagUnsynchronized() {
         if(this.originalHeader==null)
             return false;
         return this.originalHeader.isUnsynchronized();
     }
 
+    /**
+     * load the tag from an already-open file handle. 
+     * @param open file handle
+     * @param VersionString to try and load (wildcards supported per VersionString)
+     * @return (this) if successful, null otherwise
+     */
     final public MediaTag load(RandomAccessFile raf,String versions) 
                 throws IOException {
         // search for tag, load header info etc, set container value
@@ -103,6 +129,11 @@ public class Id3v2Tag extends MediaTag {
         return b;
     }
 
+    /**
+     * reads a single 28 bit "sync safe int" from the current position in open file
+     * @param f open file
+     * @return integer value read
+     */
     public static Integer readSyncSafeInt(RandomAccessFile f) throws IOException {
         byte[] buf=new byte[4];
         MediaFileUtil.read_sure(f,buf);
@@ -261,6 +292,14 @@ public class Id3v2Tag extends MediaTag {
         
         return newFrame;
     }
+
+    /**
+     * Converts a byte buffer representing ID3v2 frame ID to a string representation
+     * log warnings if invalid character is found, but convert anyhow
+     * 
+     * @param byte array
+     * @return string representation
+     */
     public String convertId3v2FrameID(byte[] d) {
         String id;
         try {
@@ -281,6 +320,13 @@ public class Id3v2Tag extends MediaTag {
         return id;
     }
 
+    /**
+     * Generates a new ID3v2 tag blob from this subtree
+     * 
+     * @param target length (currently means minimum length) of ID3 tag to generate
+     * @param preferred amount of padding to use (only if tag must be larger than target length)
+     * @return integer value read
+     */
 	@Override
 	public byte[] generate(int targetLength,int preferredPadding) {
 		// create frames first
