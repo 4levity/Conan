@@ -33,15 +33,15 @@ public class VariablePrecisionTime implements SettableFromString {
             this.regex=regex;
             this.expectedStringLength=expectedStringLength;
         }
-		public SimpleDateFormat getFormatter() {
-			return formatter;
-		}
-		public String getRegex() {
-			return regex;
-		}
-		public int getExpectedStringLength() {
-			return expectedStringLength;
-		}
+	public SimpleDateFormat getFormatter() {
+		return formatter;
+	}
+	public String getRegex() {
+		return regex;
+	}
+	public int getExpectedStringLength() {
+		return expectedStringLength;
+	}
     }
     protected int year;
     protected byte month;
@@ -51,14 +51,27 @@ public class VariablePrecisionTime implements SettableFromString {
     protected byte second;
     protected String extraData;
     
+    /**
+     * Create object from ISO 8601 string 
+     * @param date formatted with variable precision in ISO 8601 style
+     * @return 	
+     */
     public VariablePrecisionTime(String iso8601date) {
     	reset();
     	setIso8601Date(iso8601date);
     }
+    /**
+     * Create empty date object (precision=none) 
+     * @return 	
+     */
     public VariablePrecisionTime() {
     	reset();
     }
-    
+    /**
+     * copy constructor
+     * @param object to copy
+     * @return 	
+     */
     public VariablePrecisionTime(VariablePrecisionTime copy) {
     	this.year=copy.year;
     	this.month=copy.month;
@@ -68,7 +81,7 @@ public class VariablePrecisionTime implements SettableFromString {
     	this.second=copy.second;
    		this.extraData=copy.extraData;
 	}
-	/*
+    /**
      * sets the value of this object from an ISO 8601 variable precision date string in the
      * format YYYY or YYYY-DD or YYYY-DD-MM or YYYY-DD-MMTHH:MM or YYYY-DD-MMTHH:MM:SS
      * 
@@ -79,7 +92,8 @@ public class VariablePrecisionTime implements SettableFromString {
      * if a pattern match occurs, the value of this object will be reset. if no match occurs
      * the value will stay the same.
      * 
-     * returns true if a pattern match occured on one of the above time formats, false if not.
+     * @param date/time stamp string in ISO8601 or partial ISO8601 format
+     * @returns true if a pattern match occured on one of the above time formats, false if not.
      */
     private boolean setIso8601Date(String s) {
     	for(Precision p : Precision.values()) {
@@ -141,6 +155,10 @@ public class VariablePrecisionTime implements SettableFromString {
 		}
 		return true;
 	}
+    /**
+     * remove all date/time data and set precision to "none"
+     * @return 	
+     */
     public void reset() {
     	this.year=-1;
     	this.month=-1;
@@ -150,18 +168,29 @@ public class VariablePrecisionTime implements SettableFromString {
     	this.second=-1;
     	this.extraData=null;
     }
+    /**
+     * Set just the month and the day from a numeric string. 
+     * @param month/day as 4 character string
+     * @return true if successful
+     */
     public boolean set_MMDD(String MMDD) {
     	if(MMDD.matches("\\d\\d\\d\\d")) {
     		int m = (byte)Integer.parseInt(MMDD.substring(0, 2));
     		int d = (byte)Integer.parseInt(MMDD.substring(2, 4));
-    		if(m<1 || m>12 || d<1 || d>31) {
+    		if(!(m<1 || m>12 || d<1 || d>31)) {
     			this.month=(byte) m;
+    			// TODO: validate day of month
     			this.day=(byte) d;
     			return true;
     		}
     	}
     	return false;
     }    
+    /**
+     * Set just the hour and minute from a numeric string. 
+     * @param hour/minute as 4 character string
+     * @return true if successful
+     */
     public boolean set_hhmm(String hhmm) {
     	if(hhmm.matches("\\d\\d\\d\\d")) {
     		int h= (byte)Integer.parseInt(hhmm.substring(0, 2));
@@ -174,6 +203,11 @@ public class VariablePrecisionTime implements SettableFromString {
     	}
     	return false;
     }
+    /**
+     * Set just the year from a numeric string. 
+     * @param year as 4 character string
+     * @return true if successful
+     */
     public boolean set_Year(String year) {    	
     	if(year.matches("\\d\\d\\d\\d")) {
     		int y=Integer.parseInt(year);
@@ -184,6 +218,13 @@ public class VariablePrecisionTime implements SettableFromString {
     	}
     	return false;
     }
+
+
+    /**
+     * Generate an ISO8601 date/time string with variable precision depending on what data we have
+     * @param 
+     * @return string representation of date
+     */
 	@Override
 	public String toString() {
 		String s="";
@@ -208,6 +249,10 @@ public class VariablePrecisionTime implements SettableFromString {
 		}
 		return s;
 	}
+    /**
+     * Determine the precision by examining which fields are available
+     * @return current Precision of object
+     */
 	public Precision getPrecision() {
 		if(year<0)
 			return Precision.NONE;
@@ -221,6 +266,10 @@ public class VariablePrecisionTime implements SettableFromString {
 			return Precision.MINUTE;
 		return Precision.SECOND;
 	}
+    /**
+     * Set the value of this object from an input string, discarding existing value
+     * @return true if successful
+     */
 	@Override
 	public boolean setFromString(String value) {
 		return this.setIso8601Date(value);
