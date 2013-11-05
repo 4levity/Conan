@@ -28,14 +28,13 @@ public class VersionString implements Comparable<VersionString>,Comparator<Strin
 
     /**
      * initialize empty version string or comparator
-     * @param
      */
     public VersionString() {
         this.version = "";
     }
     /**
      * initialize a version string from a string (all strings are valid)
-     * @param string representing a version
+     * @param version   string representing a version
      */
     public VersionString(String version) {
         this.version = version;
@@ -43,7 +42,8 @@ public class VersionString implements Comparable<VersionString>,Comparator<Strin
     
     /**
      * compare two version strings using the VersionString equality and wildcard rules
-     * @param strings to compare
+     * @param vA first string to compare
+     * @param vb first string to compare
      * @return 0 if match, negative if vA > vB, positive if vA < vB
      */
     static public int compareVersions(String vA, String vB) {
@@ -109,8 +109,8 @@ public class VersionString implements Comparable<VersionString>,Comparator<Strin
      * "*" becomes "*"
      * "foo" becomes "*"
      * 
-     * @param v
-     * @return
+     * @param v input version string
+     * @return new string object representing generalized version of input
      */
     static public String generalizeVersion(String v) {
         if (v==null)
@@ -132,9 +132,9 @@ public class VersionString implements Comparable<VersionString>,Comparator<Strin
     /**
      * compare two version strings as described in VersionString (violates transitivity of equality)
      * 
-     * @param s1
-     * @param s2
-     * @return result of comparison
+     * @param s1 first version string to compare
+     * @param s2 second version string to compare
+     * @return result of comparison (negative/zero/positive)
      */
     public int compare(String s1, String s2) {
         return compareVersions(s1,s2);
