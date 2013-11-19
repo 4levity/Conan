@@ -1,6 +1,9 @@
 Conan
 =====
 
+Conan is a library for media tags and a utility program to work with them.
+Currently working features are tag reading, validation, generating raw tags.
+
 conan:
 * the app (command line test/debug features for now, swing or html GUI later?)
 
