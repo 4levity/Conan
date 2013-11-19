@@ -179,7 +179,7 @@ public class ConanApp {
 		System.out.println("       or SEVERE (only show major issues).");
 		System.out.println("");
 		System.out.println("  --gui");
-		System.out.println("       start graphical editor (experimental)");
+		System.out.println("       start graphical editor (not currently implemented)");
 		System.out.println("");
 		System.out.println("*** the following options have no effect in graphical mode ***");
 		System.out.println("");
