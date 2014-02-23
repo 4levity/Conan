@@ -5,14 +5,14 @@ import info.jlibrarian.stringutils.SettableFromString;
 import java.text.SimpleDateFormat;
 
 /**
- * Automatic precision date+time object with iso 8601 support.  No time zone.
+ * Automatic variable-precision date+time object with partial ISO 8601 support (see TODOs).  
+ * Can only contain consistent dates/times (e.g. cannot contain 2001-02-29). 
  * 
- * Precision controls output format and available fields and is defined by 
- * the first un-set field.  e.g. if obj represents 2004-04-04 the precision is DAY.
+ * 'Precision' is defined as the field before the first un-set field. Precision controls output format. 
  * 
- * If you have set year=2004 and time=02:45, the time value will be retained
- * privately, but the object will act like it has precision YEAR until you 
- * fill in the day and month, and then precision will become MINUTE
+ * e.g. if the obj represents 2004-04-04T??:??:?? we would say the precision is DAY.
+ * But if you have set only year and day ("2004-??-04T??:??:??") then precision is YEAR 
+ * until you also set the month to a value, then precision will become DAY.
  * 
  * @author ivan
  */
@@ -20,6 +20,7 @@ public class VariablePrecisionTime implements SettableFromString {
     public enum Precision {
         SECOND ("yyyy-MM-dd'T'HH:mm:ss","\\d{4}-\\d{2}-\\d{2}[Tt:]\\d{2}:\\d{2}:\\d{2}",19),
         MINUTE ("yyyy-MM-dd'T'HH:mm","\\d{4}-\\d{2}-\\d{2}[Tt:]\\d{2}:\\d{2}",16),
+        HOUR ("yyyy-MM-dd'T'HH","\\d{4}-\\d{2}-\\d{2}[Tt:]\\d{2}",13),
         DAY ("yyyy-MM-dd","\\d{4}-\\d{2}-\\d{2}",10),
         MONTH ("yyyy-MM","\\d{4}-\\d{2}",7),
         YEAR ("yyyy","\\d{4}",4),
@@ -95,7 +96,17 @@ public class VariablePrecisionTime implements SettableFromString {
      * @param date/time stamp string in ISO8601 or partial ISO8601 format
      * @returns true if a pattern match occured on one of the above time formats, false if not.
      */
-    private boolean setIso8601Date(String s) {
+    public boolean setIso8601Date(String s) {
+    	// TODO: support alternate ISO 8601 date/time format e.g. no dash between y-m-d, no colon between hh:mm:ss
+    	// TODO: support ISO 8601 fractional time with decimal point
+    	// TODO: support ISO 8601 time zone designation
+    	// TODO: support ISO 8601 week number specification
+    	// TODO: support ISO 8601 ordinal date specification
+    	// TODO: support ISO 8601 "midnight" 24:00
+    	
+    	// first, try to evaluate SECOND precision e.g. the most precise
+    	// then MINUTE, DAY and so on
+    	// when a regex match is found, evaluate it and return
     	for(Precision p : Precision.values()) {
     		// depending on the iteration order of the enum here (should be declaration order)
     		if(s.length()>=p.expectedStringLength) {
@@ -105,58 +116,138 @@ public class VariablePrecisionTime implements SettableFromString {
             				this.extraData = s.substring(p.expectedStringLength+1);
             			}
             		}
-            		return setPrecision(s,p);
+            		return setIso8601Date(s,p);
             	}
     		}
     	}
-    	return false;
+    	return false; // input does not look like complete or partial ISO 8601 date
 	}
-	private boolean setPrecision(String s, Precision p) {
+
+    /**
+     * determine whether the given combination of year/month/day represents a valid past/future date
+     * if any value is negative, it will be ignored (assumed valid). if all values are negative, return true.
+     * @param year
+     * @param month
+     * @param day
+     * @return false if invalid, true otherwise
+     */
+    static public boolean validYMD(int year,int month,int day) {
+    	// non-interdependent checks
+		if(year>9999)
+			return false;
+		if(month==0 || month>12)
+			return false;
+		if(day==0 || day>31)
+			return false;
+    	    	
+    	if(month>0) {
+			// check if day is invalid for this month/year
+			if(month==2) {
+				// feb
+				if(day>29) return false;
+				if(year>0 && day==29) {
+					if(((year%4!=0)||(year%100==0))&&(year%400!=0) )
+						// not leap year
+						return false;
+				}
+			} else if(day>30 && (month==4 || month==6 || month==9 || month==11)) {
+				// apr/jun/sep/nov
+				return false;
+			}
+		}
+    	return true;
+    }
+    /** 
+     * Set one of the fields without affecting the value of others. Will fail if
+     * resulting date does not make sense, for example:
+
+     *  vpt.reset(); // precision is now NONE
+     *  vpt.set(Precision.HOUR,13); // precision is still MONTH (because day is unknown)
+     *  vpt.set(Precision.YEAR,2013); // precision is now YEAR
+     *  vpt.set(Precision.MONTH,2); // precision is now MONTH
+     *  vpt.set(Precision.DAY,29); // this will fail because month=2 and year is not a leap year
+     * 
+     */
+    public boolean set(Precision p,int value) {
+		if(p.compareTo(Precision.YEAR)==0) {
+			if(!validYMD(value,month,day)) {
+				return false;
+			}
+			this.year=value;
+		} else if(p.compareTo(Precision.MONTH)==0) {
+			if(!validYMD(year,value,day)) {
+				return false;
+			}
+			this.month=(byte)value;
+		} else if(p.compareTo(Precision.DAY)==0) { 
+			if(!validYMD(year,month,value)) { 
+				return false;
+			}
+			this.day=(byte)value;
+		} else if(p.compareTo(Precision.HOUR)==0) { 
+			if(value<0 || value>23) {
+				return false;
+			}
+			this.hour=(byte)value;
+		} else if(p.compareTo(Precision.MINUTE)==0) { 
+			if(value<0 || value>59) {
+				return false;
+			}
+			this.minute=(byte)value;
+		} else if(p.compareTo(Precision.SECOND)==0) { 
+			if(value<0 || value>59) {
+				return false;
+			}
+			this.second=(byte) value;
+		}
+		return true;
+    }
+    
+    /**
+     * Sets value of date from partial/complete ISO 8601 at a certain precision.
+     * @param s date/time stamp string in ISO8601 or partial ISO8601 format
+     * @param p Precision of input string
+     * @returns true if time set to requested precision, false if an error occurred
+     */
+	public boolean setIso8601Date(String s, Precision p) {
 		// caller first validates string length 
 		// and that numeric digits are in correct position
 
 		reset();
 		if(p.compareTo(Precision.YEAR)<=0) {
-			int y=Integer.parseInt(s.substring(0,4));
-			if(y<0 || y>10000) {
+			if( !set(Precision.YEAR,Integer.parseInt(s.substring(0,4))) ) {
 				return false;
 			}
-			this.year=y;
 		} 
 		if(p.compareTo(Precision.MONTH)<=0) {
-			int m=(byte)Integer.parseInt(s.substring(5,7));
-			if(m<1 || m>12) {
+			if( !set(Precision.MONTH,Integer.parseInt(s.substring(5,7))) ) {
 				return false;
 			}
-			this.month=(byte)m;
 		} 
 		if(p.compareTo(Precision.DAY)<=0) { 
-			int d=(byte)Integer.parseInt(s.substring(8,10));
-			if(d<1 || d>31) {
+			if( !set(Precision.DAY,Integer.parseInt(s.substring(8,10))) ) {
 				return false;
 			}
-			this.day=(byte)d;
+		} 
+		if(p.compareTo(Precision.HOUR)<=0) { 
+			if( !set(Precision.HOUR,Integer.parseInt(s.substring(11,13))) ) {	
+				return false;
+			}
 		} 
 		if(p.compareTo(Precision.MINUTE)<=0) { 
-			int h=(byte)Integer.parseInt(s.substring(11,13));	
-			int m=(byte)Integer.parseInt(s.substring(14,16));
-			if(h<0 || h>23 || m<0 || m>59) {
+			if( !set(Precision.MINUTE, Integer.parseInt(s.substring(14,16))) ) {
 				return false;
 			}
-			this.hour=(byte)h;
-			this.minute=(byte)m;
 		} 
 		if(p.compareTo(Precision.SECOND)==0) { 
-			int sec=(byte)Integer.parseInt(s.substring(17,19));
-			if(sec<0 || sec>60) {
+			if( !set(Precision.SECOND, Integer.parseInt(s.substring(17,19))) ) {
 				return false;
 			}
-			this.second=(byte) sec;
 		}
 		return true;
 	}
     /**
-     * remove all date/time data and set precision to "none"
+     * remove all date/time data which also makes precision "none"
      * @return 	
      */
     public void reset() {
@@ -268,6 +359,7 @@ public class VariablePrecisionTime implements SettableFromString {
 	}
     /**
      * Set the value of this object from an input string, discarding existing value
+     * Assume input is complete/partial ISO 8601 date
      * @return true if successful
      */
 	@Override
