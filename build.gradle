@@ -1,0 +1,18 @@
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'eclipse'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
+
+sourceCompatibility = 1.7
+mainClassName = "info.jlibrarian.conan.ConanApp"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+}
+
